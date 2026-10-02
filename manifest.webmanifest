@@ -1,0 +1,15 @@
+{
+  "name":"LG Subscribe Control Centre",
+  "short_name":"LG Control",
+  "description":"LG Subscribe product, stock, pricing and poster control centre.",
+  "id":"./",
+  "start_url":"./",
+  "scope":"./",
+  "display":"standalone",
+  "orientation":"any",
+  "background_color":"#f4f6f8",
+  "theme_color":"#b00020",
+  "icons":[
+    {"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}
+  ]
+}
