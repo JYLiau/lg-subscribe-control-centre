@@ -121,9 +121,10 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     const q=await cloud.from('workspace_state').select('state_json').eq('workspace_id',cloudWorkspaceId).maybeSingle();if(q.error)throw q.error;
     if(q.data?.state_json?.products){
       state=q.data.state_json;
+      const categoryChanged=normalizeStateCategories(state.products);
       const rounded=normalizeStockNumbers(state.products);
       localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
-      if(rounded){
+      if(rounded||categoryChanged){
         await cloud.from('workspace_state').upsert({workspace_id:cloudWorkspaceId,state_json:state},{onConflict:'workspace_id'});
       }
     }
@@ -138,7 +139,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
   async function syncNormalizedCoreFromState(){
     if(!cloudReady||!cloudWorkspaceId)return;
     try{
-      const prods=Object.values(state.products||{}).map(p=>({workspace_id:cloudWorkspaceId,model_code:p.code,model_code_full:p.code,name:p.description||null,category:p.category||null,lifecycle_status:p.lifecycleStatus||null,submission_status:p.submissionStatus||null,width_mm:p.dimensions?.width||null,height_mm:p.dimensions?.height||null,depth_mm:p.dimensions?.depth||null,dimension_status:(String(p.dimensionSource||'').toLowerCase().includes('provisional')?'provisional':((p.dimensions?.width&&p.dimensions?.height)?'confirmed':'unknown')),notes:[p.dimensionSource,p.assetNote].filter(Boolean).join(' • ')||null,source_last_updated:state.reportDate||null}));
+      const prods=Object.values(state.products||{}).map(p=>({workspace_id:cloudWorkspaceId,model_code:p.code,model_code_full:p.code,name:p.description||null,category:normalizeCategory(p.category)||null,lifecycle_status:p.lifecycleStatus||null,submission_status:p.submissionStatus||null,width_mm:p.dimensions?.width||null,height_mm:p.dimensions?.height||null,depth_mm:p.dimensions?.depth||null,dimension_status:(String(p.dimensionSource||'').toLowerCase().includes('provisional')?'provisional':((p.dimensions?.width&&p.dimensions?.height)?'confirmed':'unknown')),notes:[p.dimensionSource,p.assetNote].filter(Boolean).join(' • ')||null,source_last_updated:state.reportDate||null}));
       for(let i=0;i<prods.length;i+=150){const r=await cloud.from('products').upsert(prods.slice(i,i+150),{onConflict:'workspace_id,model_code'});if(r.error)throw r.error;}
       const mapq=await cloud.from('products').select('id,model_code').eq('workspace_id',cloudWorkspaceId);if(mapq.error)throw mapq.error;const ids=Object.fromEntries((mapq.data||[]).map(x=>[x.model_code,x.id]));
       const av=[];for(const p of Object.values(state.products||{})){for(const region of ['AL8','AL2','AL3']){const s=p.stock?.[region]||{};if(!ids[p.code])continue;av.push({workspace_id:cloudWorkspaceId,product_id:ids[p.code],region_code:region,as_of_date:String(state.reportDate||new Date().toISOString()).slice(0,10),opening_stock:s.opening==null?null:stockQty(s.opening),inbound_stock:(s.incoming??s.inTransit??s.pending)==null?null:stockQty(s.incoming??s.inTransit??s.pending),backorder:s.backorder==null?null:stockQty(s.backorder),balance_stock:s.balance==null?null:stockQty(s.balance)});}}
@@ -300,6 +301,12 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     return (h>>>0).toString(36);
   }
   function normModel(code){ return String(code||'').trim().toUpperCase(); }
+  function normalizeCategory(value){
+    const s=String(value??'').trim();
+    if(['REF','REF - Multi Door','REF - Side by Side','REF - Top Freezer'].includes(s)) return 'REF';
+    if(['DRYER','WASH TOWER','WASHER','WASHER - F.Load','WASHER - T. Load','WASHER DRYER'].includes(s)) return 'LAUNDRY';
+    return s;
+  }
 
   function validStockModelCode(value){
     const s=String(value??'').trim().toUpperCase();
@@ -331,7 +338,15 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     seed.sourceDocuments = seed.sourceDocuments || [];
     return seed;
   }
-  function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); updateReportStamp(); updateNav(); if(cloudReady)queueCloudStateSync(); }
+  function normalizeStateCategories(products){
+    let changed=false;
+    for(const p of Object.values(products||{})){
+      const n=normalizeCategory(p.category);
+      if((p.category||'')!==n){p.category=n;changed=true;}
+    }
+    return changed;
+  }
+  function saveState(){ normalizeStateCategories(state.products); localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); updateReportStamp(); updateNav(); if(cloudReady)queueCloudStateSync(); }
 
   function openDb(){
     return new Promise((resolve,reject)=>{
@@ -627,7 +642,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     let cat='';
     for(let i=ah.row+1;i<av.length;i++){
       const r=av[i]||[];
-      if(validStockCategory(r[ah.catIdx])) cat=String(r[ah.catIdx]).trim();
+      if(validStockCategory(r[ah.catIdx])) cat=normalizeCategory(r[ah.catIdx]);
       const raw=r[ah.modelIdx], code=normModel(raw);
       if(!code) continue;
       if(!validStockModelCode(code)){
@@ -673,7 +688,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     cat='';
     for(let i=ph.row+1;i<pf.length;i++){
       const r=pf[i]||[];
-      if(validStockCategory(r[ph.catIdx])) cat=String(r[ph.catIdx]).trim();
+      if(validStockCategory(r[ph.catIdx])) cat=normalizeCategory(r[ph.catIdx]);
       const raw=r[ph.modelIdx], code=normModel(raw);
       if(!code) continue;
       if(!validStockModelCode(code)){
