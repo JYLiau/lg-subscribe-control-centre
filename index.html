@@ -119,8 +119,18 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
   }
   async function cloudLoadOrSeedState(){
     const q=await cloud.from('workspace_state').select('state_json').eq('workspace_id',cloudWorkspaceId).maybeSingle();if(q.error)throw q.error;
-    if(q.data?.state_json?.products){state=q.data.state_json;localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
-    else{await cloud.from('workspace_state').upsert({workspace_id:cloudWorkspaceId,state_json:state},{onConflict:'workspace_id'});}
+    if(q.data?.state_json?.products){
+      state=q.data.state_json;
+      const rounded=normalizeStockNumbers(state.products);
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+      if(rounded){
+        await cloud.from('workspace_state').upsert({workspace_id:cloudWorkspaceId,state_json:state},{onConflict:'workspace_id'});
+      }
+    }
+    else{
+      normalizeStockNumbers(state.products);
+      await cloud.from('workspace_state').upsert({workspace_id:cloudWorkspaceId,state_json:state},{onConflict:'workspace_id'});
+    }
     await syncNormalizedCoreFromState();
   }
   function queueCloudStateSync(){if(!cloudReady||cloudSyncing)return;clearTimeout(cloudSyncTimer);setCloudStatus('Saving to cloud…','busy');cloudSyncTimer=setTimeout(cloudSaveState,700);clearTimeout(cloudNormaliseTimer);cloudNormaliseTimer=setTimeout(syncNormalizedCoreFromState,2600);}
@@ -131,7 +141,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
       const prods=Object.values(state.products||{}).map(p=>({workspace_id:cloudWorkspaceId,model_code:p.code,model_code_full:p.code,name:p.description||null,category:p.category||null,lifecycle_status:p.lifecycleStatus||null,submission_status:p.submissionStatus||null,width_mm:p.dimensions?.width||null,height_mm:p.dimensions?.height||null,depth_mm:p.dimensions?.depth||null,dimension_status:(String(p.dimensionSource||'').toLowerCase().includes('provisional')?'provisional':((p.dimensions?.width&&p.dimensions?.height)?'confirmed':'unknown')),notes:[p.dimensionSource,p.assetNote].filter(Boolean).join(' • ')||null,source_last_updated:state.reportDate||null}));
       for(let i=0;i<prods.length;i+=150){const r=await cloud.from('products').upsert(prods.slice(i,i+150),{onConflict:'workspace_id,model_code'});if(r.error)throw r.error;}
       const mapq=await cloud.from('products').select('id,model_code').eq('workspace_id',cloudWorkspaceId);if(mapq.error)throw mapq.error;const ids=Object.fromEntries((mapq.data||[]).map(x=>[x.model_code,x.id]));
-      const av=[];for(const p of Object.values(state.products||{})){for(const region of ['AL8','AL2','AL3']){const s=p.stock?.[region]||{};if(!ids[p.code])continue;av.push({workspace_id:cloudWorkspaceId,product_id:ids[p.code],region_code:region,as_of_date:String(state.reportDate||new Date().toISOString()).slice(0,10),opening_stock:s.opening??null,inbound_stock:(s.incoming??s.inTransit??s.pending??null),backorder:s.backorder??null,balance_stock:s.balance??null});}}
+      const av=[];for(const p of Object.values(state.products||{})){for(const region of ['AL8','AL2','AL3']){const s=p.stock?.[region]||{};if(!ids[p.code])continue;av.push({workspace_id:cloudWorkspaceId,product_id:ids[p.code],region_code:region,as_of_date:String(state.reportDate||new Date().toISOString()).slice(0,10),opening_stock:s.opening==null?null:stockQty(s.opening),inbound_stock:(s.incoming??s.inTransit??s.pending)==null?null:stockQty(s.incoming??s.inTransit??s.pending),backorder:s.backorder==null?null:stockQty(s.backorder),balance_stock:s.balance==null?null:stockQty(s.balance)});}}
       for(let i=0;i<av.length;i+=200){const r=await cloud.from('product_availability_current').upsert(av.slice(i,i+200),{onConflict:'workspace_id,product_id,region_code'});if(r.error)throw r.error;}
       const plans=(state.pricePlans||[]).filter(p=>ids[p.modelCode]).map(p=>({workspace_id:cloudWorkspaceId,product_id:ids[p.modelCode],client_key:p.id||null,plan_years:Number(p.planYears),service_type:p.serviceType||'Unknown',normal_monthly:Number(p.normalPrice||0),promo_type:p.promoType||null,promo_value:p.promoValue??null,promo_months:p.promoMonths??null,source_text:p.source||null,is_current:true}));
       for(const p of plans){const r=await cloud.from('price_plans').upsert(p,{onConflict:'workspace_id,client_key'});if(r.error)throw r.error;}
@@ -252,7 +262,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
   let currentPage = 'dashboard';
   let pendingImport = null;
   let pendingDocImport = null;
-  let productFilter = { search:'', lifecycle:'all', stock:'all' };
+  let productFilter = { search:'', category:'all', lifecycle:'all', stock:'all' };
   let priceEditId = null;
   let posterDraft = { model1:'', model2:'', template:'single', title:'', badge:'', plan1:'', plan2:'', show5:true, show7:true, servicePreference:'Combine', crossShowIndividuals:true, region:'AL8', language:'ms', overrideRestricted:false };
 
@@ -262,6 +272,23 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     if (v === null || v === undefined || v === '') return 0;
     const n = typeof v === 'number' ? v : Number(String(v).replace(/,/g,''));
     return Number.isFinite(n) ? n : 0;
+  }
+  function stockQty(v){ return Math.round(safeNum(v)); }
+  function normalizeStockNumbers(products){
+    let changed=false;
+    const fields=['opening','incoming','inTransit','pending','backorder','currentOrders','balance'];
+    for(const p of Object.values(products||{})){
+      if(!p.stock) continue;
+      for(const region of ['AL8','AL2','AL3']){
+        const s=p.stock[region]; if(!s) continue;
+        for(const key of fields){
+          if(s[key]===null || s[key]===undefined || s[key]==='') continue;
+          const n=stockQty(s[key]);
+          if(s[key]!==n){s[key]=n;changed=true;}
+        }
+      }
+    }
+    return changed;
   }
   function esc(s){ return String(s ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
   function money(v){ if (v === null || v === undefined || v === '') return '—'; return `RM${Number(v).toFixed(0)}`; }
@@ -593,7 +620,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
       }
       return null;
     }
-    function stockAt(r,idx){ return idx>=0 && idx<r.length ? safeNum(r[idx]) : 0; }
+    function stockAt(r,idx){ return idx>=0 && idx<r.length ? stockQty(r[idx]) : 0; }
 
     const ah=findHeader(av);
     if(!ah) throw new Error('Could not locate Category / Model header in “Available Sum”.');
@@ -766,18 +793,20 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
   }
 
   function renderProducts(view){
+    const cats=[...new Set(Object.values(state.products||{}).map(x=>x.category).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b)));
     const products=Object.values(state.products||{}).filter(p=>{ if(!validStockModelCode(p.code)) return false;
       const q=productFilter.search.toLowerCase();
       if(q && !`${p.code} ${p.description} ${p.category}`.toLowerCase().includes(q)) return false;
+      if(productFilter.category!=='all' && (p.category||'')!==productFilter.category) return false;
       if(productFilter.lifecycle!=='all' && !(p.lifecycleStatus||'').toLowerCase().includes(productFilter.lifecycle)) return false;
       if(productFilter.stock!=='all' && stockState(p)!==productFilter.stock) return false;
       return true;
     });
-    const cats=[...new Set(Object.values(state.products||{}).map(x=>x.category).filter(Boolean))];
     view.innerHTML=`
       <div class="card">
         <div class="toolbar">
           <input id="productSearch" class="input search grow" placeholder="Search model, category or description" value="${esc(productFilter.search)}">
+          <select id="categoryFilter" class="select"><option value="all">All categories</option>${cats.map(x=>`<option value="${esc(x)}" ${productFilter.category===x?'selected':''}>${esc(x)}</option>`).join('')}</select>
           <select id="lifeFilter" class="select"><option value="all">All lifecycle</option><option value="current" ${productFilter.lifecycle==='current'?'selected':''}>Current</option><option value="npi" ${productFilter.lifecycle==='npi'?'selected':''}>NPI</option><option value="discontinued" ${productFilter.lifecycle==='discontinued'?'selected':''}>Discontinued</option></select>
           <select id="stockFilter" class="select"><option value="all">All stock</option>${['In Stock','Incoming','Backorder / No Stock','No Stock'].map(x=>`<option ${productFilter.stock===x?'selected':''}>${x}</option>`).join('')}</select>
           <span class="badge-num">${products.length}</span>
@@ -786,12 +815,13 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
           ${products.sort((a,b)=>`${a.category}${a.code}`.localeCompare(`${b.category}${b.code}`)).map(p=>`<tr>
             <td>${esc(p.category||'—')}</td><td class="mono"><button class="link-btn" data-product="${esc(p.code)}">${esc(p.code)}</button></td><td>${esc(p.description||'—')}</td>
             <td><span class="pill ${lifecycleClass(p.lifecycleStatus,p.submissionStatus)}"><span class="dot"></span>${esc(lifecycleDisplay(p))}</span></td><td>${esc(p.submissionStatus||'—')}</td>
-            <td><span class="pill ${stockClass(stockState(p))}">${esc(stockState(p))}</span></td><td>${safeNum(p.stock?.AL8?.balance)}</td><td>${safeNum(p.stock?.AL2?.balance)}</td><td>${safeNum(p.stock?.AL3?.balance)}</td>
+            <td><span class="pill ${stockClass(stockState(p))}">${esc(stockState(p))}</span></td><td>${stockQty(p.stock?.AL8?.balance)}</td><td>${stockQty(p.stock?.AL2?.balance)}</td><td>${stockQty(p.stock?.AL3?.balance)}</td>
             <td>${p.imageApproved?'<span class="pill green">Approved</span>':'<span class="pill gray">Needed</span>'}</td>
           </tr>`).join('')}
         </tbody></table></div>
       </div>`;
     document.getElementById('productSearch').oninput=e=>{productFilter.search=e.target.value;renderProducts(view)};
+    document.getElementById('categoryFilter').onchange=e=>{productFilter.category=e.target.value;renderProducts(view)};
     document.getElementById('lifeFilter').onchange=e=>{productFilter.lifecycle=e.target.value;renderProducts(view)};
     document.getElementById('stockFilter').onchange=e=>{productFilter.stock=e.target.value;renderProducts(view)};
     view.querySelectorAll('[data-product]').forEach(b=>b.onclick=()=>openProductModal(b.dataset.product));
@@ -804,9 +834,9 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
         <div class="field"><label>Lifecycle</label><div>${esc(p.lifecycleStatus||'—')}</div></div><div class="field"><label>Submission</label><div>${esc(p.submissionStatus||'—')}</div></div><div class="field"><label>Derived availability</label><div>${esc(stockState(p))}</div></div>
       </div><div class="hr"></div>
       <div class="table-wrap"><table class="table"><thead><tr><th>Warehouse</th><th>Opening</th><th>Inbound</th><th>Backorder</th><th>Balance</th></tr></thead><tbody>
-      <tr><td>AL8</td><td>${safeNum(p.stock?.AL8?.opening)}</td><td>${safeNum(p.stock?.AL8?.incoming)}</td><td>${safeNum(p.stock?.AL8?.backorder)}</td><td>${safeNum(p.stock?.AL8?.balance)}</td></tr>
-      <tr><td>AL2 Sabah</td><td>${safeNum(p.stock?.AL2?.opening)}</td><td>${safeNum(p.stock?.AL2?.inTransit)+safeNum(p.stock?.AL2?.pending)}</td><td>${safeNum(p.stock?.AL2?.backorder)}</td><td>${safeNum(p.stock?.AL2?.balance)}</td></tr>
-      <tr><td>AL3 Sarawak</td><td>${safeNum(p.stock?.AL3?.opening)}</td><td>${safeNum(p.stock?.AL3?.inTransit)+safeNum(p.stock?.AL3?.pending)}</td><td>${safeNum(p.stock?.AL3?.backorder)}</td><td>${safeNum(p.stock?.AL3?.balance)}</td></tr>
+      <tr><td>AL8</td><td>${stockQty(p.stock?.AL8?.opening)}</td><td>${stockQty(p.stock?.AL8?.incoming)}</td><td>${stockQty(p.stock?.AL8?.backorder)}</td><td>${stockQty(p.stock?.AL8?.balance)}</td></tr>
+      <tr><td>AL2 Sabah</td><td>${stockQty(p.stock?.AL2?.opening)}</td><td>${stockQty(p.stock?.AL2?.inTransit)+stockQty(p.stock?.AL2?.pending)}</td><td>${stockQty(p.stock?.AL2?.backorder)}</td><td>${stockQty(p.stock?.AL2?.balance)}</td></tr>
+      <tr><td>AL3 Sarawak</td><td>${stockQty(p.stock?.AL3?.opening)}</td><td>${stockQty(p.stock?.AL3?.inTransit)+stockQty(p.stock?.AL3?.pending)}</td><td>${stockQty(p.stock?.AL3?.backorder)}</td><td>${stockQty(p.stock?.AL3?.balance)}</td></tr>
       </tbody></table></div>`;
     m.showModal(); document.getElementById('closeModal').onclick=()=>m.close();
   }
