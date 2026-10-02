@@ -263,7 +263,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
   let currentPage = 'dashboard';
   let pendingImport = null;
   let pendingDocImport = null;
-  let productFilter = { search:'', category:'all', lifecycle:'all', stock:'all' };
+  let productFilter = { search:'', category:'all', lifecycle:'all', stock:'all', sort:'priority' };
   let priceEditId = null;
   let posterDraft = { model1:'', model2:'', template:'single', title:'', badge:'', plan1:'', plan2:'', show5:true, show7:true, servicePreference:'Combine', crossShowIndividuals:true, region:'AL8', language:'ms', overrideRestricted:false };
 
@@ -407,6 +407,36 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     return 'No Stock';
   }
   function stockClass(st){ return st==='In Stock'?'green':st==='Incoming'?'blue':st.startsWith('Backorder')?'amber':'gray'; }
+  function lifecycleRank(p){
+    const s=String(p?.lifecycleStatus||'').toLowerCase();
+    const sub=String(p?.submissionStatus||'').toLowerCase();
+    if(s.includes('current')) return 0;
+    if(s.includes('npi')) return 1;
+    if(s.includes('discontinued')||sub.includes('stop')) return 3;
+    return 2;
+  }
+  function stockRank(p){
+    const st=stockState(p);
+    if(st==='In Stock') return 0;
+    if(st==='Incoming') return 1;
+    if(st==='Backorder / No Stock') return 2;
+    return 3;
+  }
+  function productSortCompare(a,b,mode='priority'){
+    const codeCmp=String(a.code||'').localeCompare(String(b.code||''));
+    const catCmp=String(a.category||'').localeCompare(String(b.category||''));
+    if(mode==='availability'){
+      return stockRank(a)-stockRank(b) || lifecycleRank(a)-lifecycleRank(b) || catCmp || codeCmp;
+    }
+    if(mode==='lifecycle'){
+      return lifecycleRank(a)-lifecycleRank(b) || stockRank(a)-stockRank(b) || catCmp || codeCmp;
+    }
+    if(mode==='model') return codeCmp;
+    if(mode==='category') return catCmp || lifecycleRank(a)-lifecycleRank(b) || stockRank(a)-stockRank(b) || codeCmp;
+    // Recommended priority: Current first, then NPI/other, Discontinued last;
+    // inside each lifecycle group, In Stock first and No Stock last.
+    return lifecycleRank(a)-lifecycleRank(b) || stockRank(a)-stockRank(b) || catCmp || codeCmp;
+  }
   function totalPositiveStock(p){
     const s=p.stock||{}; return [s.AL8?.balance,s.AL2?.balance,s.AL3?.balance].reduce((a,b)=>a+Math.max(0,safeNum(b)),0);
   }
@@ -824,10 +854,17 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
           <select id="categoryFilter" class="select"><option value="all">All categories</option>${cats.map(x=>`<option value="${esc(x)}" ${productFilter.category===x?'selected':''}>${esc(x)}</option>`).join('')}</select>
           <select id="lifeFilter" class="select"><option value="all">All lifecycle</option><option value="current" ${productFilter.lifecycle==='current'?'selected':''}>Current</option><option value="npi" ${productFilter.lifecycle==='npi'?'selected':''}>NPI</option><option value="discontinued" ${productFilter.lifecycle==='discontinued'?'selected':''}>Discontinued</option></select>
           <select id="stockFilter" class="select"><option value="all">All stock</option>${['In Stock','Incoming','Backorder / No Stock','No Stock'].map(x=>`<option ${productFilter.stock===x?'selected':''}>${x}</option>`).join('')}</select>
+          <select id="sortFilter" class="select">
+            <option value="priority" ${productFilter.sort==='priority'?'selected':''}>Sort: Priority</option>
+            <option value="availability" ${productFilter.sort==='availability'?'selected':''}>Sort: Availability</option>
+            <option value="lifecycle" ${productFilter.sort==='lifecycle'?'selected':''}>Sort: Lifecycle</option>
+            <option value="category" ${productFilter.sort==='category'?'selected':''}>Sort: Category</option>
+            <option value="model" ${productFilter.sort==='model'?'selected':''}>Sort: Model</option>
+          </select>
           <span class="badge-num">${products.length}</span>
         </div>
         <div class="table-wrap"><table class="table"><thead><tr><th>Category</th><th>Model</th><th>Description</th><th>Lifecycle</th><th>Submission</th><th>Availability</th><th>AL8</th><th>AL2</th><th>AL3</th><th>Asset</th></tr></thead><tbody>
-          ${products.sort((a,b)=>`${a.category}${a.code}`.localeCompare(`${b.category}${b.code}`)).map(p=>`<tr>
+          ${products.sort((a,b)=>productSortCompare(a,b,productFilter.sort)).map(p=>`<tr>
             <td>${esc(p.category||'—')}</td><td class="mono"><button class="link-btn" data-product="${esc(p.code)}">${esc(p.code)}</button></td><td>${esc(p.description||'—')}</td>
             <td><span class="pill ${lifecycleClass(p.lifecycleStatus,p.submissionStatus)}"><span class="dot"></span>${esc(lifecycleDisplay(p))}</span></td><td>${esc(p.submissionStatus||'—')}</td>
             <td><span class="pill ${stockClass(stockState(p))}">${esc(stockState(p))}</span></td><td>${stockQty(p.stock?.AL8?.balance)}</td><td>${stockQty(p.stock?.AL2?.balance)}</td><td>${stockQty(p.stock?.AL3?.balance)}</td>
@@ -839,6 +876,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     document.getElementById('categoryFilter').onchange=e=>{productFilter.category=e.target.value;renderProducts(view)};
     document.getElementById('lifeFilter').onchange=e=>{productFilter.lifecycle=e.target.value;renderProducts(view)};
     document.getElementById('stockFilter').onchange=e=>{productFilter.stock=e.target.value;renderProducts(view)};
+    document.getElementById('sortFilter').onchange=e=>{productFilter.sort=e.target.value;renderProducts(view)};
     view.querySelectorAll('[data-product]').forEach(b=>b.onclick=()=>openProductModal(b.dataset.product));
   }
   function openProductModal(code){
