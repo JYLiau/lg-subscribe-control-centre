@@ -132,5 +132,250 @@ async function boot(){
 if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{});}
 boot();
 </script>
+
+<script>
+(function(){
+  function lgValidModelCode(value){
+    var s=String(value==null?'':value).trim().toUpperCase();
+    if(!s || s.length<5 || s.length>45) return false;
+    if(s==='MODEL' || s==='GRAND TOTAL' || s==='TOTAL') return false;
+    if(!/^[A-Z0-9][A-Z0-9.\-]*$/.test(s)) return false;
+    if(!/[A-Z]/.test(s) || !/[0-9]/.test(s)) return false;
+    return true;
+  }
+  function lgValidCategory(value){
+    var s=String(value==null?'':value).trim();
+    if(!s || s.length>60 || !/[A-Za-z]/.test(s)) return false;
+    if(/^(CATEGORY|MODEL|GRAND TOTAL|TOTAL|OPENING STOCK|BALANCE STOCK)$/i.test(s)) return false;
+    return true;
+  }
+  function lgSanitizeProductsMap(map){
+    var out={}; var removed=[];
+    Object.entries(map||{}).forEach(function(entry){
+      var code=entry[0], p=entry[1];
+      if(!lgValidModelCode(code)){removed.push(code);return;}
+      var clean=Object.assign({},p);
+      if(clean.category && !lgValidCategory(clean.category)) clean.category='';
+      out[code]=clean;
+    });
+    return {products:out,removed:removed};
+  }
+
+  var originalCloudLoadOrSeedState=(typeof cloudLoadOrSeedState==='function'?cloudLoadOrSeedState:null);
+  if(originalCloudLoadOrSeedState){
+    cloudLoadOrSeedState=async function(){
+      await originalCloudLoadOrSeedState();
+      var cleaned=lgSanitizeProductsMap(state.products||{});
+      if(cleaned.removed.length){
+        state.products=cleaned.products;
+        localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+        if(cloudWorkspaceId){
+          try{await cloud.from('workspace_state').upsert({workspace_id:cloudWorkspaceId,state_json:state},{onConflict:'workspace_id'});}catch(e){console.warn(e);}
+        }
+      }
+    };
+  }
+
+  if(typeof state!=='undefined' && state && state.products){
+    var bootClean=lgSanitizeProductsMap(state.products);
+    if(bootClean.removed.length){
+      state.products=bootClean.products;
+      try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}
+    }
+  }
+
+  parseStockWorkbook=function(wb,fileName){
+    var availableSheet=wb.Sheets['Available Sum'];
+    var portfolioSheet=wb.Sheets['Portfolio Status'];
+    if(!availableSheet||!portfolioSheet) throw new Error('Required sheets “Available Sum” and/or “Portfolio Status” were not found.');
+    var av=XLSX.utils.sheet_to_json(availableSheet,{header:1,defval:null,raw:true});
+    var pf=XLSX.utils.sheet_to_json(portfolioSheet,{header:1,defval:null,raw:true});
+    var reportCell=(av&&av[0]&&av[0][3]) || (pf&&pf[0]&&pf[0][1]) || null;
+    var reportDate=excelDateToIso(reportCell) || nowIso();
+    var products={}; var rejected=[];
+
+    function findHeader(rows){
+      for(var i=0;i<Math.min(rows.length,80);i++){
+        var r=rows[i]||[];
+        var hasModel=r.some(function(v){return String(v||'').trim().toLowerCase()==='model';});
+        var hasCat=r.some(function(v){return String(v||'').trim().toLowerCase()==='category';});
+        if(hasModel&&hasCat) return i;
+      }
+      return -1;
+    }
+
+    var avHeader=findHeader(av);
+    if(avHeader<0) throw new Error('Could not locate Category / Model header in “Available Sum”.');
+    var cat='';
+    for(var i=avHeader+1;i<av.length;i++){
+      var r=av[i]||[];
+      if(lgValidCategory(r[2])) cat=String(r[2]).trim();
+      var rawCode=r[3];
+      var code=normModel(rawCode);
+      if(!code) continue;
+      if(!lgValidModelCode(code)){
+        if(String(rawCode||'').trim()) rejected.push({sheet:'Available Sum',row:i+1,value:String(rawCode)});
+        continue;
+      }
+      products[code]=Object.assign({},products[code]||{},{
+        code:code,
+        category:cat||((products[code]||{}).category)||'',
+        stock:{
+          AL8:{opening:safeNum(r[4]),incoming:safeNum(r[5]),backorder:safeNum(r[6]),currentOrders:safeNum(r[7]),balance:safeNum(r[8])},
+          AL2:{opening:safeNum(r[21]),inTransit:safeNum(r[22]),pending:safeNum(r[23]),backorder:safeNum(r[24]),currentOrders:safeNum(r[25]),balance:safeNum(r[26])},
+          AL3:{opening:safeNum(r[27]),inTransit:safeNum(r[28]),pending:safeNum(r[29]),backorder:safeNum(r[30]),currentOrders:safeNum(r[31]),balance:safeNum(r[32])}
+        }
+      });
+    }
+
+    var pfHeader=findHeader(pf);
+    if(pfHeader<0) throw new Error('Could not locate Category / Model header in “Portfolio Status”.');
+    cat='';
+    for(var j=pfHeader+1;j<pf.length;j++){
+      var pr=pf[j]||[];
+      if(lgValidCategory(pr[0])) cat=String(pr[0]).trim();
+      var rawPf=pr[1];
+      var pcode=normModel(rawPf);
+      if(!pcode) continue;
+      if(!lgValidModelCode(pcode)){
+        if(String(rawPf||'').trim()) rejected.push({sheet:'Portfolio Status',row:j+1,value:String(rawPf)});
+        continue;
+      }
+      products[pcode]=products[pcode]||{code:pcode,category:cat,stock:{AL8:{},AL2:{},AL3:{}}};
+      if(cat) products[pcode].category=cat;
+      products[pcode].description=String(pr[2]||'').trim();
+      products[pcode].lifecycleStatus=String(pr[3]||'').trim();
+      products[pcode].submissionStatus=String(pr[4]||'').trim();
+    }
+    return {sourceReport:fileName,reportDate:reportDate,products:products,rejectedRows:rejected};
+  };
+
+  handleStockFile=async function(file){
+    if(!file) return;
+    if(typeof XLSX==='undefined'){toast('Spreadsheet parser could not load. Check internet connection.');return;}
+    try{
+      var buf=await file.arrayBuffer();
+      var wb=XLSX.read(buf,{type:'array',cellDates:true});
+      var parsed=parseStockWorkbook(wb,file.name);
+      var diff=compareImport(parsed);
+      var selected={};
+      diff.forEach(function(c){selected[c.model]=c.type!=='missing';});
+      pendingImport={fileName:file.name,file:file,parsed:parsed,diff:diff,selected:selected,options:{stock:true,lifecycle:true,newModels:true,missing:false}};
+      renderImportPreview();
+      toast('Report read. Choose which changes to apply.');
+    }catch(err){console.error(err);toast('Could not read report: '+(err.message||err));}
+  };
+
+  function lgSelectedChangeRelevant(c,opt){
+    if(c.type==='new-model') return !!opt.newModels;
+    if(c.type==='missing') return !!opt.missing;
+    var s=c.summary||'';
+    var life=s.indexOf('Lifecycle')>=0 || s.indexOf('Submission')>=0;
+    var stock=s.indexOf('Stock:')>=0 || s.indexOf('Balance')>=0;
+    return (life&&opt.lifecycle)||(stock&&opt.stock);
+  }
+
+  renderImportPreview=function(){
+    var el=document.getElementById('importPreview'); if(!el||!pendingImport)return;
+    var d=pendingImport.diff||[]; var counts={new:0,lifecycle:0,stock:0,missing:0};
+    d.forEach(function(x){
+      if(x.type==='new-model')counts.new++;
+      if(x.type==='missing')counts.missing++;
+      if((x.summary||'').includes('Lifecycle')||(x.summary||'').includes('Submission'))counts.lifecycle++;
+      if((x.summary||'').includes('Stock:')||(x.summary||'').includes('Balance'))counts.stock++;
+    });
+    var rejected=(pendingImport.parsed.rejectedRows||[]);
+    var rows=d.map(function(x){
+      var checked=pendingImport.selected[x.model]?' checked':'';
+      var pill=x.type==='new-model'?'blue':x.type==='missing'?'red':'amber';
+      return '<tr><td><input type="checkbox" data-import-select="'+esc(x.model)+'"'+checked+'></td><td class="mono">'+esc(x.model)+'</td><td><span class="pill '+pill+'"><span class="dot"></span>'+esc(x.type)+'</span></td><td>'+esc(x.summary)+'</td></tr>';
+    }).join('');
+    el.innerHTML=
+      '<div class="hr"></div>'+
+      '<div class="card-title-row"><div><h2>Review before applying</h2><div class="small muted">'+esc(pendingImport.fileName)+' • report '+esc(fmtDate(pendingImport.parsed.reportDate))+'</div></div><div><button class="btn btn-secondary btn-sm" id="cancelImport">Cancel</button> <button class="btn btn-primary btn-sm" id="applyImport">Apply selected</button></div></div>'+
+      '<div class="grid change-summary"><div class="mini-kpi"><b>'+counts.new+'</b><span>New models</span></div><div class="mini-kpi"><b>'+counts.lifecycle+'</b><span>Lifecycle changes</span></div><div class="mini-kpi"><b>'+counts.stock+'</b><span>Stock changes</span></div><div class="mini-kpi"><b>'+counts.missing+'</b><span>Missing from report</span></div></div>'+
+      (rejected.length?'<div class="notice ok" style="margin-top:12px"><b>'+rejected.length+' non-model row'+(rejected.length===1?'':'s')+' ignored automatically.</b> Totals and numeric cells are no longer imported as products.</div>':'')+
+      '<div class="card" style="margin:14px 0;padding:14px"><div class="small muted" style="margin-bottom:8px"><b>Fields to apply</b></div><div style="display:flex;gap:14px;flex-wrap:wrap">'+
+      '<label><input type="checkbox" id="impOptStock" '+(pendingImport.options.stock?'checked':'')+'> Availability / stock</label>'+
+      '<label><input type="checkbox" id="impOptLife" '+(pendingImport.options.lifecycle?'checked':'')+'> Lifecycle / submission</label>'+
+      '<label><input type="checkbox" id="impOptNew" '+(pendingImport.options.newModels?'checked':'')+'> Add new models</label>'+
+      '<label><input type="checkbox" id="impOptMissing" '+(pendingImport.options.missing?'checked':'')+'> Mark models missing from report</label>'+
+      '</div><div style="margin-top:10px"><button class="btn btn-secondary btn-sm" id="selectAllImport">Select all rows</button> <button class="btn btn-secondary btn-sm" id="clearImport">Clear rows</button></div></div>'+
+      (d.length?'<div class="table-wrap" style="max-height:430px"><table class="table"><thead><tr><th>Apply</th><th>Model</th><th>Change</th><th>Details</th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<div class="notice ok">No model lifecycle or availability changes were detected.</div>')+
+      '<div class="notice warn" style="margin-top:14px"><b>Safe update:</b> prices, images, dimensions and poster records are preserved. Unchecked rows remain unchanged.</div>';
+
+    document.querySelectorAll('[data-import-select]').forEach(function(cb){cb.onchange=function(){pendingImport.selected[cb.dataset.importSelect]=cb.checked;};});
+    ['impOptStock','impOptLife','impOptNew','impOptMissing'].forEach(function(id){
+      var node=document.getElementById(id); if(!node)return;
+      node.onchange=function(){
+        pendingImport.options.stock=document.getElementById('impOptStock').checked;
+        pendingImport.options.lifecycle=document.getElementById('impOptLife').checked;
+        pendingImport.options.newModels=document.getElementById('impOptNew').checked;
+        pendingImport.options.missing=document.getElementById('impOptMissing').checked;
+      };
+    });
+    document.getElementById('selectAllImport').onclick=function(){d.forEach(function(c){pendingImport.selected[c.model]=true;});renderImportPreview();};
+    document.getElementById('clearImport').onclick=function(){d.forEach(function(c){pendingImport.selected[c.model]=false;});renderImportPreview();};
+    document.getElementById('cancelImport').onclick=function(){pendingImport=null;renderUpdate(document.getElementById('view'));};
+    document.getElementById('applyImport').onclick=applyPendingImport;
+  };
+
+  applyPendingImport=async function(){
+    if(!pendingImport)return;
+    var opt=pendingImport.options||{stock:true,lifecycle:true,newModels:true,missing:false};
+    var chosen=(pendingImport.diff||[]).filter(function(c){return pendingImport.selected[c.model]&&lgSelectedChangeRelevant(c,opt);});
+    if(!chosen.length){toast('No applicable changes selected.');return;}
+    var sourceFile=pendingImport.file; var cloudSourcePath=null;
+    try{cloudSourcePath=await cloudUploadSourceFile(sourceFile,'stock');}catch(e){console.warn(e);}
+    var parsed=pendingImport.parsed; var old=state.products||{}; var next=Object.assign({},old);
+
+    Object.keys(parsed.products||{}).forEach(function(code){
+      if(next[code] && next[code].reportMissing) next[code]=Object.assign({},next[code],{reportMissing:false});
+    });
+
+    chosen.forEach(function(change){
+      var code=change.model, incoming=parsed.products[code], prev=old[code]||{};
+      if(change.type==='missing'){
+        if(opt.missing && prev.code) next[code]=Object.assign({},prev,{reportMissing:true,updatedAt:nowIso()});
+        return;
+      }
+      if(!incoming)return;
+      if(change.type==='new-model' && !opt.newModels)return;
+      var merged=Object.assign({},prev);
+      merged.code=code;
+      if(incoming.category) merged.category=incoming.category;
+      if(opt.stock && incoming.stock) merged.stock=incoming.stock;
+      if(opt.lifecycle){
+        if(Object.prototype.hasOwnProperty.call(incoming,'description')) merged.description=incoming.description;
+        if(Object.prototype.hasOwnProperty.call(incoming,'lifecycleStatus')) merged.lifecycleStatus=incoming.lifecycleStatus;
+        if(Object.prototype.hasOwnProperty.call(incoming,'submissionStatus')) merged.submissionStatus=incoming.submissionStatus;
+      }
+      merged.dimensions=prev.dimensions||{width:null,height:null,depth:null};
+      merged.imageApproved=!!prev.imageApproved;
+      merged.reportMissing=false;
+      merged.updatedAt=nowIso();
+      next[code]=merged;
+    });
+
+    var cleaned=lgSanitizeProductsMap(next);
+    state.products=cleaned.products;
+    state.sourceReport=parsed.sourceReport;
+    state.reportDate=parsed.reportDate;
+    var applied=chosen.map(function(c){return Object.assign({},c,{at:nowIso()});});
+    state.changeLog=[...(state.changeLog||[]),...applied].slice(-500);
+    var visual=applied.filter(function(c){
+      var s=c.summary||'';
+      return c.type==='missing'||s.indexOf('Lifecycle')>=0||s.indexOf('Submission')>=0;
+    });
+    markPostersOutdated(visual.map(function(x){return x.model;}),visual);
+    state.importHistory=state.importHistory||[];
+    state.importHistory.push({id:uid('import'),fileName:pendingImport.fileName,reportDate:parsed.reportDate,appliedAt:nowIso(),changeCount:applied.length,rejectedRows:(parsed.rejectedRows||[]).length,storagePath:cloudSourcePath});
+    pendingImport=null;
+    saveState();
+    toast('Selected updates applied. '+applied.length+' model change'+(applied.length===1?'':'s')+' updated.');
+    render();
+  };
+})();
+</script>
 </body>
 </html>
