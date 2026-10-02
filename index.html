@@ -1,225 +1,606 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#b00020">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="LG Control">
-  <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#b00020" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="LG Control" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="./icon-192.png" />
   <title>LG Subscribe Control Centre</title>
   <style>
-    *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#f4f6f8;color:#17181b}
-    .boot{min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(135deg,#111318,#2a0c14)}
-    .card{width:min(460px,94vw);background:#fff;border-radius:22px;padding:28px;box-shadow:0 30px 90px rgba(0,0,0,.35);text-align:center}
-    .logo{width:64px;height:64px;border-radius:18px;margin:0 auto 16px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:22px;background:linear-gradient(145deg,#e22933,#8c001b)}
-    h1{font-size:22px;margin:0 0 8px}p{margin:0;color:#667085;font-size:13px;line-height:1.5}
-    .spinner{width:30px;height:30px;border:3px solid #eee;border-top-color:#b00020;border-radius:50%;margin:22px auto 0;animation:s .8s linear infinite}
-    @keyframes s{to{transform:rotate(360deg)}}button{margin-top:18px;border:0;border-radius:10px;background:#b00020;color:#fff;padding:11px 18px;font-weight:700}
-  </style>
+:root{
+  --bg:#f4f6f8;--panel:#fff;--text:#17181b;--muted:#6b7280;--line:#e6e8ec;
+  --red:#b00020;--red2:#d71920;--softred:#fff1f2;--green:#0f8a5f;--softgreen:#ecfdf5;
+  --amber:#b7791f;--softamber:#fffbeb;--blue:#2563eb;--softblue:#eff6ff;--gray:#64748b;
+  --shadow:0 8px 28px rgba(20,24,32,.07);--radius:16px;
+}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select,textarea{font:inherit}.shell{min-height:100vh;display:grid;grid-template-columns:250px 1fr}.sidebar{position:sticky;top:0;height:100vh;background:#111318;color:#fff;padding:20px 14px;display:flex;flex-direction:column}.brand{display:flex;gap:12px;align-items:center;padding:4px 8px 22px}.brand-mark{width:42px;height:42px;border-radius:13px;background:linear-gradient(145deg,#e22933,#9b001c);display:grid;place-items:center;font-weight:800;letter-spacing:-1px}.brand-title{font-weight:750}.brand-sub{font-size:12px;color:#aeb4bf;margin-top:2px}.nav{display:flex;flex-direction:column;gap:5px}.nav-btn{width:100%;border:0;background:transparent;color:#c8cdd6;border-radius:10px;padding:11px 12px;text-align:left;display:flex;align-items:center;gap:10px;cursor:pointer}.nav-btn:hover{background:#1b1f27;color:#fff}.nav-btn.active{background:#252a34;color:#fff}.nav-icon{width:23px;opacity:.95}.nav-badge{margin-left:auto;background:#b00020;color:#fff;font-size:11px;min-width:22px;height:20px;padding:0 6px;border-radius:999px;display:grid;place-items:center}.sidebar-footer{margin-top:auto;border-top:1px solid #2b303a;padding:15px 8px 0;display:grid;gap:8px}.report-stamp{font-size:11px;color:#9fa6b1;line-height:1.35;margin-bottom:2px}.main{min-width:0}.topbar{height:94px;background:rgba(255,255,255,.91);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:18px 28px;position:sticky;top:0;z-index:20}.topbar h1{font-size:24px;margin:0}.topbar p{margin:4px 0 0;color:var(--muted);font-size:13px}.view{padding:26px 28px 40px;max-width:1500px}.btn{border:1px solid transparent;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:650;display:inline-flex;gap:8px;align-items:center;justify-content:center}.btn-primary{background:var(--red);color:#fff}.btn-primary:hover{background:#920019}.btn-secondary{background:#fff;border-color:#d9dde4;color:#24262b}.btn-secondary:hover{background:#f7f8fa}.btn-ghost{background:transparent;border-color:#343945;color:#d2d6de}.btn-danger{background:#fff;border-color:#fecaca;color:#b91c1c}.btn-sm{padding:7px 10px;border-radius:8px;font-size:12px}.file-btn{cursor:pointer}.grid{display:grid;gap:16px}.kpi-grid{grid-template-columns:repeat(5,minmax(0,1fr))}.kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}.kpi-label{font-size:12px;color:var(--muted);font-weight:650}.kpi-value{font-size:30px;font-weight:800;letter-spacing:-.7px;margin-top:6px}.kpi-note{font-size:11px;color:var(--muted);margin-top:6px}.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:19px}.card-title-row{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}.card h2,.card h3{margin:0}.card h2{font-size:17px}.card h3{font-size:14px}.muted{color:var(--muted)}.small{font-size:12px}.two-col{grid-template-columns:1.15fr .85fr}.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.toolbar .grow{flex:1}.input,.select,.textarea{border:1px solid #d7dbe2;background:#fff;border-radius:9px;padding:9px 10px;outline:none}.input:focus,.select:focus,.textarea:focus{border-color:#a5001e;box-shadow:0 0 0 3px rgba(176,0,32,.08)}.input.search{min-width:250px}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}.table{width:100%;border-collapse:collapse;min-width:860px}.table th{position:sticky;top:0;background:#f8f9fb;text-align:left;font-size:11px;color:#5f6672;padding:10px 11px;border-bottom:1px solid var(--line);white-space:nowrap}.table td{padding:10px 11px;border-bottom:1px solid #eff1f4;font-size:12px;vertical-align:middle}.table tr:last-child td{border-bottom:0}.table tr:hover td{background:#fbfbfc}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.pill{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:700;white-space:nowrap}.pill.green{background:var(--softgreen);color:#067647}.pill.red{background:var(--softred);color:#b42318}.pill.amber{background:var(--softamber);color:#9a6700}.pill.blue{background:var(--softblue);color:#175cd3}.pill.gray{background:#f1f3f5;color:#5d6674}.dot{width:7px;height:7px;border-radius:50%;background:currentColor}.dropzone{border:2px dashed #d6dae1;border-radius:16px;padding:30px;text-align:center;background:#fbfcfd}.dropzone.drag{border-color:var(--red);background:#fff5f6}.dropzone h3{margin:8px 0 5px}.dropzone p{margin:0;color:var(--muted);font-size:12px}.change-summary{grid-template-columns:repeat(4,minmax(0,1fr));margin:18px 0}.mini-kpi{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}.mini-kpi b{display:block;font-size:22px}.mini-kpi span{font-size:11px;color:var(--muted)}.change-row{display:grid;grid-template-columns:170px 1fr 1fr;gap:12px;padding:11px 0;border-bottom:1px solid #eef0f3;font-size:12px}.change-row:last-child{border:0}.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.field label{display:block;font-size:11px;color:#667085;font-weight:700;margin-bottom:5px}.field .input,.field .select{width:100%}.asset-layout{display:grid;grid-template-columns:320px 1fr;gap:18px}.asset-preview{height:310px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(45deg,#fafafa 25%,#f1f2f4 25%,#f1f2f4 50%,#fafafa 50%,#fafafa 75%,#f1f2f4 75%);background-size:22px 22px;display:grid;place-items:center;overflow:hidden}.asset-preview img{max-width:92%;max-height:92%;object-fit:contain}.asset-placeholder{color:#8a919e;text-align:center;font-size:12px}.poster-layout{display:grid;grid-template-columns:360px minmax(0,1fr);gap:20px}.poster-canvas-wrap{background:#272b31;border-radius:16px;padding:16px;display:grid;place-items:center;min-height:640px}.poster-canvas-wrap canvas{width:min(100%,560px);height:auto;background:#fff;box-shadow:0 14px 45px rgba(0,0,0,.25)}.poster-controls{display:grid;gap:14px}.poster-product-slot{border:1px solid var(--line);border-radius:12px;padding:12px}.poster-product-slot h4{margin:0 0 10px;font-size:13px}.empty-state{padding:42px 18px;text-align:center;color:var(--muted)}.empty-state b{display:block;color:#343741;margin-bottom:6px}.revision-item{display:grid;grid-template-columns:1fr auto;gap:16px;border:1px solid var(--line);border-radius:13px;padding:14px;margin-bottom:10px}.revision-item h4{margin:0 0 5px;font-size:14px}.revision-reason{font-size:12px;color:#7a4e00}.modal{border:0;border-radius:16px;box-shadow:0 25px 70px rgba(0,0,0,.28);padding:0;max-width:min(720px,92vw);width:100%}.modal::backdrop{background:rgba(11,14,20,.55)}#modalBody{padding:22px}.toast{position:fixed;right:22px;bottom:22px;background:#17191e;color:#fff;padding:11px 14px;border-radius:10px;box-shadow:var(--shadow);opacity:0;transform:translateY(8px);pointer-events:none;transition:.2s;z-index:100}.toast.show{opacity:1;transform:translateY(0)}.code-box{background:#111318;color:#e5e7eb;border-radius:10px;padding:12px;font-family:ui-monospace,monospace;font-size:11px;white-space:pre-wrap}.notice{border-radius:12px;padding:12px 14px;font-size:12px;border:1px solid}.notice.info{background:#eff6ff;border-color:#bfdbfe;color:#1e40af}.notice.warn{background:#fffbeb;border-color:#fde68a;color:#92400e}.notice.ok{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}.right{text-align:right}.hr{height:1px;background:var(--line);margin:16px 0}.link-btn{background:transparent;border:0;color:var(--blue);cursor:pointer;padding:0;font-weight:650}.settings-grid{grid-template-columns:1fr 1fr}.badge-num{display:inline-grid;place-items:center;min-width:23px;height:23px;padding:0 7px;background:#f1f3f5;border-radius:99px;font-size:11px;font-weight:700}
+@media(max-width:1050px){.shell{grid-template-columns:76px 1fr}.brand-title,.brand-sub,.nav-label,.sidebar-footer{display:none}.brand{justify-content:center;padding-inline:0}.nav-btn{justify-content:center;padding:12px}.nav-icon{width:auto}.nav-badge{position:absolute;margin:0 0 25px 24px}.kpi-grid{grid-template-columns:repeat(2,1fr)}.two-col,.poster-layout,.asset-layout{grid-template-columns:1fr}.poster-canvas-wrap{min-height:auto}.form-grid{grid-template-columns:1fr 1fr}}
+@media(display-mode:standalone){body{overscroll-behavior:none}.topbar{padding-top:max(14px,env(safe-area-inset-top));min-height:82px;height:auto}.sidebar{padding-bottom:max(7px,env(safe-area-inset-bottom));height:calc(67px + env(safe-area-inset-bottom))}.view{padding-bottom:calc(90px + env(safe-area-inset-bottom))}}
+.pwa-link{word-break:break-all;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;background:#f8fafc;border:1px solid var(--line);padding:10px;border-radius:9px}.btn-install{background:#111318;color:#fff;border-color:#111318}.btn-install:hover{background:#242833}.btn-install.published{background:#0f8a5f;border-color:#0f8a5f}
+@media(max-width:700px){.shell{display:block}.sidebar{position:fixed;bottom:0;top:auto;left:0;right:0;width:100%;height:67px;z-index:50;padding:7px;background:#111318}.brand,.sidebar-footer{display:none}.nav{flex-direction:row;overflow-x:auto}.nav-btn{min-width:64px;padding:9px 8px;flex-direction:column;gap:2px;font-size:9px}.nav-label{display:block;font-size:9px}.nav-icon{font-size:17px}.nav-badge{margin:-15px 0 0 25px}.topbar{height:82px;padding:14px 16px}.topbar h1{font-size:20px}.topbar p{display:none}.top-actions .btn{padding:8px 10px;font-size:11px}.view{padding:16px 14px 90px}.kpi-grid{grid-template-columns:1fr 1fr}.change-summary,.settings-grid{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}.input.search{min-width:0;width:100%}.change-row{grid-template-columns:1fr}.poster-layout{grid-template-columns:1fr}.poster-canvas-wrap{padding:8px}.asset-layout{grid-template-columns:1fr}}
+
+
+.cloud-gate{position:fixed;inset:0;z-index:999;background:linear-gradient(135deg,#111318,#2a0c14);display:grid;place-items:center;padding:24px}.cloud-gate.hidden{display:none}.cloud-card{width:min(480px,94vw);background:#fff;border-radius:22px;padding:26px;box-shadow:0 30px 90px rgba(0,0,0,.35)}.cloud-card h1{margin:0 0 6px;font-size:25px}.cloud-card p{margin:0 0 18px;color:#667085;font-size:13px}.cloud-status{font-size:12px;margin-top:12px;min-height:18px;color:#667085}.cloud-user{font-size:11px;color:#aeb4bf;overflow:hidden;text-overflow:ellipsis}.sync-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#9aa1ad;margin-right:6px}.sync-dot.ok{background:#22c55e}.sync-dot.busy{background:#f59e0b}.sync-dot.err{background:#ef4444}
+</style>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-<div class="boot" id="boot"><div class="card"><div class="logo">LG</div><h1>LG Subscribe Control Centre</h1><p id="status">Opening your secure cloud workspace…</p><div class="spinner" id="spin"></div></div></div>
-<script>
-const SOURCE_URL='https://jmnnesumjpkraugtzdkl.supabase.co/storage/v1/object/public/app-static/d257117f-df44-4da3-b7cb-7d0b84e6e0e4/lg-control-centre/index.html';
+  <div id="cloudGate" class="cloud-gate">
+    <div class="cloud-card">
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:16px"><div class="brand-mark" style="color:#fff">LG</div><div><h1>Subscribe Control Centre</h1><div class="small muted">Cloud workspace • Supabase • PWA v0.8</div></div></div>
+      <div class="field"><label>Email</label><input id="cloudEmail" class="input" type="email" style="width:100%" autocomplete="email" placeholder="you@example.com"></div>
+      <div class="field" style="margin-top:10px"><label>Password</label><input id="cloudPassword" class="input" type="password" style="width:100%" autocomplete="current-password" placeholder="Password"></div>
+      <div style="display:flex;gap:8px;margin-top:16px"><button id="cloudSignIn" class="btn btn-primary" style="flex:1">Sign in</button><button id="cloudSignUp" class="btn btn-secondary" style="flex:1">Create account</button></div>
+      <div id="cloudStatus" class="cloud-status">Sign in to load the same catalogue, images and poster history on any device.</div>
+    </div>
+  </div>
+  <div id="appShell" class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">LG</div>
+        <div>
+          <div class="brand-title">Subscribe Control</div>
+          <div class="brand-sub">Product • Stock • Poster</div>
+        </div>
+      </div>
+      <nav id="nav" class="nav"></nav>
+      <div class="sidebar-footer">
+        <div id="reportStamp" class="report-stamp">No report loaded</div>
+        <button id="exportBackupBtn" class="btn btn-ghost btn-sm">Export backup</button>
+        <label class="btn btn-ghost btn-sm file-btn">Import backup<input id="importBackupInput" type="file" accept="application/json,.json" hidden></label>
+      </div>
+    </aside>
 
-const IMPORT_PATCH = String.raw`
-  function renderImportPreview(){
-    const el=document.getElementById('importPreview'); if(!el||!pendingImport) return;
-    const d=pendingImport.diff||[];
-    if(!(pendingImport.selected instanceof Set)) pendingImport.selected=new Set(d.filter(x=>x.type!=='missing').map(x=>x.model));
-    const counts={new:0,lifecycle:0,stock:0,missing:0};
-    d.forEach(x=>{if(x.type==='new-model')counts.new++;if(x.type==='missing')counts.missing++;if(x.summary.includes('Lifecycle')||x.summary.includes('Submission'))counts.lifecycle++;if(x.summary.includes('Stock:')||x.summary.includes('Balance'))counts.stock++;});
-    const sel=pendingImport.selected.size;
-    el.innerHTML=
-      '<div class="hr"></div>'+
-      '<div class="card-title-row"><div><h2>Review before applying</h2><div class="small muted">'+esc(pendingImport.fileName)+' • report '+esc(fmtDate(pendingImport.parsed.reportDate))+'</div></div>'+
-      '<div><button class="btn btn-secondary btn-sm" id="cancelImport">Cancel</button> <button class="btn btn-primary btn-sm" id="applyImport" '+(sel?'':'disabled')+'>Apply selected ('+sel+')</button></div></div>'+
-      '<div class="grid change-summary">'+
-        '<div class="mini-kpi"><b>'+counts.new+'</b><span>New models</span></div>'+
-        '<div class="mini-kpi"><b>'+counts.lifecycle+'</b><span>Lifecycle changes</span></div>'+
-        '<div class="mini-kpi"><b>'+counts.stock+'</b><span>Stock changes</span></div>'+
-        '<div class="mini-kpi"><b>'+counts.missing+'</b><span>Missing from report</span></div>'+
-      '</div>'+
-      '<div class="toolbar"><button class="btn btn-secondary btn-sm" id="selectAllImport">Select all</button><button class="btn btn-secondary btn-sm" id="clearImport">Clear all</button><span class="small muted">Tick only the model updates you want to apply. Missing models are unchecked by default.</span></div>'+
-      (d.length?'<div class="table-wrap" style="max-height:460px"><table class="table"><thead><tr><th style="width:58px">Apply</th><th>Model</th><th>Change</th><th>Details</th></tr></thead><tbody>'+
-        d.map(x=>'<tr><td><input class="import-choice" type="checkbox" data-model="'+esc(x.model)+'" '+(pendingImport.selected.has(x.model)?'checked':'')+'></td><td class="mono">'+esc(x.model)+'</td><td><span class="pill '+(x.type==='new-model'?'blue':x.type==='missing'?'red':'amber')+'"><span class="dot"></span>'+esc(x.type)+'</span></td><td>'+esc(x.summary)+'</td></tr>').join('')+
-        '</tbody></table></div>':'<div class="notice ok">No model lifecycle or availability changes were detected.</div>')+
-      '<div class="notice ok" style="margin-top:14px"><b>Import protection enabled:</b> numeric totals, repeated headers and non-model rows are ignored instead of being created as products.</div>'+
-      '<div class="notice warn" style="margin-top:10px"><b>Safe update behavior:</b> only selected models are updated. Price plans, saved images, dimensions and poster records are preserved.</div>';
-    document.getElementById('cancelImport').onclick=()=>{pendingImport=null;renderUpdate(document.getElementById('view'))};
-    document.getElementById('applyImport').onclick=applyPendingImport;
-    document.getElementById('selectAllImport').onclick=()=>{pendingImport.selected=new Set(d.map(x=>x.model));renderImportPreview();};
-    document.getElementById('clearImport').onclick=()=>{pendingImport.selected=new Set();renderImportPreview();};
-    el.querySelectorAll('.import-choice').forEach(cb=>cb.onchange=()=>{if(cb.checked)pendingImport.selected.add(cb.dataset.model);else pendingImport.selected.delete(cb.dataset.model);renderImportPreview();});
-  }
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1 id="pageTitle">Dashboard</h1>
+          <p id="pageSubtitle">Current product, stock and poster health.</p>
+        </div>
+        <div class="top-actions">
+          <button id="installAppBtn" class="btn btn-install">Home Screen</button>
+          <button id="quickUpdateBtn" class="btn btn-primary">Upload stock update</button>
+        </div>
+      </header>
+      <section id="view" class="view"></section>
+    </main>
+  </div>
 
-  async function applyPendingImport(){
-    if(!pendingImport) return;
-    const selected=pendingImport.selected instanceof Set?pendingImport.selected:new Set();
-    const changes=pendingImport.diff.filter(c=>selected.has(c.model));
-    if(!changes.length){toast('Select at least one update to apply.');return;}
-    const sourceFile=pendingImport.file; let cloudSourcePath=null; try{cloudSourcePath=await cloudUploadSourceFile(sourceFile,'stock')}catch(e){console.warn(e)}
-    const parsed=pendingImport.parsed; const old=state.products||{}; const next=clone(old);
-    const chosenModels=new Set(changes.map(c=>c.model));
-    chosenModels.forEach(code=>{
-      const incoming=parsed.products[code],prev=old[code]||{};
-      if(incoming){
-        next[code]=Object.assign({},prev,incoming,{
-          dimensions:prev.dimensions||{width:null,height:null,depth:null},
-          imageApproved:!!prev.imageApproved,
-          reportMissing:false,
-          updatedAt:nowIso()
-        });
-      }else if(prev.code){
-        next[code]=Object.assign({},prev,{reportMissing:true,updatedAt:nowIso()});
-      }
-    });
-    state.products=next; state.sourceReport=parsed.sourceReport; state.reportDate=parsed.reportDate;
-    const applied=changes.map(c=>({...c,at:nowIso()}));
-    state.changeLog=[...(state.changeLog||[]),...applied].slice(-500);
-    const posterChanges=applied.filter(c=>c.type==='new-model'||c.type==='missing'||c.summary.includes('Lifecycle')||c.summary.includes('Submission'));
-    if(posterChanges.length) markPostersOutdated([...new Set(posterChanges.map(x=>x.model))],posterChanges);
-    state.importHistory=state.importHistory||[];
-    state.importHistory.push({id:uid('import'),fileName:pendingImport.fileName,reportDate:parsed.reportDate,appliedAt:nowIso(),changeCount:applied.length,detectedChangeCount:pendingImport.diff.length,storagePath:cloudSourcePath});
-    pendingImport=null; saveState(); toast(applied.length+' selected update'+(applied.length===1?'':'s')+' applied.'); render();
-  }
-`;
+  <div id="toast" class="toast"></div>
 
-function applyImporterFixes(html){
-  html=html.replace(
-    "function normModel(code){ return String(code||'').trim().toUpperCase(); }",
-    "function normModel(code){ return String(code||'').trim().toUpperCase(); }\\n  function isValidModelCell(v){if(typeof v!=='string')return false;const s=normModel(v);if(!s||['MODEL','EOL MODEL','NEW MODEL','REMOVAL FROM DST','GRAND TOTAL'].includes(s))return false;if(s.length<5||s.length>48||/\\\\s/.test(s)||!/[A-Z]/.test(s))return false;return /^[A-Z0-9._+\\\\/-]+$/.test(s);}\\n  function isValidCategoryCell(v){return typeof v==='string'&&/[A-Za-z]/.test(v)&&String(v).trim().toLowerCase()!=='category';}"
-  );
-  html=html.replace("if(r[2]) cat=String(r[2]).trim();","if(isValidCategoryCell(r[2])) cat=String(r[2]).trim();");
-  html=html.replace("const code=normModel(r[3]);\\n      if(!code || code==='MODEL') continue;","if(!isValidModelCell(r[3])) continue;\\n      const code=normModel(r[3]);");
-  html=html.replace("if(r[0] && String(r[0]).trim()!=='Category') cat=String(r[0]).trim();","if(isValidCategoryCell(r[0])) cat=String(r[0]).trim();");
-  html=html.replace("const code=normModel(r[1]);\\n      if(!code || code==='MODEL') continue;","if(!isValidModelCell(r[1])) continue;\\n      const code=normModel(r[1]);");
-  html=html.replace("pendingImport={fileName:file.name,file,parsed,diff};","pendingImport={fileName:file.name,file,parsed,diff,selected:new Set(diff.filter(x=>x.type!=='missing').map(x=>x.model))};");
-  html=html.replace(
-    /  function renderImportPreview\(\)\{[\s\S]*?\n  function renderProducts\(view\)\{/,
-    IMPORT_PATCH+"\\n  function renderProducts(view){"
-  );
-  html=html.replace(
-    '<div class="change-row"><b>2. Review</b><span>New / discontinued / stock changes</span><span class="muted">Approve only when correct.</span></div>',
-    '<div class="change-row"><b>2. Review</b><span>New / lifecycle / stock changes</span><span class="muted">Select individual model updates to apply.</span></div>'
-  );
-  return html;
-}
+  <dialog id="modal" class="modal">
+    <div id="modalBody"></div>
+  </dialog>
 
-async function boot(){
-  try{
-    const r=await fetch(SOURCE_URL,{cache:'no-store'});
-    if(!r.ok) throw new Error('Source returned '+r.status);
-    let html=await r.text();
-    html=html.replace(
-      "function isPublishedPwaLocation(){return location.protocol==='https:'&&location.pathname.includes('/storage/v1/object/public/app-static/');}",
-      "function isPublishedPwaLocation(){return location.protocol==='https:';}"
-    );
-    html=applyImporterFixes(html);
-    html=html.replaceAll('./icon-192.png','./icon.svg').replaceAll('./icon-512.png','./icon.svg');
-    document.open();
-    document.write(html);
-    document.close();
-  }catch(e){
-    document.getElementById('status').textContent='Could not open the app: '+(e.message||e);
-    document.getElementById('spin').outerHTML='<button onclick="location.reload()">Retry</button>';
-  }
-}
-if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{});}
-boot();
+  <script>
+window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products":{},"pricePlans":[],"posters":[],"importHistory":[],"comboPresets":[],"settings":{"agentName":"Jason Yang","agentContact":"011-59726619","posterDisclaimer":"Imej untuk tujuan ilustrasi sahaja. Tertakluk kepada terma & syarat."}};
+
 </script>
-
+  
+<script>window.__LG_BUILTIN_ASSETS__={};window.__LG_CONFIRMED_DIMS__={"F2520SNEKR.AEBREML":{"width":650,"height":950,"depth":780,"note":"LG internal model sheet supplied by user."},"FV1450S2W.ABWREML":{"width":600,"height":850,"depth":560,"note":"LG internal model sheet supplied by user."},"WT2520NHEGR.ABGREML":{"width":700,"height":1890,"depth":830,"note":"LG internal model sheet supplied by user."},"WT1410NHB.APBRQML":{"width":600,"height":1655,"depth":660,"note":"LG internal model sheet supplied by user."},"TV2520SV9KR.APBREML":{"width":632,"height":1040,"depth":670,"note":"LG internal model sheet supplied by user."},"TV2517DV3B.APBREML":{"width":632,"height":1018,"depth":670,"note":"LG internal model sheet supplied by user."}};window.__LG_TEMPLATE_BACKGROUNDS__={};window.__LG_SEEDED_PRICE_PLANS__=[{"id":"seed-fx1412-5c","modelCode":"FX1412S5GR.AEGREML","planYears":5,"serviceType":"Combine","normalPrice":90,"promoType":"percent","promoValue":50,"promoMonths":9,"source":"User-approved October poster / Double Match example"},{"id":"seed-fx1412-7c","modelCode":"FX1412S5GR.AEGREML","planYears":7,"serviceType":"Combine","normalPrice":70,"promoType":"percent","promoValue":50,"promoMonths":9,"source":"User-approved October combo pricing"},{"id":"seed-rx10-5c","modelCode":"RX10VHP3KR.BEBREML","planYears":5,"serviceType":"Combine","normalPrice":130,"promoType":"percent","promoValue":50,"promoMonths":9,"source":"User-approved Washer + Dryer combo poster"},{"id":"seed-rx10-7c","modelCode":"RX10VHP3KR.BEBREML","planYears":7,"serviceType":"Combine","normalPrice":110,"promoType":"percent","promoValue":50,"promoMonths":9,"source":"User-approved combo pricing reference"},{"id":"seed-gcb257-5r","modelCode":"GC-B257KLJR.APYRLML","planYears":5,"serviceType":"Regular Visit 24M","normalPrice":105,"promoType":"percent","promoValue":50,"promoMonths":12,"source":"October Q4 new launch promotion"},{"id":"seed-gcb257-7r","modelCode":"GC-B257KLJR.APYRLML","planYears":7,"serviceType":"Regular Visit 24M","normalPrice":85,"promoType":"percent","promoValue":50,"promoMonths":12,"source":"October Q4 new launch promotion"},{"id":"seed-tx2522-5r","modelCode":"TX2522AT9GR.AEGREML","planYears":5,"serviceType":"Regular Visit 24M","normalPrice":100,"promoType":"percent","promoValue":50,"promoMonths":12,"source":"October Q4 new launch promotion"},{"id":"seed-tx2522-7r","modelCode":"TX2522AT9GR.AEGREML","planYears":7,"serviceType":"Regular Visit 24M","normalPrice":80,"promoType":"percent","promoValue":50,"promoMonths":12,"source":"October Q4 new launch promotion"},{"id":"seed-f2515-5c","modelCode":"F2515RNTKAR.AEBREML","planYears":5,"serviceType":"Combine","normalPrice":105,"promoType":"percent","promoValue":50,"promoMonths":9,"source":"User-approved current poster"},{"id":"seed-f2515-7c","modelCode":"F2515RNTKAR.AEBREML","planYears":7,"serviceType":"Combine","normalPrice":85,"promoType":"percent","promoValue":50,"promoMonths":9,"source":"User-approved current poster"}];</script>
 <script>
-(function(){
-  function lgValidModelCode(value){
-    var s=String(value==null?'':value).trim().toUpperCase();
-    if(!s || s.length<5 || s.length>45) return false;
-    if(s==='MODEL' || s==='GRAND TOTAL' || s==='TOTAL') return false;
-    if(!/^[A-Z0-9][A-Z0-9.\-]*$/.test(s)) return false;
-    if(!/[A-Z]/.test(s) || !/[0-9]/.test(s)) return false;
-    return true;
-  }
-  function lgValidCategory(value){
-    var s=String(value==null?'':value).trim();
-    if(!s || s.length>60 || !/[A-Za-z]/.test(s)) return false;
-    if(/^(CATEGORY|MODEL|GRAND TOTAL|TOTAL|OPENING STOCK|BALANCE STOCK)$/i.test(s)) return false;
-    return true;
-  }
-  function lgSanitizeProductsMap(map){
-    var out={}; var removed=[];
-    Object.entries(map||{}).forEach(function(entry){
-      var code=entry[0], p=entry[1];
-      if(!lgValidModelCode(code)){removed.push(code);return;}
-      var clean=Object.assign({},p);
-      if(clean.category && !lgValidCategory(clean.category)) clean.category='';
-      out[code]=clean;
-    });
-    return {products:out,removed:removed};
-  }
+(() => {
+  'use strict';
 
-  var originalCloudLoadOrSeedState=(typeof cloudLoadOrSeedState==='function'?cloudLoadOrSeedState:null);
-  if(originalCloudLoadOrSeedState){
-    cloudLoadOrSeedState=async function(){
-      await originalCloudLoadOrSeedState();
-      var cleaned=lgSanitizeProductsMap(state.products||{});
-      if(cleaned.removed.length){
-        state.products=cleaned.products;
-        localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
-        if(cloudWorkspaceId){
-          try{await cloud.from('workspace_state').upsert({workspace_id:cloudWorkspaceId,state_json:state},{onConflict:'workspace_id'});}catch(e){console.warn(e);}
-        }
+  const STORAGE_KEY = 'lgSubscribeControlCentre.v071';
+  const DB_NAME = 'lgSubscribeAssets';
+  const DB_VERSION = 1;
+  const ASSET_STORE = 'productAssets';
+  const SUPABASE_URL = 'https://jmnnesumjpkraugtzdkl.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable__CO_CJqvrVqG-LClfcD_Wg_CVdZZZU8';
+  const cloud = window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+  let cloudSession=null, cloudWorkspaceId=null, cloudWorkspacePromise=null, cloudReady=false, cloudSyncTimer=null, cloudNormaliseTimer=null, cloudSyncing=false;
+  function setCloudStatus(text,kind=''){const e=document.getElementById('cloudStatus');if(e)e.textContent=text;const u=document.getElementById('cloudUserText');if(u&&cloudSession)u.textContent=cloudSession.user.email||'Signed in';const d=document.getElementById('syncDot');if(d)d.className='sync-dot '+kind;}
+  function dataUrlToBlob(dataUrl){const [meta,b64]=dataUrl.split(',');const mime=(meta.match(/data:([^;]+)/)||[])[1]||'image/png';const bin=atob(b64),arr=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);return new Blob([arr],{type:mime});}
+  function blobToDataUrl(blob){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.readAsDataURL(blob)})}
+  function cloudAssetPath(model,fileName='asset.png'){const ext=(fileName.split('.').pop()||'png').toLowerCase();const safe=String(model).replace(/[^A-Za-z0-9._-]/g,'_');return `${cloudWorkspaceId}/cutouts/${safe}.${ext}`;}
+  async function ensureCloudWorkspace(){
+    if(cloudWorkspaceId)return cloudWorkspaceId;
+    if(cloudWorkspacePromise)return cloudWorkspacePromise;
+    cloudWorkspacePromise=(async()=>{
+      let {data,error}=await cloud.from('workspaces').select('id,name,created_at').order('created_at',{ascending:true}).limit(1);if(error)throw error;
+      if(!data?.length){
+        // Re-check once before creating. Auth callbacks can fire close together on mobile.
+        await new Promise(r=>setTimeout(r,120));
+        const again=await cloud.from('workspaces').select('id,name,created_at').order('created_at',{ascending:true}).limit(1);if(again.error)throw again.error;data=again.data;
       }
-    };
+      if(!data?.length){const ins=await cloud.from('workspaces').insert({name:'LG Subscribe Control Centre',owner_id:cloudSession.user.id}).select('id,name,created_at').single();if(ins.error)throw ins.error;data=[ins.data];}
+      cloudWorkspaceId=data[0].id;return cloudWorkspaceId;
+    })();
+    try{return await cloudWorkspacePromise}finally{cloudWorkspacePromise=null}
   }
-
-  if(typeof state!=='undefined' && state && state.products){
-    var bootClean=lgSanitizeProductsMap(state.products);
-    if(bootClean.removed.length){
-      state.products=bootClean.products;
-      try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}
+  async function cloudLoadOrSeedState(){
+    const q=await cloud.from('workspace_state').select('state_json').eq('workspace_id',cloudWorkspaceId).maybeSingle();if(q.error)throw q.error;
+    if(q.data?.state_json?.products){state=q.data.state_json;localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+    else{await cloud.from('workspace_state').upsert({workspace_id:cloudWorkspaceId,state_json:state},{onConflict:'workspace_id'});}
+    await syncNormalizedCoreFromState();
+  }
+  function queueCloudStateSync(){if(!cloudReady||cloudSyncing)return;clearTimeout(cloudSyncTimer);setCloudStatus('Saving to cloud…','busy');cloudSyncTimer=setTimeout(cloudSaveState,700);clearTimeout(cloudNormaliseTimer);cloudNormaliseTimer=setTimeout(syncNormalizedCoreFromState,2600);}
+  async function cloudSaveState(){if(!cloudReady||!cloudWorkspaceId)return;cloudSyncing=true;try{const r=await cloud.from('workspace_state').upsert({workspace_id:cloudWorkspaceId,state_json:state},{onConflict:'workspace_id'});if(r.error)throw r.error;setCloudStatus('Cloud synced','ok')}catch(e){console.error(e);setCloudStatus('Cloud sync error','err')}finally{cloudSyncing=false}}
+  async function syncNormalizedCoreFromState(){
+    if(!cloudReady||!cloudWorkspaceId)return;
+    try{
+      const prods=Object.values(state.products||{}).map(p=>({workspace_id:cloudWorkspaceId,model_code:p.code,model_code_full:p.code,name:p.description||null,category:p.category||null,lifecycle_status:p.lifecycleStatus||null,submission_status:p.submissionStatus||null,width_mm:p.dimensions?.width||null,height_mm:p.dimensions?.height||null,depth_mm:p.dimensions?.depth||null,dimension_status:(String(p.dimensionSource||'').toLowerCase().includes('provisional')?'provisional':((p.dimensions?.width&&p.dimensions?.height)?'confirmed':'unknown')),notes:[p.dimensionSource,p.assetNote].filter(Boolean).join(' • ')||null,source_last_updated:state.reportDate||null}));
+      for(let i=0;i<prods.length;i+=150){const r=await cloud.from('products').upsert(prods.slice(i,i+150),{onConflict:'workspace_id,model_code'});if(r.error)throw r.error;}
+      const mapq=await cloud.from('products').select('id,model_code').eq('workspace_id',cloudWorkspaceId);if(mapq.error)throw mapq.error;const ids=Object.fromEntries((mapq.data||[]).map(x=>[x.model_code,x.id]));
+      const av=[];for(const p of Object.values(state.products||{})){for(const region of ['AL8','AL2','AL3']){const s=p.stock?.[region]||{};if(!ids[p.code])continue;av.push({workspace_id:cloudWorkspaceId,product_id:ids[p.code],region_code:region,as_of_date:String(state.reportDate||new Date().toISOString()).slice(0,10),opening_stock:s.opening??null,inbound_stock:(s.incoming??s.inTransit??s.pending??null),backorder:s.backorder??null,balance_stock:s.balance??null});}}
+      for(let i=0;i<av.length;i+=200){const r=await cloud.from('product_availability_current').upsert(av.slice(i,i+200),{onConflict:'workspace_id,product_id,region_code'});if(r.error)throw r.error;}
+      const plans=(state.pricePlans||[]).filter(p=>ids[p.modelCode]).map(p=>({workspace_id:cloudWorkspaceId,product_id:ids[p.modelCode],client_key:p.id||null,plan_years:Number(p.planYears),service_type:p.serviceType||'Unknown',normal_monthly:Number(p.normalPrice||0),promo_type:p.promoType||null,promo_value:p.promoValue??null,promo_months:p.promoMonths??null,source_text:p.source||null,is_current:true}));
+      for(const p of plans){const r=await cloud.from('price_plans').upsert(p,{onConflict:'workspace_id,client_key'});if(r.error)throw r.error;}
+    }catch(e){console.warn('normalized sync',e)}
+  }
+  async function cloudUploadSourceFile(file,kind){if(!cloudReady||!file)return null;const safe=file.name.replace(/[^A-Za-z0-9._-]/g,'_');const path=`${cloudWorkspaceId}/${kind}/${Date.now()}_${safe}`;const up=await cloud.storage.from('source-documents').upload(path,file,{upsert:false});if(up.error)throw up.error;return path;}
+  async function cloudUploadPoster(blob,fileName){if(!cloudReady||!blob)return null;const safe=fileName.replace(/[^A-Za-z0-9._-]/g,'_');const path=`${cloudWorkspaceId}/${new Date().toISOString().slice(0,10)}/${safe}`;const up=await cloud.storage.from('poster-exports').upload(path,blob,{contentType:'image/png',upsert:true});if(up.error)throw up.error;return path;}
+  let deferredInstallPrompt=null;
+  let lastPublishedPwaUrl='';
+  const PWA_BUCKET='app-static';
+  function isStandaloneMode(){return window.matchMedia?.('(display-mode: standalone)').matches||window.navigator.standalone===true;}
+  function isPublishedPwaLocation(){return location.protocol==='https:'&&location.pathname.includes('/storage/v1/object/public/app-static/');}
+  function updateInstallButton(){
+    const b=document.getElementById('installAppBtn');if(!b)return;
+    if(isStandaloneMode()){b.textContent='Installed';b.disabled=true;b.classList.add('published');return;}
+    b.disabled=false;
+    if(deferredInstallPrompt){b.textContent='Install App';b.classList.add('published');return;}
+    if(isPublishedPwaLocation()){b.textContent='Add to Home';b.classList.add('published');return;}
+    b.textContent=cloudReady?'Publish App':'Home Screen';b.classList.remove('published');
+  }
+  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;updateInstallButton();});
+  window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;toast('LG Subscribe Control Centre installed.');updateInstallButton();});
+  async function registerPwaServiceWorker(){
+    if(!('serviceWorker' in navigator)||!isPublishedPwaLocation())return;
+    try{await navigator.serviceWorker.register('./sw.js',{scope:'./'});}catch(e){console.warn('PWA service worker',e)}
+  }
+  function makeIconBlob(size){
+    return new Promise(resolve=>{const c=document.createElement('canvas');c.width=c.height=size;const x=c.getContext('2d');
+      const g=x.createLinearGradient(0,0,size,size);g.addColorStop(0,'#e22933');g.addColorStop(1,'#8c001b');x.fillStyle=g;x.fillRect(0,0,size,size);
+      const pad=Math.round(size*.10);x.fillStyle='rgba(255,255,255,.10)';x.beginPath();x.roundRect(pad,pad,size-pad*2,size-pad*2,size*.16);x.fill();
+      x.fillStyle='#fff';x.textAlign='center';x.textBaseline='middle';x.font=`800 ${Math.round(size*.30)}px system-ui, sans-serif`;x.fillText('LG',size/2,size*.43);
+      x.font=`700 ${Math.round(size*.105)}px system-ui, sans-serif`;x.fillText('SUBSCRIBE',size/2,size*.66);
+      x.font=`600 ${Math.round(size*.07)}px system-ui, sans-serif`;x.fillStyle='rgba(255,255,255,.9)';x.fillText('CONTROL',size/2,size*.78);
+      c.toBlob(resolve,'image/png',1);
+    });
+  }
+  async function uploadPwaFile(path,body,contentType){
+    const up=await cloud.storage.from(PWA_BUCKET).upload(path,body,{contentType,upsert:true,cacheControl:'0'});if(up.error)throw up.error;
+  }
+  function publicSafeHtmlSnapshot(){
+    const root=document.documentElement.cloneNode(true);
+    const gate=root.querySelector('#cloudGate');if(gate)gate.classList.remove('hidden');
+    const nav=root.querySelector('#nav');if(nav)nav.innerHTML='';
+    const view=root.querySelector('#view');if(view)view.innerHTML='';
+    const email=root.querySelector('#cloudEmail');if(email){email.removeAttribute('value');}
+    const password=root.querySelector('#cloudPassword');if(password){password.removeAttribute('value');}
+    const signout=root.querySelector('#cloudSignOutBtn');if(signout)signout.style.display='none';
+    for(const s of root.querySelectorAll('script')){
+      const t=s.textContent||'';
+      if(t.trim().startsWith('window.__LG_SEED__ =')){
+        s.textContent='window.__LG_SEED__ = '+JSON.stringify({version:1,sourceReport:'',reportDate:null,products:{},pricePlans:[],posters:[],importHistory:[],comboPresets:[],settings:{agentName:'Jason Yang',agentContact:'011-59726619',posterDisclaimer:'Imej untuk tujuan ilustrasi sahaja. Tertakluk kepada terma & syarat.'}})+';';
+        break;
+      }
     }
+    return '<!doctype html>\n'+root.outerHTML;
+  }
+  async function publishPwaPackage(){
+    if(!cloudReady||!cloudWorkspaceId){toast('Sign in first, then publish the app.');return null;}
+    const btn=document.getElementById('installAppBtn');const old=btn?.textContent||'';if(btn){btn.disabled=true;btn.textContent='Publishing…';}
+    try{
+      await cloudSaveState();
+      const base=`${cloudWorkspaceId}/lg-control-centre`;
+      const manifest={name:'LG Subscribe Control Centre',short_name:'LG Control',description:'LG Subscribe product, stock, pricing and poster control centre.',id:'./index.html',start_url:'./index.html',scope:'./',display:'standalone',orientation:'any',background_color:'#f4f6f8',theme_color:'#b00020',icons:[{src:'./icon-192.png',sizes:'192x192',type:'image/png',purpose:'any maskable'},{src:'./icon-512.png',sizes:'512x512',type:'image/png',purpose:'any maskable'}]};
+      const sw=`const CACHE='lg-subscribe-control-v08';\nself.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['./index.html','./manifest.webmanifest','./icon-192.png'])))});\nself.addEventListener('activate',e=>{e.waitUntil(Promise.all([clients.claim(),caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('lg-subscribe-control-')&&k!==CACHE).map(k=>caches.delete(k))))]))});\nself.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;const u=new URL(e.request.url);if(u.origin!==self.location.origin)return;e.respondWith(fetch(e.request).then(r=>{if(r&&r.ok&&e.request.mode==='navigate'){const copy=r.clone();caches.open(CACHE).then(c=>c.put('./index.html',copy))}return r}).catch(()=>caches.match(e.request).then(r=>r||caches.match('./index.html'))))});`;
+      const [i192,i512]=await Promise.all([makeIconBlob(192),makeIconBlob(512)]);
+      await uploadPwaFile(`${base}/manifest.webmanifest`,new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'}),'application/manifest+json');
+      await uploadPwaFile(`${base}/sw.js`,new Blob([sw],{type:'application/javascript'}),'application/javascript');
+      await uploadPwaFile(`${base}/icon-192.png`,i192,'image/png');
+      await uploadPwaFile(`${base}/icon-512.png`,i512,'image/png');
+      await uploadPwaFile(`${base}/index.html`,new Blob([publicSafeHtmlSnapshot()],{type:'text/html'}),'text/html');
+      const pu=cloud.storage.from(PWA_BUCKET).getPublicUrl(`${base}/index.html`);lastPublishedPwaUrl=pu.data.publicUrl;
+      if(btn){btn.disabled=false;btn.textContent='Open App';btn.classList.add('published');}
+      const m=document.getElementById('modal'), body=document.getElementById('modalBody');
+      body.innerHTML=`<h2 style="margin-top:0">Home-screen app is ready</h2><p class="small muted">Your cloud data stays behind your Supabase login. The public app shell does not contain the internal stock report.</p><div class="pwa-link">${esc(lastPublishedPwaUrl)}</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><a class="btn btn-primary" href="${esc(lastPublishedPwaUrl)}" target="_blank" rel="noopener">Open app in Chrome</a><button id="copyPwaUrl" class="btn btn-secondary">Copy link</button><button id="closePwaModal" class="btn btn-secondary">Close</button></div><div class="notice info" style="margin-top:14px"><b>On your Samsung/Android phone:</b><br>1. Open the app link in Chrome.<br>2. Tap <b>Install App</b> at the top if it appears. If not, use Chrome menu <b>⋮ → Add to Home screen / Install app</b>.<br>3. The LG Control icon will then open like an app from your home screen.</div>`;
+      body.querySelector('#copyPwaUrl').onclick=async()=>{await navigator.clipboard.writeText(lastPublishedPwaUrl);toast('App link copied.')};
+      body.querySelector('#closePwaModal').onclick=()=>m.close();m.showModal();toast('Home-screen app published.');return lastPublishedPwaUrl;
+    }catch(e){console.error(e);toast('Could not publish app: '+(e.message||e));if(btn){btn.disabled=false;btn.textContent=old||'Publish App';}return null;}
+  }
+  async function handleInstallApp(){
+    if(isStandaloneMode()){toast('Already installed on this device.');return;}
+    if(deferredInstallPrompt){deferredInstallPrompt.prompt();const result=await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;updateInstallButton();if(result.outcome==='accepted')toast('Installing app…');return;}
+    if(isPublishedPwaLocation()){
+      const m=document.getElementById('modal'), body=document.getElementById('modalBody');
+      body.innerHTML='<h2 style="margin-top:0">Add to Home screen</h2><div class="notice info">In Chrome, tap <b>⋮</b> in the top-right, then choose <b>Add to Home screen</b> or <b>Install app</b>. After installation it opens full-screen like an app.</div><button id="closeInstallHelp" class="btn btn-primary" style="margin-top:14px">OK</button>';
+      body.querySelector('#closeInstallHelp').onclick=()=>m.close();m.showModal();return;
+    }
+    await publishPwaPackage();
+  }
+  registerPwaServiceWorker().finally(updateInstallButton);
+  async function initCloudAuth(){
+    const gate=document.getElementById('cloudGate'), status=document.getElementById('cloudStatus');
+    const start=async(session)=>{cloudSession=session;if(!session){gate.classList.remove('hidden');cloudReady=false;return;}status.textContent='Loading cloud workspace…';try{await ensureCloudWorkspace();await cloudLoadOrSeedState();cloudReady=true;gate.classList.add('hidden');document.getElementById('cloudSignOutBtn').style.display='inline-flex';setCloudStatus('Cloud synced','ok');await hydrateAllCloudAssetsToLocal();await syncAllLocalAssetsToCloud();render();updateInstallButton();}catch(e){console.error(e);status.textContent='Could not open cloud workspace: '+(e.message||e);}};
+    const s=await cloud.auth.getSession();await start(s.data.session);
+    cloud.auth.onAuthStateChange((_event,session)=>{if(session?.user?.id!==cloudSession?.user?.id||(!session&&cloudSession))start(session)});
+    document.getElementById('cloudSignIn').onclick=async()=>{status.textContent='Signing in…';const email=document.getElementById('cloudEmail').value.trim(),password=document.getElementById('cloudPassword').value;const r=await cloud.auth.signInWithPassword({email,password});if(r.error)status.textContent=r.error.message;else await start(r.data.session)};
+    document.getElementById('cloudSignUp').onclick=async()=>{status.textContent='Creating account…';const email=document.getElementById('cloudEmail').value.trim(),password=document.getElementById('cloudPassword').value;if(password.length<6){status.textContent='Use a password of at least 6 characters.';return;}const r=await cloud.auth.signUp({email,password});if(r.error)status.textContent=r.error.message;else if(r.data.session)await start(r.data.session);else status.textContent='Account created. Check your email to confirm, then sign in.'};
+    document.getElementById('cloudSignOutBtn').onclick=async()=>{await cloudSaveState();await cloud.auth.signOut();cloudSession=null;cloudWorkspaceId=null;cloudReady=false;gate.classList.remove('hidden');document.getElementById('cloudSignOutBtn').style.display='none';setCloudStatus('Signed out','')};
   }
 
-  parseStockWorkbook=function(wb,fileName){
-    var availableSheet=wb.Sheets['Available Sum'];
-    var portfolioSheet=wb.Sheets['Portfolio Status'];
-    if(!availableSheet||!portfolioSheet) throw new Error('Required sheets “Available Sum” and/or “Portfolio Status” were not found.');
-    var av=XLSX.utils.sheet_to_json(availableSheet,{header:1,defval:null,raw:true});
-    var pf=XLSX.utils.sheet_to_json(portfolioSheet,{header:1,defval:null,raw:true});
-    var reportCell=(av&&av[0]&&av[0][3]) || (pf&&pf[0]&&pf[0][1]) || null;
-    var reportDate=excelDateToIso(reportCell) || nowIso();
-    var products={}; var rejected=[];
+  const pageMeta = {
+    dashboard: ['Dashboard', 'Current product, stock and poster health.'],
+    update: ['Upload Update', 'Review a new stock report before it changes the system.'],
+    products: ['Products', 'Lifecycle and availability from the latest stock report.'],
+    assets: ['Product Assets', 'Save approved product photos and real physical dimensions once.'],
+    prices: ['Prices & Promotions', 'Maintain customer-facing plans that drive poster pricing.'],
+    posters: ['Poster Studio', 'Generate customer-ready posters from approved data and assets.'],
+    revisions: ['Revision Queue', 'Posters that became outdated after model, stock or price changes.'],
+    settings: ['Settings', 'Poster identity, data backups and system behavior.']
+  };
 
+  const navItems = [
+    ['dashboard','▦','Dashboard'],['update','⇧','Update'],['products','▤','Products'],
+    ['assets','◫','Assets'],['prices','RM','Pricing'],['posters','▣','Posters'],
+    ['revisions','!','Revisions'],['settings','⚙','Settings']
+  ];
+
+  let state = loadState();
+  let currentPage = 'dashboard';
+  let pendingImport = null;
+  let pendingDocImport = null;
+  let productFilter = { search:'', lifecycle:'all', stock:'all' };
+  let priceEditId = null;
+  let posterDraft = { model1:'', model2:'', template:'single', title:'', badge:'', plan1:'', plan2:'', show5:true, show7:true, servicePreference:'Combine', crossShowIndividuals:true, region:'AL8', language:'ms', overrideRestricted:false };
+
+  function clone(v){ return JSON.parse(JSON.stringify(v)); }
+  function nowIso(){ return new Date().toISOString(); }
+  function safeNum(v){
+    if (v === null || v === undefined || v === '') return 0;
+    const n = typeof v === 'number' ? v : Number(String(v).replace(/,/g,''));
+    return Number.isFinite(n) ? n : 0;
+  }
+  function esc(s){ return String(s ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+  function money(v){ if (v === null || v === undefined || v === '') return '—'; return `RM${Number(v).toFixed(0)}`; }
+  function fmtDate(v){ if (!v) return '—'; const d=new Date(v); return Number.isNaN(d.getTime()) ? String(v) : d.toLocaleString(undefined,{year:'numeric',month:'short',day:'2-digit',hour:'2-digit',minute:'2-digit'}); }
+  function uid(prefix='id'){ return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8)}`; }
+  function hashObject(o){
+    const s=JSON.stringify(o); let h=2166136261;
+    for(let i=0;i<s.length;i++){ h ^= s.charCodeAt(i); h += (h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24); }
+    return (h>>>0).toString(36);
+  }
+  function normModel(code){ return String(code||'').trim().toUpperCase(); }
+
+  function validStockModelCode(value){
+    const s=String(value??'').trim().toUpperCase();
+    if(!s || s.length<5 || s.length>45) return false;
+    if(['MODEL','TOTAL','GRAND TOTAL'].includes(s)) return false;
+    if(!/^[A-Z0-9][A-Z0-9.\-]*$/.test(s)) return false;
+    return /[A-Z]/.test(s) && /[0-9]/.test(s);
+  }
+  function validStockCategory(value){
+    const s=String(value??'').trim();
+    if(!s || s.length>60 || !/[A-Za-z]/.test(s)) return false;
+    return !/^(CATEGORY|MODEL|TOTAL|GRAND TOTAL|OPENING STOCK|BALANCE STOCK)$/i.test(s);
+  }
+
+  function loadState(){
+    try{
+      const raw=localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        const parsed=JSON.parse(raw);
+        if(parsed && parsed.products) return parsed;
+      }
+    }catch(e){ console.warn('load state',e); }
+    const seed=clone(window.__LG_SEED__ || {products:{},pricePlans:[],posters:[],importHistory:[],settings:{}});
+    seed.changeLog = seed.changeLog || [];
+    seed.settings = Object.assign({agentName:'',agentContact:'',posterDisclaimer:'Image for illustration purposes only. T&C apply.'},seed.settings||{});
+    seed.pricePlans = seed.pricePlans || [];
+    seed.posters = seed.posters || [];
+    seed.importHistory = seed.importHistory || [];
+    seed.sourceDocuments = seed.sourceDocuments || [];
+    return seed;
+  }
+  function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); updateReportStamp(); updateNav(); if(cloudReady)queueCloudStateSync(); }
+
+  function openDb(){
+    return new Promise((resolve,reject)=>{
+      const req=indexedDB.open(DB_NAME,DB_VERSION);
+      req.onupgradeneeded=()=>{
+        const db=req.result;
+        if(!db.objectStoreNames.contains(ASSET_STORE)) db.createObjectStore(ASSET_STORE,{keyPath:'model'});
+      };
+      req.onsuccess=()=>resolve(req.result); req.onerror=()=>reject(req.error);
+    });
+  }
+  async function putAsset(model,dataUrl,fileName){
+    const db=await openDb();
+    await new Promise((resolve,reject)=>{const tx=db.transaction(ASSET_STORE,'readwrite');tx.objectStore(ASSET_STORE).put({model,dataUrl,fileName,updatedAt:nowIso()});tx.oncomplete=()=>resolve(true);tx.onerror=()=>reject(tx.error);});
+    if(cloudReady&&cloudWorkspaceId){try{const path=cloudAssetPath(model,fileName||'asset.png'),blob=dataUrlToBlob(dataUrl);const up=await cloud.storage.from('product-assets').upload(path,blob,{contentType:blob.type,upsert:true});if(up.error)throw up.error;}catch(e){console.warn('cloud asset upload',e)}}
+    return true;
+  }
+  async function getAsset(model){
+    const db=await openDb();
+    const local=await new Promise((resolve,reject)=>{const tx=db.transaction(ASSET_STORE,'readonly');const req=tx.objectStore(ASSET_STORE).get(model);req.onsuccess=()=>resolve(req.result||null);req.onerror=()=>reject(req.error);});
+    if(local)return local;
+    if(cloudReady&&cloudWorkspaceId){try{const list=await cloud.storage.from('product-assets').list(`${cloudWorkspaceId}/cutouts`,{limit:1000});if(list.error)throw list.error;const safe=String(model).replace(/[^A-Za-z0-9._-]/g,'_');const f=(list.data||[]).find(x=>x.name.startsWith(safe+'.'));if(f){const path=`${cloudWorkspaceId}/cutouts/${f.name}`;const d=await cloud.storage.from('product-assets').download(path);if(d.error)throw d.error;const dataUrl=await blobToDataUrl(d.data);const rec={model,dataUrl,fileName:f.name,updatedAt:nowIso()};await new Promise((resolve,reject)=>{const tx=db.transaction(ASSET_STORE,'readwrite');tx.objectStore(ASSET_STORE).put(rec);tx.oncomplete=()=>resolve(true);tx.onerror=()=>reject(tx.error)});return rec;}}catch(e){console.warn('cloud asset download',e)}}
+    return null;
+  }
+  async function getAllAssets(){
+    const db=await openDb();
+    return new Promise((resolve,reject)=>{
+      const tx=db.transaction(ASSET_STORE,'readonly');
+      const req=tx.objectStore(ASSET_STORE).getAll();
+      req.onsuccess=()=>resolve(req.result||[]); req.onerror=()=>reject(req.error);
+    });
+  }
+  async function clearAssets(){
+    const db=await openDb();
+    return new Promise((resolve,reject)=>{
+      const tx=db.transaction(ASSET_STORE,'readwrite');
+      tx.objectStore(ASSET_STORE).clear(); tx.oncomplete=()=>resolve(true); tx.onerror=()=>reject(tx.error);
+    });
+  }
+  async function hydrateAllCloudAssetsToLocal(){if(!cloudReady)return;try{const list=await cloud.storage.from('product-assets').list(`${cloudWorkspaceId}/cutouts`,{limit:1000});if(list.error)throw list.error;const db=await openDb();for(const f of list.data||[]){if(!f.name||f.name.endsWith('/'))continue;const path=`${cloudWorkspaceId}/cutouts/${f.name}`;const d=await cloud.storage.from('product-assets').download(path);if(d.error)continue;const dataUrl=await blobToDataUrl(d.data);const model=f.name.replace(/\.[^.]+$/,'');await new Promise((resolve,reject)=>{const tx=db.transaction(ASSET_STORE,'readwrite');tx.objectStore(ASSET_STORE).put({model,dataUrl,fileName:f.name,updatedAt:nowIso()});tx.oncomplete=()=>resolve(true);tx.onerror=()=>reject(tx.error)})}}catch(e){console.warn('asset hydrate',e)}}
+  async function syncAllLocalAssetsToCloud(){if(!cloudReady)return;try{const list=await cloud.storage.from('product-assets').list(`${cloudWorkspaceId}/cutouts`,{limit:1000});if(list.error)throw list.error;const remote=new Set((list.data||[]).map(x=>x.name));for(const a of await getAllAssets()){const path=cloudAssetPath(a.model,a.fileName||'asset.png');const name=path.split('/').pop();if(remote.has(name))continue;const blob=dataUrlToBlob(a.dataUrl);const up=await cloud.storage.from('product-assets').upload(path,blob,{contentType:blob.type,upsert:false});if(up.error)console.warn(up.error)}}catch(e){console.warn('asset sync',e)}}
+
+  function lifecycleClass(status,submission){
+    const s=(status||'').toLowerCase(), sub=(submission||'').toLowerCase();
+    if(s.includes('discontinued')||sub.includes('stop')) return 'red';
+    if(s.includes('npi')) return 'blue';
+    if(s.includes('current')) return 'green';
+    return 'gray';
+  }
+  function stockState(product){
+    const s=product?.stock||{};
+    const balances=[s.AL8?.balance,s.AL2?.balance,s.AL3?.balance].map(safeNum);
+    if(balances.some(n=>n>0)) return 'In Stock';
+    const inbound=[s.AL8?.incoming,s.AL2?.inTransit,s.AL2?.pending,s.AL3?.inTransit,s.AL3?.pending].map(safeNum);
+    if(inbound.some(n=>n>0)) return 'Incoming';
+    const back=[s.AL8?.backorder,s.AL2?.backorder,s.AL3?.backorder].map(safeNum);
+    if(back.some(n=>n>0)||balances.some(n=>n<0)) return 'Backorder / No Stock';
+    return 'No Stock';
+  }
+  function stockClass(st){ return st==='In Stock'?'green':st==='Incoming'?'blue':st.startsWith('Backorder')?'amber':'gray'; }
+  function totalPositiveStock(p){
+    const s=p.stock||{}; return [s.AL8?.balance,s.AL2?.balance,s.AL3?.balance].reduce((a,b)=>a+Math.max(0,safeNum(b)),0);
+  }
+  function lifecycleDisplay(p){ return p.lifecycleStatus || 'Not classified'; }
+  function modelFingerprint(p){
+    const plans=state.pricePlans.filter(x=>x.modelCode===p.code).map(x=>({
+      planYears:x.planYears,serviceType:x.serviceType,normalPrice:x.normalPrice,promoType:x.promoType,promoValue:x.promoValue,promoMonths:x.promoMonths,effectiveFrom:x.effectiveFrom,effectiveTo:x.effectiveTo
+    }));
+    return hashObject({lifecycleStatus:p.lifecycleStatus,submissionStatus:p.submissionStatus,dimensions:p.dimensions||{},imageApproved:!!p.imageApproved,plans});
+  }
+  function regionBalance(p,region='AL8'){return safeNum(p?.stock?.[region]?.balance)}
+  function posterAvailability(code,region='AL8'){
+    const p=state.products[code];if(!p)return {level:'red',text:'Model missing',balance:0,restricted:true};
+    const life=String(p.lifecycleStatus||'').toLowerCase(),sub=String(p.submissionStatus||'').toLowerCase();
+    if(life.includes('discontinued')||sub.includes('stop'))return {level:'red',text:'STOP / Discontinued',balance:regionBalance(p,region),restricted:true};
+    const b=regionBalance(p,region);if(b>0)return {level:'green',text:`In stock (${b})`,balance:b,restricted:false};
+    const st=stockState(p);if(st==='Incoming')return {level:'blue',text:'Incoming / no current balance',balance:b,restricted:false};
+    return {level:'amber',text:'No current stock / backorder',balance:b,restricted:false};
+  }
+  function regionLabel(r){return r==='AL2'?'Sabah (AL2)':r==='AL3'?'Sarawak (AL3)':'Peninsular / AL8'}
+  function tr(en,ms){return posterDraft.language==='ms'?ms:en}
+  function scheduleText(r){const a=r.start===r.end?`${r.start}`:`${r.start}–${r.end}`;return posterDraft.language==='ms'?`Bulan ${a}`:`Month ${a}`}
+
+
+  function renderNav(){
+    const nav=document.getElementById('nav');
+    nav.innerHTML=navItems.map(([id,icon,label])=>{
+      const badge=id==='revisions'?revisionCount():0;
+      return `<button class="nav-btn ${currentPage===id?'active':''}" data-page="${id}"><span class="nav-icon">${icon}</span><span class="nav-label">${label}</span>${badge?`<span class="nav-badge">${badge}</span>`:''}</button>`;
+    }).join('');
+    nav.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.page)));
+  }
+  function updateNav(){ renderNav(); }
+  function navigate(page){ currentPage=page; render(); }
+  function render(){
+    const [title,sub]=pageMeta[currentPage];
+    document.getElementById('pageTitle').textContent=title; document.getElementById('pageSubtitle').textContent=sub;
+    renderNav(); updateReportStamp();
+    const view=document.getElementById('view');
+    if(currentPage==='dashboard') renderDashboard(view);
+    else if(currentPage==='update') renderUpdate(view);
+    else if(currentPage==='products') renderProducts(view);
+    else if(currentPage==='assets') renderAssets(view);
+    else if(currentPage==='prices') renderPrices(view);
+    else if(currentPage==='posters') renderPosters(view);
+    else if(currentPage==='revisions') renderRevisions(view);
+    else if(currentPage==='settings') renderSettings(view);
+  }
+  function updateReportStamp(){
+    const el=document.getElementById('reportStamp'); if(!el) return;
+    el.innerHTML=`Latest source<br><b>${esc(state.sourceReport||'—')}</b><br>${esc(fmtDate(state.reportDate))}`;
+  }
+  function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200); }
+
+  function posterIsOutdated(poster){
+    if(poster.status==='outdated') return true;
+    const snaps=poster.modelSnapshots||{};
+    return (poster.modelCodes||[]).some(code=>{
+      const p=state.products[code]; return !p || snaps[code]!==modelFingerprint(p);
+    });
+  }
+  function revisionCount(){ return (state.posters||[]).filter(posterIsOutdated).length; }
+  function markPostersOutdated(modelCodes,reasons){
+    const set=new Set(modelCodes);
+    state.posters.forEach(p=>{
+      const hit=(p.modelCodes||[]).filter(m=>set.has(m));
+      if(hit.length){
+        p.status='outdated'; p.outdatedAt=nowIso();
+        p.outdatedReasons=[...(p.outdatedReasons||[]),...(reasons||[]).filter(r=>hit.includes(r.model))].slice(-20);
+      }
+    });
+  }
+
+  function renderDashboard(view){
+    const products=Object.values(state.products||{});
+    const active=products.filter(p=>!String(p.submissionStatus||'').toLowerCase().includes('stop') && !String(p.lifecycleStatus||'').toLowerCase().includes('discontinued')).length;
+    const newModels=products.filter(p=>String(p.lifecycleStatus||'').toLowerCase().includes('npi')).length;
+    const inStock=products.filter(p=>stockState(p)==='In Stock').length;
+    const assets=products.filter(p=>p.imageApproved).length;
+    const revisions=revisionCount();
+    const recent=(state.changeLog||[]).slice(-8).reverse();
+    view.innerHTML=`
+      <div class="grid kpi-grid">
+        ${kpi('Active models',active,'Not stopped/discontinued')}
+        ${kpi('NPI / new',newModels,'Lifecycle from Portfolio Status')}
+        ${kpi('In stock',inStock,'Positive balance in AL8/AL2/AL3')}
+        ${kpi('Approved images',assets,`${products.length-assets} still need assets`)}
+        ${kpi('Poster revisions',revisions,revisions?'Action required':'All registered posters current')}
+        ${kpi('Source documents',(state.sourceDocuments||[]).length,'Price, promo and leaflet audit trail')}
+      </div>
+      <div class="grid two-col" style="margin-top:16px">
+        <div class="card">
+          <div class="card-title-row"><div><h2>System workflow</h2><div class="small muted">Designed around the reports you receive repeatedly.</div></div><button class="btn btn-primary btn-sm" id="dashUpload">Upload new report</button></div>
+          <div class="notice ok"><b>Stock report importer is mapped.</b> The first worksheet <span class="mono">Available Sum</span> updates AL8/AL2/AL3 availability; the last worksheet <span class="mono">Portfolio Status</span> updates model lifecycle and stop-submission status.</div>
+          <div class="hr"></div>
+          <div class="change-row"><b>1. Upload</b><span>New stock report XLSX</span><span class="muted">Nothing changes yet.</span></div>
+          <div class="change-row"><b>2. Review</b><span>New / discontinued / stock changes</span><span class="muted">Approve only when correct.</span></div>
+          <div class="change-row"><b>3. Apply</b><span>Product master is versioned</span><span class="muted">History is retained.</span></div>
+          <div class="change-row"><b>4. Revise</b><span>Affected posters are flagged</span><span class="muted">Regenerate from current data.</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title-row"><h2>Latest detected changes</h2><span class="badge-num">${recent.length}</span></div>
+          ${recent.length?recent.map(c=>`<div style="padding:9px 0;border-bottom:1px solid #eef0f3"><b class="mono small">${esc(c.model)}</b><div class="small">${esc(c.summary)}</div><div class="small muted">${esc(fmtDate(c.at))}</div></div>`).join(''):`<div class="empty-state"><b>No later import yet</b>The initial 1 Oct 2026 workbook is loaded as the baseline.</div>`}
+        </div>
+      </div>`;
+    document.getElementById('dashUpload').onclick=()=>navigate('update');
+  }
+  function kpi(label,value,note){ return `<div class="kpi"><div class="kpi-label">${esc(label)}</div><div class="kpi-value">${esc(value)}</div><div class="kpi-note">${esc(note)}</div></div>`; }
+
+  function renderUpdate(view){
+    view.innerHTML=`
+      <div class="card">
+        <div class="dropzone" id="dropzone">
+          <div style="font-size:34px">⇧</div><h3>Upload the latest stock report</h3>
+          <p>Expected workbook sheets: <span class="mono">Available Sum</span> and <span class="mono">Portfolio Status</span>.</p>
+          <div style="margin-top:14px"><label class="btn btn-primary file-btn">Choose XLSX<input id="stockFileInput" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden></label></div>
+        </div>
+        <div id="importPreview"></div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="card-title-row"><div><h2>Upload price / promotion source</h2><div class="small muted">Upload the recurring price card, promo preview, promo memo or product leaflet PDF. The prototype extracts model codes and promo signals for review and keeps an audit trail; it will not overwrite prices unless you approve structured plan changes.</div></div></div>
+        <div class="toolbar" style="align-items:end">
+          <div class="field grow"><label>Document type</label><select id="docType" class="select" style="width:100%"><option value="price-card">Subscription price card</option><option value="promo-preview">Promotion preview / by model</option><option value="promo-memo">Promotion memo details</option><option value="product-leaflet">Product leaflet / dimensions</option></select></div>
+          <label class="btn btn-secondary file-btn">Choose PDF<input id="docFileInput" type="file" accept="application/pdf,.pdf" hidden></label>
+        </div>
+        <div id="docImportPreview"></div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="card-title-row"><h2>Import history</h2><span class="badge-num">${(state.importHistory?.length||0)+(state.sourceDocuments?.length||0)}</span></div>
+        ${renderImportHistory()}
+        ${renderSourceHistory()}
+      </div>`;
+    const input=document.getElementById('stockFileInput'); input.addEventListener('change',e=>handleStockFile(e.target.files[0]));
+    const docInput=document.getElementById('docFileInput'); if(docInput) docInput.addEventListener('change',e=>handleSourcePdf(e.target.files[0],document.getElementById('docType').value));
+    const dz=document.getElementById('dropzone');
+    ['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('drag')}));
+    ['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('drag')}));
+    dz.addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f)handleStockFile(f)});
+    if(pendingImport) renderImportPreview();
+    if(pendingDocImport) renderDocImportPreview();
+  }
+  function renderImportHistory(){
+    const rows=(state.importHistory||[]).slice().reverse();
+    if(!rows.length) return '<div class="empty-state">No imports yet.</div>';
+    return `<div class="table-wrap"><table class="table"><thead><tr><th>File</th><th>Report date</th><th>Applied</th><th>Changes</th></tr></thead><tbody>${rows.map(x=>`<tr><td>${esc(x.fileName)}</td><td>${esc(fmtDate(x.reportDate))}</td><td>${esc(fmtDate(x.appliedAt))}</td><td>${esc(x.changeCount??'Baseline')}</td></tr>`).join('')}</tbody></table></div>`;
+  }
+  function renderSourceHistory(){
+    const rows=(state.sourceDocuments||[]).slice().reverse();
+    if(!rows.length) return '';
+    return `<div style="margin-top:14px"><div class="small muted" style="margin-bottom:7px">Price / promotion source documents</div><div class="table-wrap"><table class="table"><thead><tr><th>Type</th><th>File</th><th>Imported</th><th>Detected</th></tr></thead><tbody>${rows.map(x=>`<tr><td>${esc(sourceTypeLabel(x.type))}</td><td>${esc(x.fileName)}</td><td>${esc(fmtDate(x.importedAt))}</td><td>${esc((x.detectedModels||[]).length)} models • ${esc((x.signals||[]).length)} promo signals</td></tr>`).join('')}</tbody></table></div></div>`;
+  }
+  function sourceTypeLabel(t){ return ({'price-card':'Subscription price card','promo-preview':'Promotion preview','promo-memo':'Promotion memo','product-leaflet':'Product leaflet / dimensions'})[t]||t; }
+  async function handleSourcePdf(file,type){
+    if(!file) return;
+    if(typeof pdfjsLib==='undefined'){ toast('PDF parser could not load. Check internet connection.'); return; }
+    try{
+      pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      const data=new Uint8Array(await file.arrayBuffer());
+      const pdf=await pdfjsLib.getDocument({data}).promise;
+      let text='';
+      for(let i=1;i<=pdf.numPages;i++){
+        const page=await pdf.getPage(i); const tc=await page.getTextContent();
+        text += '\n' + tc.items.map(x=>x.str).join(' ');
+      }
+      const detectedModels=detectModelCodes(text);
+      const signals=detectPromoSignals(text);
+      pendingDocImport={fileName:file.name,type,pages:pdf.numPages,detectedModels,signals,importedAt:nowIso(),_file:file};
+      renderDocImportPreview(); toast('PDF read. Review detected content before saving the source record.');
+    }catch(err){ console.error(err); toast(`Could not read PDF: ${err.message||err}`); }
+  }
+  function detectModelCodes(text){
+    const set=new Set(); const patterns=[/\b[A-Z0-9]{2,}(?:-[A-Z0-9]+)*(?:\.[A-Z0-9]+)+\b/g,/\b(?:S3-[A-Z0-9-]+|GC-[A-Z0-9-]+|GN-[A-Z0-9-]+|GV-[A-Z0-9-]+|FX[A-Z0-9-]+|FV[A-Z0-9-]+|F\d[A-Z0-9-]+|RX[A-Z0-9-]+|TX[A-Z0-9-]+|TV[A-Z0-9-]+|WT[A-Z0-9-]+|WD[A-Z0-9-]+|WU[A-Z0-9-]+|AS[A-Z0-9-]+|DFC[A-Z0-9-]+)\b/g];
+    for(const re of patterns){ for(const m of text.matchAll(re)) set.add(normModel(m[0])); }
+    return [...set].sort();
+  }
+  function detectPromoSignals(text){
+    const compact=String(text||'').replace(/\s+/g,' '); const found=new Set();
+    const regs=[/\b\d{1,2}%\s*(?:OFF|off)?[^.]{0,45}?(?:\d{1,2}\s*(?:M|MONTH|MONTHS|Ms))/gi,/\bRM\s*\d+(?:\.\d+)?\s*OFF\b[^.]{0,60}/gi,/\b(?:1st|1|01)[^\n]{0,20}(?:Oct|October|Nov|November|Dec|December)[^\n]{0,45}(?:31st|31|30th|30|15th|15)[^\n]{0,20}(?:Oct|October|Nov|November|Dec|December)[^\n]{0,10}20\d{2}/gi,/\bFREE\s+(?:LG\s+)?\d{2}[”\"']?\s*INCH[^.]{0,80}/gi];
+    for(const re of regs){ for(const m of compact.matchAll(re)){ const v=m[0].trim(); if(v.length<140) found.add(v); } }
+    return [...found].slice(0,30);
+  }
+  function renderDocImportPreview(){
+    const el=document.getElementById('docImportPreview'); if(!el||!pendingDocImport) return;
+    const x=pendingDocImport;
+    el.innerHTML=`<div class="hr"></div><div class="card-title-row"><div><h3>Review source document</h3><div class="small muted">${esc(x.fileName)} • ${esc(sourceTypeLabel(x.type))} • ${x.pages} pages</div></div><div><button id="cancelDocImport" class="btn btn-secondary btn-sm">Cancel</button> <button id="saveDocImport" class="btn btn-primary btn-sm">Save source record</button></div></div>
+      <div class="grid change-summary"><div class="mini-kpi"><b>${x.detectedModels.length}</b><span>Model codes detected</span></div><div class="mini-kpi"><b>${x.signals.length}</b><span>Promo / date signals</span></div></div>
+      <div class="notice info"><b>Safety rule:</b> this PDF is stored as an audit/source record only in this prototype. Complex table values are not automatically written into live price plans unless they are converted to structured changes and approved.</div>
+      ${x.detectedModels.length?`<div class="small muted" style="margin-top:12px">Detected models</div><div class="model-chip-wrap">${x.detectedModels.slice(0,60).map(m=>`<span class="pill gray mono">${esc(m)}</span>`).join(' ')}</div>`:''}
+      ${x.signals.length?`<div class="small muted" style="margin-top:12px">Detected promo signals</div>${x.signals.map(v=>`<div class="change-row"><span>${esc(v)}</span></div>`).join('')}`:''}`;
+    document.getElementById('cancelDocImport').onclick=()=>{pendingDocImport=null;renderUpdate(document.getElementById('view'))};
+    document.getElementById('saveDocImport').onclick=async()=>{let storagePath=null;try{storagePath=await cloudUploadSourceFile(x._file,'pdf')}catch(e){console.warn(e)} state.sourceDocuments=state.sourceDocuments||[]; const {_file,...record}=x; state.sourceDocuments.push({...record,storagePath,id:uid('source')}); pendingDocImport=null; saveState(); renderUpdate(document.getElementById('view')); toast('Source document saved to cloud update history.'); };
+  }
+
+  async function handleStockFile(file){
+    if(!file) return;
+    if(typeof XLSX==='undefined'){ toast('Spreadsheet parser could not load. Check internet connection.'); return; }
+    try{
+      const buf=await file.arrayBuffer();
+      const wb=XLSX.read(buf,{type:'array',cellDates:true});
+      const parsed=parseStockWorkbook(wb,file.name);
+      const diff=compareImport(parsed);
+      const selected={};
+      diff.forEach(c=>selected[c.model]=c.type!=='missing');
+      pendingImport={fileName:file.name,file,parsed,diff,selected,options:{stock:true,lifecycle:true,newModels:true,missing:false}};
+      renderImportPreview();
+      toast('Report read. Choose which changes to apply.');
+    }catch(err){ console.error(err); toast(`Could not read report: ${err.message||err}`); }
+  }
+  function parseStockWorkbook(wb,fileName){
+    const availableSheet=wb.Sheets['Available Sum'];
+    const portfolioSheet=wb.Sheets['Portfolio Status'];
+    if(!availableSheet||!portfolioSheet) throw new Error('Required sheets “Available Sum” and/or “Portfolio Status” were not found.');
+    const av=XLSX.utils.sheet_to_json(availableSheet,{header:1,defval:null,raw:true});
+    const pf=XLSX.utils.sheet_to_json(portfolioSheet,{header:1,defval:null,raw:true});
+    const reportCell=av?.[0]?.[3] ?? pf?.[0]?.[1] ?? null;
+    const reportDate=excelDateToIso(reportCell) || nowIso();
+    const products={}, rejectedRows=[];
     function findHeader(rows){
-      for(var i=0;i<Math.min(rows.length,80);i++){
-        var r=rows[i]||[];
-        var hasModel=r.some(function(v){return String(v||'').trim().toLowerCase()==='model';});
-        var hasCat=r.some(function(v){return String(v||'').trim().toLowerCase()==='category';});
-        if(hasModel&&hasCat) return i;
+      for(let i=0;i<Math.min(rows.length,80);i++){
+        const row=rows[i]||[];
+        const lower=row.map(v=>String(v??'').trim().toLowerCase());
+        if(lower.includes('model') && lower.includes('category')) return i;
       }
       return -1;
     }
-
-    var avHeader=findHeader(av);
+    const avHeader=findHeader(av);
     if(avHeader<0) throw new Error('Could not locate Category / Model header in “Available Sum”.');
-    var cat='';
-    for(var i=avHeader+1;i<av.length;i++){
-      var r=av[i]||[];
-      if(lgValidCategory(r[2])) cat=String(r[2]).trim();
-      var rawCode=r[3];
-      var code=normModel(rawCode);
+    let cat='';
+    for(let i=avHeader+1;i<av.length;i++){
+      const r=av[i]||[];
+      if(validStockCategory(r[2])) cat=String(r[2]).trim();
+      const raw=r[3], code=normModel(raw);
       if(!code) continue;
-      if(!lgValidModelCode(code)){
-        if(String(rawCode||'').trim()) rejected.push({sheet:'Available Sum',row:i+1,value:String(rawCode)});
-        continue;
-      }
+      if(!validStockModelCode(code)){ if(String(raw??'').trim()) rejectedRows.push({sheet:'Available Sum',row:i+1,value:String(raw)}); continue; }
       products[code]=Object.assign({},products[code]||{},{
-        code:code,
-        category:cat||((products[code]||{}).category)||'',
+        code,category:cat||products[code]?.category||'',
         stock:{
           AL8:{opening:safeNum(r[4]),incoming:safeNum(r[5]),backorder:safeNum(r[6]),currentOrders:safeNum(r[7]),balance:safeNum(r[8])},
           AL2:{opening:safeNum(r[21]),inTransit:safeNum(r[22]),pending:safeNum(r[23]),backorder:safeNum(r[24]),currentOrders:safeNum(r[25]),balance:safeNum(r[26])},
@@ -227,155 +608,447 @@ boot();
         }
       });
     }
-
-    var pfHeader=findHeader(pf);
+    const pfHeader=findHeader(pf);
     if(pfHeader<0) throw new Error('Could not locate Category / Model header in “Portfolio Status”.');
     cat='';
-    for(var j=pfHeader+1;j<pf.length;j++){
-      var pr=pf[j]||[];
-      if(lgValidCategory(pr[0])) cat=String(pr[0]).trim();
-      var rawPf=pr[1];
-      var pcode=normModel(rawPf);
-      if(!pcode) continue;
-      if(!lgValidModelCode(pcode)){
-        if(String(rawPf||'').trim()) rejected.push({sheet:'Portfolio Status',row:j+1,value:String(rawPf)});
-        continue;
-      }
-      products[pcode]=products[pcode]||{code:pcode,category:cat,stock:{AL8:{},AL2:{},AL3:{}}};
-      if(cat) products[pcode].category=cat;
-      products[pcode].description=String(pr[2]||'').trim();
-      products[pcode].lifecycleStatus=String(pr[3]||'').trim();
-      products[pcode].submissionStatus=String(pr[4]||'').trim();
+    for(let i=pfHeader+1;i<pf.length;i++){
+      const r=pf[i]||[];
+      if(validStockCategory(r[0])) cat=String(r[0]).trim();
+      const raw=r[1], code=normModel(raw);
+      if(!code) continue;
+      if(!validStockModelCode(code)){ if(String(raw??'').trim()) rejectedRows.push({sheet:'Portfolio Status',row:i+1,value:String(raw)}); continue; }
+      products[code]=products[code]||{code,category:cat,stock:{AL8:{},AL2:{},AL3:{}}};
+      if(cat) products[code].category=cat;
+      products[code].description=String(r[2]||'').trim();
+      products[code].lifecycleStatus=String(r[3]||'').trim();
+      products[code].submissionStatus=String(r[4]||'').trim();
     }
-    return {sourceReport:fileName,reportDate:reportDate,products:products,rejectedRows:rejected};
-  };
-
-  handleStockFile=async function(file){
-    if(!file) return;
-    if(typeof XLSX==='undefined'){toast('Spreadsheet parser could not load. Check internet connection.');return;}
-    try{
-      var buf=await file.arrayBuffer();
-      var wb=XLSX.read(buf,{type:'array',cellDates:true});
-      var parsed=parseStockWorkbook(wb,file.name);
-      var diff=compareImport(parsed);
-      var selected={};
-      diff.forEach(function(c){selected[c.model]=c.type!=='missing';});
-      pendingImport={fileName:file.name,file:file,parsed:parsed,diff:diff,selected:selected,options:{stock:true,lifecycle:true,newModels:true,missing:false}};
-      renderImportPreview();
-      toast('Report read. Choose which changes to apply.');
-    }catch(err){console.error(err);toast('Could not read report: '+(err.message||err));}
-  };
-
-  function lgSelectedChangeRelevant(c,opt){
-    if(c.type==='new-model') return !!opt.newModels;
-    if(c.type==='missing') return !!opt.missing;
-    var s=c.summary||'';
-    var life=s.indexOf('Lifecycle')>=0 || s.indexOf('Submission')>=0;
-    var stock=s.indexOf('Stock:')>=0 || s.indexOf('Balance')>=0;
-    return (life&&opt.lifecycle)||(stock&&opt.stock);
+    return {sourceReport:fileName,reportDate,products,rejectedRows};
   }
-
-  renderImportPreview=function(){
-    var el=document.getElementById('importPreview'); if(!el||!pendingImport)return;
-    var d=pendingImport.diff||[]; var counts={new:0,lifecycle:0,stock:0,missing:0};
-    d.forEach(function(x){
-      if(x.type==='new-model')counts.new++;
-      if(x.type==='missing')counts.missing++;
-      if((x.summary||'').includes('Lifecycle')||(x.summary||'').includes('Submission'))counts.lifecycle++;
-      if((x.summary||'').includes('Stock:')||(x.summary||'').includes('Balance'))counts.stock++;
+  function excelDateToIso(v){
+    if(!v) return null;
+    if(v instanceof Date && !Number.isNaN(v.getTime())) return v.toISOString();
+    if(typeof v==='number'){
+      const ms=Math.round((v-25569)*86400*1000); const d=new Date(ms); return Number.isNaN(d.getTime())?null:d.toISOString();
+    }
+    const d=new Date(v); return Number.isNaN(d.getTime())?null:d.toISOString();
+  }
+  function compareImport(parsed){
+    const changes=[]; const old=state.products||{}; const next=parsed.products||{};
+    const all=new Set([...Object.keys(old),...Object.keys(next)]);
+    all.forEach(code=>{
+      const a=old[code],b=next[code];
+      if(!a && b){ changes.push({model:code,type:'new-model',summary:`New model detected • ${b.lifecycleStatus||'status not specified'}`}); return; }
+      if(a && !b){ changes.push({model:code,type:'missing',summary:'Model is no longer present in the new report'}); return; }
+      const parts=[];
+      if((a.lifecycleStatus||'')!==(b.lifecycleStatus||'')) parts.push(`Lifecycle: ${a.lifecycleStatus||'—'} → ${b.lifecycleStatus||'—'}`);
+      if((a.submissionStatus||'')!==(b.submissionStatus||'')) parts.push(`Submission: ${a.submissionStatus||'—'} → ${b.submissionStatus||'—'}`);
+      const oldSt=stockState(a),newSt=stockState(b);
+      if(oldSt!==newSt) parts.push(`Stock: ${oldSt} → ${newSt}`);
+      const oldBal=[a.stock?.AL8?.balance,a.stock?.AL2?.balance,a.stock?.AL3?.balance].map(safeNum).join('/');
+      const newBal=[b.stock?.AL8?.balance,b.stock?.AL2?.balance,b.stock?.AL3?.balance].map(safeNum).join('/');
+      if(oldBal!==newBal) parts.push(`Balance AL8/AL2/AL3: ${oldBal} → ${newBal}`);
+      if(parts.length) changes.push({model:code,type:'changed',summary:parts.join(' • ')});
     });
-    var rejected=(pendingImport.parsed.rejectedRows||[]);
-    var rows=d.map(function(x){
-      var checked=pendingImport.selected[x.model]?' checked':'';
-      var pill=x.type==='new-model'?'blue':x.type==='missing'?'red':'amber';
-      return '<tr><td><input type="checkbox" data-import-select="'+esc(x.model)+'"'+checked+'></td><td class="mono">'+esc(x.model)+'</td><td><span class="pill '+pill+'"><span class="dot"></span>'+esc(x.type)+'</span></td><td>'+esc(x.summary)+'</td></tr>';
-    }).join('');
-    el.innerHTML=
-      '<div class="hr"></div>'+
-      '<div class="card-title-row"><div><h2>Review before applying</h2><div class="small muted">'+esc(pendingImport.fileName)+' • report '+esc(fmtDate(pendingImport.parsed.reportDate))+'</div></div><div><button class="btn btn-secondary btn-sm" id="cancelImport">Cancel</button> <button class="btn btn-primary btn-sm" id="applyImport">Apply selected</button></div></div>'+
-      '<div class="grid change-summary"><div class="mini-kpi"><b>'+counts.new+'</b><span>New models</span></div><div class="mini-kpi"><b>'+counts.lifecycle+'</b><span>Lifecycle changes</span></div><div class="mini-kpi"><b>'+counts.stock+'</b><span>Stock changes</span></div><div class="mini-kpi"><b>'+counts.missing+'</b><span>Missing from report</span></div></div>'+
-      (rejected.length?'<div class="notice ok" style="margin-top:12px"><b>'+rejected.length+' non-model row'+(rejected.length===1?'':'s')+' ignored automatically.</b> Totals and numeric cells are no longer imported as products.</div>':'')+
-      '<div class="card" style="margin:14px 0;padding:14px"><div class="small muted" style="margin-bottom:8px"><b>Fields to apply</b></div><div style="display:flex;gap:14px;flex-wrap:wrap">'+
-      '<label><input type="checkbox" id="impOptStock" '+(pendingImport.options.stock?'checked':'')+'> Availability / stock</label>'+
-      '<label><input type="checkbox" id="impOptLife" '+(pendingImport.options.lifecycle?'checked':'')+'> Lifecycle / submission</label>'+
-      '<label><input type="checkbox" id="impOptNew" '+(pendingImport.options.newModels?'checked':'')+'> Add new models</label>'+
-      '<label><input type="checkbox" id="impOptMissing" '+(pendingImport.options.missing?'checked':'')+'> Mark models missing from report</label>'+
-      '</div><div style="margin-top:10px"><button class="btn btn-secondary btn-sm" id="selectAllImport">Select all rows</button> <button class="btn btn-secondary btn-sm" id="clearImport">Clear rows</button></div></div>'+
-      (d.length?'<div class="table-wrap" style="max-height:430px"><table class="table"><thead><tr><th>Apply</th><th>Model</th><th>Change</th><th>Details</th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<div class="notice ok">No model lifecycle or availability changes were detected.</div>')+
-      '<div class="notice warn" style="margin-top:14px"><b>Safe update:</b> prices, images, dimensions and poster records are preserved. Unchecked rows remain unchanged.</div>';
-
-    document.querySelectorAll('[data-import-select]').forEach(function(cb){cb.onchange=function(){pendingImport.selected[cb.dataset.importSelect]=cb.checked;};});
-    ['impOptStock','impOptLife','impOptNew','impOptMissing'].forEach(function(id){
-      var node=document.getElementById(id); if(!node)return;
-      node.onchange=function(){
-        pendingImport.options.stock=document.getElementById('impOptStock').checked;
-        pendingImport.options.lifecycle=document.getElementById('impOptLife').checked;
-        pendingImport.options.newModels=document.getElementById('impOptNew').checked;
-        pendingImport.options.missing=document.getElementById('impOptMissing').checked;
-      };
-    });
-    document.getElementById('selectAllImport').onclick=function(){d.forEach(function(c){pendingImport.selected[c.model]=true;});renderImportPreview();};
-    document.getElementById('clearImport').onclick=function(){d.forEach(function(c){pendingImport.selected[c.model]=false;});renderImportPreview();};
-    document.getElementById('cancelImport').onclick=function(){pendingImport=null;renderUpdate(document.getElementById('view'));};
+    return changes;
+  }
+  function renderImportPreview(){
+    const el=document.getElementById('importPreview'); if(!el||!pendingImport) return;
+    const d=pendingImport.diff||[], counts={new:0,lifecycle:0,stock:0,missing:0};
+    d.forEach(x=>{if(x.type==='new-model')counts.new++;if(x.type==='missing')counts.missing++;if((x.summary||'').includes('Lifecycle')||(x.summary||'').includes('Submission'))counts.lifecycle++;if((x.summary||'').includes('Stock:')||(x.summary||'').includes('Balance'))counts.stock++;});
+    const rejected=pendingImport.parsed.rejectedRows||[];
+    el.innerHTML=`
+      <div class="hr"></div>
+      <div class="card-title-row"><div><h2>Review before applying</h2><div class="small muted">${esc(pendingImport.fileName)} • report ${esc(fmtDate(pendingImport.parsed.reportDate))}</div></div><div><button class="btn btn-secondary btn-sm" id="cancelImport">Cancel</button> <button class="btn btn-primary btn-sm" id="applyImport">Apply selected</button></div></div>
+      <div class="grid change-summary"><div class="mini-kpi"><b>${counts.new}</b><span>New models</span></div><div class="mini-kpi"><b>${counts.lifecycle}</b><span>Lifecycle changes</span></div><div class="mini-kpi"><b>${counts.stock}</b><span>Stock changes</span></div><div class="mini-kpi"><b>${counts.missing}</b><span>Missing from report</span></div></div>
+      ${rejected.length?`<div class="notice ok" style="margin-top:12px"><b>${rejected.length} non-model row${rejected.length===1?'':'s'} ignored automatically.</b> Totals and numeric cells will not become products.</div>`:''}
+      <div class="card" style="margin:14px 0;padding:14px">
+        <div class="small muted" style="margin-bottom:8px"><b>Fields to apply</b></div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap">
+          <label><input type="checkbox" id="impOptStock" ${pendingImport.options.stock?'checked':''}> Availability / stock</label>
+          <label><input type="checkbox" id="impOptLife" ${pendingImport.options.lifecycle?'checked':''}> Lifecycle / submission</label>
+          <label><input type="checkbox" id="impOptNew" ${pendingImport.options.newModels?'checked':''}> Add new models</label>
+          <label><input type="checkbox" id="impOptMissing" ${pendingImport.options.missing?'checked':''}> Mark missing models</label>
+        </div>
+        <div style="margin-top:10px"><button class="btn btn-secondary btn-sm" id="selectAllImport">Select all rows</button> <button class="btn btn-secondary btn-sm" id="clearImport">Clear rows</button></div>
+      </div>
+      ${d.length?`<div class="table-wrap" style="max-height:430px"><table class="table"><thead><tr><th>Apply</th><th>Model</th><th>Change</th><th>Details</th></tr></thead><tbody>${d.map(x=>`<tr><td><input type="checkbox" data-import-select="${esc(x.model)}" ${pendingImport.selected[x.model]?'checked':''}></td><td class="mono">${esc(x.model)}</td><td><span class="pill ${x.type==='new-model'?'blue':x.type==='missing'?'red':'amber'}"><span class="dot"></span>${esc(x.type)}</span></td><td>${esc(x.summary)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="notice ok">No model lifecycle or availability changes were detected.</div>'}
+      <div class="notice warn" style="margin-top:14px"><b>Safe update:</b> prices, saved images, dimensions and poster records are preserved. Unchecked rows remain unchanged.</div>`;
+    document.querySelectorAll('[data-import-select]').forEach(cb=>cb.onchange=()=>{pendingImport.selected[cb.dataset.importSelect]=cb.checked});
+    const syncOpts=()=>{pendingImport.options={stock:document.getElementById('impOptStock').checked,lifecycle:document.getElementById('impOptLife').checked,newModels:document.getElementById('impOptNew').checked,missing:document.getElementById('impOptMissing').checked}};
+    ['impOptStock','impOptLife','impOptNew','impOptMissing'].forEach(id=>document.getElementById(id).onchange=syncOpts);
+    document.getElementById('selectAllImport').onclick=()=>{d.forEach(c=>pendingImport.selected[c.model]=true);renderImportPreview()};
+    document.getElementById('clearImport').onclick=()=>{d.forEach(c=>pendingImport.selected[c.model]=false);renderImportPreview()};
+    document.getElementById('cancelImport').onclick=()=>{pendingImport=null;renderUpdate(document.getElementById('view'))};
     document.getElementById('applyImport').onclick=applyPendingImport;
-  };
-
-  applyPendingImport=async function(){
-    if(!pendingImport)return;
-    var opt=pendingImport.options||{stock:true,lifecycle:true,newModels:true,missing:false};
-    var chosen=(pendingImport.diff||[]).filter(function(c){return pendingImport.selected[c.model]&&lgSelectedChangeRelevant(c,opt);});
+  }
+  async function applyPendingImport(){
+    if(!pendingImport) return;
+    const opt=pendingImport.options||{stock:true,lifecycle:true,newModels:true,missing:false};
+    const relevant=c=>{
+      if(c.type==='new-model') return opt.newModels;
+      if(c.type==='missing') return opt.missing;
+      const s=c.summary||'', life=s.includes('Lifecycle')||s.includes('Submission'), stock=s.includes('Stock:')||s.includes('Balance');
+      return (life&&opt.lifecycle)||(stock&&opt.stock);
+    };
+    const chosen=(pendingImport.diff||[]).filter(c=>pendingImport.selected[c.model]&&relevant(c));
     if(!chosen.length){toast('No applicable changes selected.');return;}
-    var sourceFile=pendingImport.file; var cloudSourcePath=null;
-    try{cloudSourcePath=await cloudUploadSourceFile(sourceFile,'stock');}catch(e){console.warn(e);}
-    var parsed=pendingImport.parsed; var old=state.products||{}; var next=Object.assign({},old);
-
-    Object.keys(parsed.products||{}).forEach(function(code){
-      if(next[code] && next[code].reportMissing) next[code]=Object.assign({},next[code],{reportMissing:false});
-    });
-
-    chosen.forEach(function(change){
-      var code=change.model, incoming=parsed.products[code], prev=old[code]||{};
+    let cloudSourcePath=null; try{cloudSourcePath=await cloudUploadSourceFile(pendingImport.file,'stock')}catch(e){console.warn(e)}
+    const parsed=pendingImport.parsed, old=state.products||{}, next={...old};
+    chosen.forEach(change=>{
+      const code=change.model, incoming=parsed.products[code], prev=old[code]||{};
       if(change.type==='missing'){
-        if(opt.missing && prev.code) next[code]=Object.assign({},prev,{reportMissing:true,updatedAt:nowIso()});
+        if(opt.missing && prev.code) next[code]={...prev,reportMissing:true,updatedAt:nowIso()};
         return;
       }
-      if(!incoming)return;
-      if(change.type==='new-model' && !opt.newModels)return;
-      var merged=Object.assign({},prev);
-      merged.code=code;
+      if(!incoming || !validStockModelCode(code)) return;
+      const merged={...prev,code};
       if(incoming.category) merged.category=incoming.category;
       if(opt.stock && incoming.stock) merged.stock=incoming.stock;
       if(opt.lifecycle){
-        if(Object.prototype.hasOwnProperty.call(incoming,'description')) merged.description=incoming.description;
-        if(Object.prototype.hasOwnProperty.call(incoming,'lifecycleStatus')) merged.lifecycleStatus=incoming.lifecycleStatus;
-        if(Object.prototype.hasOwnProperty.call(incoming,'submissionStatus')) merged.submissionStatus=incoming.submissionStatus;
+        if('description' in incoming) merged.description=incoming.description;
+        if('lifecycleStatus' in incoming) merged.lifecycleStatus=incoming.lifecycleStatus;
+        if('submissionStatus' in incoming) merged.submissionStatus=incoming.submissionStatus;
       }
       merged.dimensions=prev.dimensions||{width:null,height:null,depth:null};
-      merged.imageApproved=!!prev.imageApproved;
-      merged.reportMissing=false;
-      merged.updatedAt=nowIso();
+      merged.imageApproved=!!prev.imageApproved; merged.reportMissing=false; merged.updatedAt=nowIso();
       next[code]=merged;
     });
-
-    var cleaned=lgSanitizeProductsMap(next);
-    state.products=cleaned.products;
-    state.sourceReport=parsed.sourceReport;
-    state.reportDate=parsed.reportDate;
-    var applied=chosen.map(function(c){return Object.assign({},c,{at:nowIso()});});
-    state.changeLog=[...(state.changeLog||[]),...applied].slice(-500);
-    var visual=applied.filter(function(c){
-      var s=c.summary||'';
-      return c.type==='missing'||s.indexOf('Lifecycle')>=0||s.indexOf('Submission')>=0;
-    });
-    markPostersOutdated(visual.map(function(x){return x.model;}),visual);
+    Object.keys(next).forEach(code=>{ if(!validStockModelCode(code)) delete next[code]; });
+    state.products=next; state.sourceReport=parsed.sourceReport; state.reportDate=parsed.reportDate;
+    const changes=chosen.map(c=>({...c,at:nowIso()}));
+    state.changeLog=[...(state.changeLog||[]),...changes].slice(-500);
+    const visual=changes.filter(c=>c.type==='missing'||(c.summary||'').includes('Lifecycle')||(c.summary||'').includes('Submission'));
+    markPostersOutdated(visual.map(x=>x.model),visual);
     state.importHistory=state.importHistory||[];
-    state.importHistory.push({id:uid('import'),fileName:pendingImport.fileName,reportDate:parsed.reportDate,appliedAt:nowIso(),changeCount:applied.length,rejectedRows:(parsed.rejectedRows||[]).length,storagePath:cloudSourcePath});
-    pendingImport=null;
+    state.importHistory.push({id:uid('import'),fileName:pendingImport.fileName,reportDate:parsed.reportDate,appliedAt:nowIso(),changeCount:changes.length,rejectedRows:(parsed.rejectedRows||[]).length,storagePath:cloudSourcePath});
+    pendingImport=null; saveState(); toast(`Selected update applied to ${changes.length} model${changes.length===1?'':'s'}.`); render();
+  }
+
+  function renderProducts(view){
+    const products=Object.values(state.products||{}).filter(p=>{ if(!validStockModelCode(p.code)) return false;
+      const q=productFilter.search.toLowerCase();
+      if(q && !`${p.code} ${p.description} ${p.category}`.toLowerCase().includes(q)) return false;
+      if(productFilter.lifecycle!=='all' && !(p.lifecycleStatus||'').toLowerCase().includes(productFilter.lifecycle)) return false;
+      if(productFilter.stock!=='all' && stockState(p)!==productFilter.stock) return false;
+      return true;
+    });
+    const cats=[...new Set(Object.values(state.products||{}).map(x=>x.category).filter(Boolean))];
+    view.innerHTML=`
+      <div class="card">
+        <div class="toolbar">
+          <input id="productSearch" class="input search grow" placeholder="Search model, category or description" value="${esc(productFilter.search)}">
+          <select id="lifeFilter" class="select"><option value="all">All lifecycle</option><option value="current" ${productFilter.lifecycle==='current'?'selected':''}>Current</option><option value="npi" ${productFilter.lifecycle==='npi'?'selected':''}>NPI</option><option value="discontinued" ${productFilter.lifecycle==='discontinued'?'selected':''}>Discontinued</option></select>
+          <select id="stockFilter" class="select"><option value="all">All stock</option>${['In Stock','Incoming','Backorder / No Stock','No Stock'].map(x=>`<option ${productFilter.stock===x?'selected':''}>${x}</option>`).join('')}</select>
+          <span class="badge-num">${products.length}</span>
+        </div>
+        <div class="table-wrap"><table class="table"><thead><tr><th>Category</th><th>Model</th><th>Description</th><th>Lifecycle</th><th>Submission</th><th>Availability</th><th>AL8</th><th>AL2</th><th>AL3</th><th>Asset</th></tr></thead><tbody>
+          ${products.sort((a,b)=>`${a.category}${a.code}`.localeCompare(`${b.category}${b.code}`)).map(p=>`<tr>
+            <td>${esc(p.category||'—')}</td><td class="mono"><button class="link-btn" data-product="${esc(p.code)}">${esc(p.code)}</button></td><td>${esc(p.description||'—')}</td>
+            <td><span class="pill ${lifecycleClass(p.lifecycleStatus,p.submissionStatus)}"><span class="dot"></span>${esc(lifecycleDisplay(p))}</span></td><td>${esc(p.submissionStatus||'—')}</td>
+            <td><span class="pill ${stockClass(stockState(p))}">${esc(stockState(p))}</span></td><td>${safeNum(p.stock?.AL8?.balance)}</td><td>${safeNum(p.stock?.AL2?.balance)}</td><td>${safeNum(p.stock?.AL3?.balance)}</td>
+            <td>${p.imageApproved?'<span class="pill green">Approved</span>':'<span class="pill gray">Needed</span>'}</td>
+          </tr>`).join('')}
+        </tbody></table></div>
+      </div>`;
+    document.getElementById('productSearch').oninput=e=>{productFilter.search=e.target.value;renderProducts(view)};
+    document.getElementById('lifeFilter').onchange=e=>{productFilter.lifecycle=e.target.value;renderProducts(view)};
+    document.getElementById('stockFilter').onchange=e=>{productFilter.stock=e.target.value;renderProducts(view)};
+    view.querySelectorAll('[data-product]').forEach(b=>b.onclick=()=>openProductModal(b.dataset.product));
+  }
+  function openProductModal(code){
+    const p=state.products[code]; if(!p) return;
+    const m=document.getElementById('modal'), body=document.getElementById('modalBody');
+    body.innerHTML=`<div class="card-title-row"><div><h2 class="mono">${esc(code)}</h2><div class="muted small">${esc(p.category)} • ${esc(p.description||'')}</div></div><button class="btn btn-secondary btn-sm" id="closeModal">Close</button></div>
+      <div class="grid form-grid">
+        <div class="field"><label>Lifecycle</label><div>${esc(p.lifecycleStatus||'—')}</div></div><div class="field"><label>Submission</label><div>${esc(p.submissionStatus||'—')}</div></div><div class="field"><label>Derived availability</label><div>${esc(stockState(p))}</div></div>
+      </div><div class="hr"></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>Warehouse</th><th>Opening</th><th>Inbound</th><th>Backorder</th><th>Balance</th></tr></thead><tbody>
+      <tr><td>AL8</td><td>${safeNum(p.stock?.AL8?.opening)}</td><td>${safeNum(p.stock?.AL8?.incoming)}</td><td>${safeNum(p.stock?.AL8?.backorder)}</td><td>${safeNum(p.stock?.AL8?.balance)}</td></tr>
+      <tr><td>AL2 Sabah</td><td>${safeNum(p.stock?.AL2?.opening)}</td><td>${safeNum(p.stock?.AL2?.inTransit)+safeNum(p.stock?.AL2?.pending)}</td><td>${safeNum(p.stock?.AL2?.backorder)}</td><td>${safeNum(p.stock?.AL2?.balance)}</td></tr>
+      <tr><td>AL3 Sarawak</td><td>${safeNum(p.stock?.AL3?.opening)}</td><td>${safeNum(p.stock?.AL3?.inTransit)+safeNum(p.stock?.AL3?.pending)}</td><td>${safeNum(p.stock?.AL3?.backorder)}</td><td>${safeNum(p.stock?.AL3?.balance)}</td></tr>
+      </tbody></table></div>`;
+    m.showModal(); document.getElementById('closeModal').onclick=()=>m.close();
+  }
+
+  function productOptions(selected=''){ return Object.values(state.products).sort((a,b)=>a.code.localeCompare(b.code)).map(p=>`<option value="${esc(p.code)}" ${p.code===selected?'selected':''}>${esc(p.code)} — ${esc(p.description||p.category||'')}</option>`).join(''); }
+
+  function renderAssets(view){
+    const selected=state.ui?.assetModel || Object.keys(state.products)[0] || '';
+    state.ui=state.ui||{}; state.ui.assetModel=selected;
+    const p=state.products[selected]||{};
+    view.innerHTML=`
+      <div class="card">
+        <div class="card-title-row"><div><h2>Approved product asset</h2><div class="small muted">Save once, reuse in every poster. Transparent PNG is preferred.</div></div><select id="assetModelSelect" class="select" style="max-width:460px"><option value="">Choose model</option>${productOptions(selected)}</select></div>
+        <div class="asset-layout">
+          <div><div id="assetPreview" class="asset-preview"><div class="asset-placeholder">No image loaded</div></div><div style="margin-top:10px"><label class="btn btn-secondary file-btn" style="width:100%">Choose product image<input id="assetImageInput" type="file" accept="image/png,image/webp,image/jpeg" hidden></label></div></div>
+          <div>
+            <div class="grid form-grid">
+              <div class="field"><label>Width (mm)</label><input id="dimW" class="input" type="number" min="1" value="${esc(p.dimensions?.width??'')}"></div>
+              <div class="field"><label>Height (mm)</label><input id="dimH" class="input" type="number" min="1" value="${esc(p.dimensions?.height??'')}"></div>
+              <div class="field"><label>Depth (mm)</label><input id="dimD" class="input" type="number" min="1" value="${esc(p.dimensions?.depth??'')}"></div>
+            </div>
+            <div class="notice info" style="margin-top:14px">For combo posters, the generator uses the real W×H dimensions to keep products at a consistent visual scale. Transparent whitespace around the uploaded image is trimmed automatically during rendering.</div>
+            <div class="field" style="margin-top:14px"><label>Asset note</label><textarea id="assetNote" class="textarea" rows="3" style="width:100%" placeholder="e.g. official front image / black color / approved Oct 2026">${esc(p.assetNote||'')}</textarea></div>
+            <label style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px"><input id="assetApproved" type="checkbox" ${p.imageApproved?'checked':''}> Mark image + dimensions approved for poster use</label>
+            <div style="margin-top:16px"><button id="saveAssetBtn" class="btn btn-primary">Save asset details</button></div>
+          </div>
+        </div>
+      </div>`;
+    document.getElementById('assetModelSelect').onchange=e=>{state.ui.assetModel=e.target.value;renderAssets(view)};
+    document.getElementById('assetImageInput').onchange=async e=>{
+      const file=e.target.files[0];if(!file||!selected)return;
+      const dataUrl=await fileToDataUrl(file); await putAsset(selected,dataUrl,file.name); await showAssetPreview(selected); toast('Image saved locally. Save details to approve it.');
+    };
+    document.getElementById('saveAssetBtn').onclick=()=>{
+      if(!selected)return;
+      p.dimensions={width:numOrNull('dimW'),height:numOrNull('dimH'),depth:numOrNull('dimD')}; p.assetNote=document.getElementById('assetNote').value.trim(); p.imageApproved=document.getElementById('assetApproved').checked; p.updatedAt=nowIso();
+      markPostersOutdated([selected],[{model:selected,summary:'Product asset/dimensions updated'}]); saveState(); toast('Asset details saved.');renderAssets(view);
+    };
+    showAssetPreview(selected);
+  }
+  function numOrNull(id){const v=document.getElementById(id).value;return v===''?null:Number(v)}
+  function fileToDataUrl(file){ return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.readAsDataURL(file)}); }
+  async function showAssetPreview(model){
+    const el=document.getElementById('assetPreview');if(!el||!model)return;
+    const a=await getAsset(model); el.innerHTML=a?`<img src="${a.dataUrl}" alt="${esc(model)}">`:'<div class="asset-placeholder">No image saved for this model yet.</div>';
+  }
+
+  function renderPrices(view){
+    const rows=state.pricePlans||[];
+    view.innerHTML=`
+      <div class="card">
+        <div class="card-title-row"><div><h2>Price & promotion plans</h2><div class="small muted">This MVP supports manual plan entry. PDF auto-extraction is the next importer.</div></div><button class="btn btn-primary btn-sm" id="newPlanBtn">+ Add plan</button></div>
+        <div class="notice warn" style="margin-bottom:14px"><b>Do not store the discounted monthly price as the source.</b> Store normal price + promotion rule. The poster price is calculated automatically.</div>
+        ${rows.length?`<div class="table-wrap"><table class="table"><thead><tr><th>Model</th><th>Plan</th><th>Service</th><th>Normal</th><th>Promotion</th><th>Calculated</th><th>Effective</th><th></th></tr></thead><tbody>${rows.map(x=>`<tr><td class="mono">${esc(x.modelCode)}</td><td>${esc(x.planYears)} years</td><td>${esc(x.serviceType||'—')}</td><td>${money(x.normalPrice)}/mth</td><td>${esc(promoText(x))}</td><td><b>${money(calcPromoPrice(x))}</b></td><td>${esc(x.effectiveFrom||'—')} → ${esc(x.effectiveTo||'open')}</td><td><button class="link-btn" data-edit-plan="${x.id}">Edit</button> · <button class="link-btn" data-del-plan="${x.id}" style="color:#b91c1c">Delete</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty-state"><b>No price plans yet</b>Add a customer-facing plan, or wait for the PDF price importer in the next build.</div>'}
+      </div>
+      <div id="planEditor" style="margin-top:16px"></div>`;
+    document.getElementById('newPlanBtn').onclick=()=>{priceEditId='new';renderPlanEditor()};
+    view.querySelectorAll('[data-edit-plan]').forEach(b=>b.onclick=()=>{priceEditId=b.dataset.editPlan;renderPlanEditor()});
+    view.querySelectorAll('[data-del-plan]').forEach(b=>b.onclick=()=>deletePlan(b.dataset.delPlan));
+    if(priceEditId) renderPlanEditor();
+  }
+  function promoText(x){
+    if(x.promoType==='percent') return `${x.promoValue}% off × ${x.promoMonths||'?'} months`;
+    if(x.promoType==='rm') return `RM${x.promoValue} off${x.promoMonths?` × ${x.promoMonths} months`:' until end'}`;
+    return 'No promotion';
+  }
+  function calcPromoPrice(x){
+    const n=safeNum(x.normalPrice); if(x.promoType==='percent') return Math.round((n*(1-safeNum(x.promoValue)/100))*100)/100; if(x.promoType==='rm') return Math.max(0,n-safeNum(x.promoValue)); return n;
+  }
+  function renderPlanEditor(){
+    const el=document.getElementById('planEditor');if(!el)return;
+    const existing=priceEditId==='new'?null:state.pricePlans.find(x=>x.id===priceEditId);
+    const x=existing||{modelCode:'',planYears:5,serviceType:'Combine',normalPrice:'',promoType:'percent',promoValue:50,promoMonths:9,effectiveFrom:'',effectiveTo:''};
+    el.innerHTML=`<div class="card"><div class="card-title-row"><h2>${existing?'Edit':'Add'} price plan</h2><button class="btn btn-secondary btn-sm" id="cancelPlan">Close</button></div>
+      <div class="grid form-grid">
+        <div class="field"><label>Model</label><select id="planModel" class="select"><option value="">Choose model</option>${productOptions(x.modelCode)}</select></div>
+        <div class="field"><label>Contract years</label><select id="planYears" class="select"><option value="5" ${x.planYears==5?'selected':''}>5 years</option><option value="7" ${x.planYears==7?'selected':''}>7 years</option></select></div>
+        <div class="field"><label>Service type</label><input id="serviceType" class="input" value="${esc(x.serviceType||'')}"></div>
+        <div class="field"><label>Normal monthly price (RM)</label><input id="normalPrice" class="input" type="number" step="1" value="${esc(x.normalPrice)}"></div>
+        <div class="field"><label>Promotion rule</label><select id="promoType" class="select"><option value="none" ${x.promoType==='none'?'selected':''}>None</option><option value="percent" ${x.promoType==='percent'?'selected':''}>% discount</option><option value="rm" ${x.promoType==='rm'?'selected':''}>RM off</option></select></div>
+        <div class="field"><label>Promotion value</label><input id="promoValue" class="input" type="number" value="${esc(x.promoValue??'')}"></div>
+        <div class="field"><label>Promotion months (blank = contract end)</label><input id="promoMonths" class="input" type="number" value="${esc(x.promoMonths??'')}"></div>
+        <div class="field"><label>Effective from</label><input id="effectiveFrom" class="input" type="date" value="${esc(x.effectiveFrom||'')}"></div>
+        <div class="field"><label>Effective to</label><input id="effectiveTo" class="input" type="date" value="${esc(x.effectiveTo||'')}"></div>
+      </div><div style="margin-top:16px"><button class="btn btn-primary" id="savePlan">Save plan</button></div></div>`;
+    document.getElementById('cancelPlan').onclick=()=>{priceEditId=null;el.innerHTML=''};
+    document.getElementById('savePlan').onclick=()=>{
+      const modelCode=document.getElementById('planModel').value;if(!modelCode){toast('Choose a model');return}
+      const plan={id:existing?.id||uid('plan'),modelCode,planYears:Number(document.getElementById('planYears').value),serviceType:document.getElementById('serviceType').value.trim(),normalPrice:Number(document.getElementById('normalPrice').value||0),promoType:document.getElementById('promoType').value,promoValue:Number(document.getElementById('promoValue').value||0),promoMonths:document.getElementById('promoMonths').value?Number(document.getElementById('promoMonths').value):null,effectiveFrom:document.getElementById('effectiveFrom').value,effectiveTo:document.getElementById('effectiveTo').value,updatedAt:nowIso()};
+      if(existing) Object.assign(existing,plan); else state.pricePlans.push(plan);
+      markPostersOutdated([modelCode],[{model:modelCode,summary:'Price/promotion plan updated'}]); saveState(); priceEditId=null; toast('Price plan saved.'); renderPrices(document.getElementById('view'));
+    };
+  }
+  function deletePlan(id){
+    const p=state.pricePlans.find(x=>x.id===id); if(!p)return;
+    if(!confirm(`Delete price plan for ${p.modelCode}?`))return;
+    state.pricePlans=state.pricePlans.filter(x=>x.id!==id); markPostersOutdated([p.modelCode],[{model:p.modelCode,summary:'Price/promotion plan deleted'}]);saveState();render();
+  }
+
+  function plansForModel(code){ return state.pricePlans.filter(x=>x.modelCode===code); }
+  function planOptions(code,selected){ return plansForModel(code).map(x=>`<option value="${x.id}" ${x.id===selected?'selected':''}>${x.planYears}Y ${esc(x.serviceType||'')} • ${money(x.normalPrice)} • ${esc(promoText(x))}</option>`).join(''); }
+  function findPlan(code,years,preferred=''){
+    const rows=plansForModel(code).filter(x=>Number(x.planYears)===Number(years));
+    if(!rows.length)return null;
+    const pref=String(preferred||'').toLowerCase();
+    if(pref){const hit=rows.find(x=>String(x.serviceType||'').toLowerCase().includes(pref.toLowerCase()));if(hit)return hit;}
+    return rows[0];
+  }
+  function monthPrice(plan,month){
+    if(!plan)return 0;const normal=safeNum(plan.normalPrice);if(plan.promoType==='none')return normal;
+    const promo=calcPromoPrice(plan);if(plan.promoMonths==null||plan.promoMonths==='')return promo;
+    return month<=safeNum(plan.promoMonths)?promo:normal;
+  }
+  function combinedSchedule(plans,years){
+    const months=Number(years)*12;const arr=[];
+    for(let m=1;m<=months;m++)arr.push(plans.reduce((s,p)=>s+monthPrice(p,m),0));
+    const ranges=[];let start=1,last=arr[0];for(let i=1;i<arr.length;i++){if(Math.abs(arr[i]-last)>.001){ranges.push({start,end:i,price:last});start=i+1;last=arr[i];}}ranges.push({start,end:months,price:last});return ranges;
+  }
+  function individualSchedule(plan,years){return combinedSchedule([plan],years)}
+  function templateLabel(t){return t==='laundry_combo'?'Washer + Dryer — premium combo':t==='cross_combo'?'Cross-category combo — individual + total':'Single product — premium price focus'}
+
+  function renderPosters(view){
+    if(!posterDraft.model1) posterDraft.model1=Object.keys(state.products).find(c=>state.products[c].imageApproved)||Object.keys(state.products)[0]||'';
+    view.innerHTML=`
+      <div class="poster-layout">
+        <div class="poster-controls">
+          <div class="card">
+            <h2>Poster setup</h2><div class="small muted" style="margin:4px 0 14px">Template-rendered output: exact product cutouts + current database pricing. No AI redraw of appliances.</div>
+            <div class="field"><label>Template</label><select id="posterTemplate" class="select" style="width:100%"><option value="single" ${posterDraft.template==='single'?'selected':''}>Single product — premium price focus</option><option value="laundry_combo" ${posterDraft.template==='laundry_combo'?'selected':''}>Washer + Dryer — side by side</option><option value="cross_combo" ${posterDraft.template==='cross_combo'?'selected':''}>Cross-category combo — individual + total</option></select></div>
+            <div class="field" style="margin-top:10px"><label>Headline (optional)</label><input id="posterTitle" class="input" style="width:100%" value="${esc(posterDraft.title)}" placeholder="Auto if blank"></div>
+            <div class="field" style="margin-top:10px"><label>Promo badge (optional)</label><input id="posterBadge" class="input" style="width:100%" value="${esc(posterDraft.badge)}" placeholder="e.g. OCTOBER OFFER"></div>
+            <div class="form-grid" style="grid-template-columns:1fr 1fr;margin-top:10px"><div class="field"><label>Poster language</label><select id="posterLanguage" class="select" style="width:100%"><option value="ms" ${posterDraft.language==='ms'?'selected':''}>Bahasa Melayu</option><option value="en" ${posterDraft.language==='en'?'selected':''}>English</option></select></div><div class="field"><label>Availability region</label><select id="posterRegion" class="select" style="width:100%"><option value="AL8" ${posterDraft.region==='AL8'?'selected':''}>Peninsular / AL8</option><option value="AL2" ${posterDraft.region==='AL2'?'selected':''}>Sabah / AL2</option><option value="AL3" ${posterDraft.region==='AL3'?'selected':''}>Sarawak / AL3</option></select></div></div>
+            <label style="display:flex;gap:8px;align-items:flex-start;font-size:12px;margin-top:10px"><input id="overrideRestricted" type="checkbox" ${posterDraft.overrideRestricted?'checked':''}> Allow generation even if a selected model is STOP Submission / Discontinued (not recommended)</label>
+            ${posterDraft.template!=='single'?`<div class="hr"></div><label style="display:flex;gap:8px;align-items:center;font-size:12px"><input id="show5" type="checkbox" ${posterDraft.show5?'checked':''}> Show 5-year pricing</label><label style="display:flex;gap:8px;align-items:center;font-size:12px;margin-top:7px"><input id="show7" type="checkbox" ${posterDraft.show7?'checked':''}> Show 7-year pricing when both products have it</label><div class="hr"></div><label>Saved combo preset</label><select id="comboPresetSelect" class="select" style="width:100%;margin-top:6px"><option value="">Choose preset</option>${(state.comboPresets||[]).map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select><button id="saveComboPresetBtn" class="btn btn-secondary" style="width:100%;margin-top:8px">Save current combo as preset</button>`:''}
+          </div>
+          ${posterSlotHtml(1,posterDraft.model1,posterDraft.plan1)}
+          <div id="posterSlot2Wrap">${posterDraft.template!=='single'?posterSlotHtml(2,posterDraft.model2,posterDraft.plan2):''}</div>
+          <div id="comboReadiness" class="card"></div>
+          <div class="card"><button id="generatePosterBtn" class="btn btn-primary" style="width:100%">Generate poster preview</button><button id="downloadPosterBtn" class="btn btn-secondary" style="width:100%;margin-top:8px">Download high-res PNG + register</button></div>
+        </div>
+        <div class="poster-canvas-wrap"><canvas id="posterCanvas" width="1600" height="1600"></canvas></div>
+      </div>`;
+    bindPosterControls(); renderComboReadiness(); generatePoster();
+  }
+  function posterSlotHtml(n,model,plan){
+    return `<div class="card poster-product-slot"><h4>Product ${n}</h4><div class="field"><label>Model</label><select id="posterModel${n}" class="select" style="width:100%"><option value="">Choose model</option>${productOptions(model)}</select></div>${posterDraft.template==='single'?`<div class="field" style="margin-top:9px"><label>Price plan</label><select id="posterPlan${n}" class="select" style="width:100%"><option value="">Choose plan</option>${planOptions(model,plan)}</select></div>`:''}<div id="posterWarn${n}" class="small muted" style="margin-top:8px"></div></div>`;
+  }
+  function bindPosterControls(){
+    document.getElementById('posterTemplate').onchange=e=>{posterDraft.template=e.target.value;posterDraft.plan1='';posterDraft.plan2='';renderPosters(document.getElementById('view'))};
+    document.getElementById('posterTitle').oninput=e=>posterDraft.title=e.target.value;document.getElementById('posterBadge').oninput=e=>posterDraft.badge=e.target.value;
+    document.getElementById('posterLanguage').onchange=e=>{posterDraft.language=e.target.value;generatePoster();renderComboReadiness()};document.getElementById('posterRegion').onchange=e=>{posterDraft.region=e.target.value;renderComboReadiness();generatePoster()};document.getElementById('overrideRestricted').onchange=e=>posterDraft.overrideRestricted=e.target.checked;
+    const s5=document.getElementById('show5'),s7=document.getElementById('show7');if(s5)s5.onchange=e=>{posterDraft.show5=e.target.checked;renderComboReadiness();generatePoster()};if(s7)s7.onchange=e=>{posterDraft.show7=e.target.checked;renderComboReadiness();generatePoster()};
+    const presetSel=document.getElementById('comboPresetSelect'),savePreset=document.getElementById('saveComboPresetBtn');
+    if(presetSel)presetSel.onchange=e=>{const p=(state.comboPresets||[]).find(x=>x.id===e.target.value);if(!p)return;posterDraft={...posterDraft,...p.draft};renderPosters(document.getElementById('view'));};
+    if(savePreset)savePreset.onclick=()=>{capturePosterFields();if(!posterDraft.model1||!posterDraft.model2){toast('Choose two products first.');return;}const name=prompt('Preset name',`${modelShort(posterDraft.model1)} + ${modelShort(posterDraft.model2)}`);if(!name)return;state.comboPresets=state.comboPresets||[];state.comboPresets.push({id:uid('combo'),name,draft:{...posterDraft}});saveState();toast('Combo preset saved.');renderPosters(document.getElementById('view'));};
+    [1,2].forEach(n=>{const m=document.getElementById(`posterModel${n}`),p=document.getElementById(`posterPlan${n}`);if(!m)return;m.onchange=e=>{posterDraft[`model${n}`]=e.target.value;posterDraft[`plan${n}`]='';renderPosters(document.getElementById('view'))};if(p)p.onchange=e=>posterDraft[`plan${n}`]=e.target.value;updatePosterWarn(n)});
+    document.getElementById('generatePosterBtn').onclick=()=>{capturePosterFields();generatePoster()};document.getElementById('downloadPosterBtn').onclick=()=>{capturePosterFields();downloadAndRegisterPoster()};
+  }
+  function capturePosterFields(){posterDraft.title=document.getElementById('posterTitle')?.value||'';posterDraft.badge=document.getElementById('posterBadge')?.value||'';[1,2].forEach(n=>{const m=document.getElementById(`posterModel${n}`),p=document.getElementById(`posterPlan${n}`);if(m)posterDraft[`model${n}`]=m.value;if(p)posterDraft[`plan${n}`]=p.value})}
+  async function updatePosterWarn(n){
+    const code=posterDraft[`model${n}`];const el=document.getElementById(`posterWarn${n}`);if(!el||!code)return;const p=state.products[code];const a=await getAsset(code);const issues=[];if(!a)issues.push('image missing');if(!p?.dimensions?.width||!p?.dimensions?.height)issues.push('physical W×H not confirmed');if(!plansForModel(code).length)issues.push('price plan missing');el.textContent=issues.length?`Needs: ${issues.join(', ')}`:'Ready for poster generation.';
+  }
+  function getSelectedPlan(n){const id=posterDraft[`plan${n}`];return state.pricePlans.find(x=>x.id===id)||plansForModel(posterDraft[`model${n}`])[0]||null}
+  function renderComboReadiness(){
+    const el=document.getElementById('comboReadiness');if(!el)return;
+    const codes=[posterDraft.model1,...(posterDraft.template!=='single'&&posterDraft.model2?[posterDraft.model2]:[])].filter(Boolean);
+    const avail=codes.map(c=>[c,posterAvailability(c,posterDraft.region)]);
+    const statusHtml=avail.length?avail.map(([c,a])=>`<div class="change-row"><b>${esc(modelShort(c))}</b><span><span class="pill ${a.level}">${esc(a.text)}</span></span><span>${esc(regionLabel(posterDraft.region))}</span></div>`).join(''):'<div class="small muted">Choose products to check availability.</div>';
+    if(posterDraft.template==='single'){el.innerHTML=`<h3>Generation check</h3>${statusHtml}`;return;}
+    const rows=[];for(const yr of [5,7]){if((yr===5&&!posterDraft.show5)||(yr===7&&!posterDraft.show7))continue;const ps=codes.map(c=>findPlan(c,yr,'combine')||findPlan(c,yr,''));if(codes.length<2)rows.push(`<div class="small muted">${yr}Y: choose two products</div>`);else if(!ps.every(Boolean))rows.push(`<div class="notice warn" style="margin-top:8px">${yr}Y: price plan missing for ${codes.filter((c,i)=>!ps[i]).map(modelShort).join(', ')}</div>`);else{const rr=combinedSchedule(ps,yr);rows.push(`<div class="notice ok" style="margin-top:8px"><b>${yr}Y total:</b> ${rr.map(r=>`${scheduleText(r)} ${money(r.price)}/mth`).join(' • ')}</div>`)} }
+    el.innerHTML=`<h3>Combo readiness</h3><div class="small muted" style="margin:5px 0 8px">Pricing is summed automatically. Mixed promotion lengths are split into separate month ranges.</div>${statusHtml}${rows.join('')}`;
+  }
+  async function generatePoster(){
+    const canvas=document.getElementById('posterCanvas');if(!canvas)return;const ctx=canvas.getContext('2d');ctx.clearRect(0,0,1600,1600);
+    if(posterDraft.template==='laundry_combo')return drawLaundryCombo(ctx);
+    if(posterDraft.template==='cross_combo')return drawCrossCombo(ctx);
+    return drawSinglePremium(ctx);
+  }
+  async function drawBrand(ctx){
+    ctx.fillStyle='rgba(255,255,255,.92)';roundRect(ctx,52,42,510,118,25,true);ctx.fillStyle='#a50022';ctx.font='900 70px system-ui';ctx.fillText('LG',82,124);ctx.fillStyle='#b00020';ctx.font='800 57px system-ui';ctx.fillText('Subscribe',205,121);
+    ctx.fillStyle='#111';ctx.font='italic 700 38px Georgia';ctx.textAlign='right';ctx.fillText("Life's Good.",1530,108);ctx.textAlign='left';
+  }
+  function autoName(code){const p=state.products[code];return (p?.description||p?.category||'LG Product').replace(/\s+/g,' ').trim()}
+  function modelShort(code){return String(code||'').split('.')[0]}
+  async function assetImage(code){const a=await getAsset(code);return a?loadImage(a.dataUrl):null}
+  function dimsFor(code,img){const p=state.products[code];const w=safeNum(p?.dimensions?.width),h=safeNum(p?.dimensions?.height);if(w&&h)return {w,h};if(img){const b=trimTransparent(img);return {w:b.sw,h:b.sh}}return {w:600,h:850}}
+  async function drawSinglePremium(ctx){
+    await drawTemplateBackground(ctx,'laundry');await drawBrand(ctx);const code=posterDraft.model1,p=state.products[code],plan=getSelectedPlan(1),img=code?await assetImage(code):null,dim=dimsFor(code,img);
+    ctx.fillStyle='rgba(255,255,255,.94)';roundRect(ctx,55,230,660,1110,36,true);ctx.fillStyle='#111';ctx.font='900 62px system-ui';ctx.fillText(autoName(code)||'LG PRODUCT',95,330);ctx.fillStyle='#c40025';ctx.font='900 54px system-ui';ctx.fillText(modelShort(code),95,397);
+    if(plan){ctx.fillStyle='#b00020';roundRect(ctx,90,470,590,150,28,true);ctx.fillStyle='#fff';ctx.font='800 38px system-ui';ctx.fillText(promoText(plan).toUpperCase(),126,530);ctx.fillStyle='#ffd451';ctx.font='900 82px system-ui';ctx.fillText(`${money(calcPromoPrice(plan))}`,126,602);ctx.fillStyle='#fff';ctx.font='700 34px system-ui';ctx.fillText('/month',485,600);ctx.fillStyle='#222';ctx.font='700 31px system-ui';ctx.fillText(`Normal ${money(plan.normalPrice)}/month`,102,680);}
+    else{ctx.fillStyle='#92400e';ctx.font='700 31px system-ui';ctx.fillText('Add a price plan to render pricing',100,520)}
+    await drawPhysicalProduct(ctx,img,dim,760,260,760,1000);drawFeatureFooter(ctx);drawContactFooter(ctx);
+  }
+  async function drawLaundryCombo(ctx){
+    await drawTemplateBackground(ctx,'laundry');await drawBrand(ctx);const codes=[posterDraft.model1,posterDraft.model2];const imgs=await Promise.all(codes.map(c=>c?assetImage(c):null));const dims=imgs.map((im,i)=>dimsFor(codes[i],im));
+    ctx.fillStyle='#111';ctx.font='900 66px system-ui';ctx.fillText((posterDraft.title||tr('THE PERFECT LAUNDRY PAIR','PAKEJ KOMBO Dobi')).toUpperCase(),70,245);ctx.fillStyle='#c40025';ctx.font='800 38px system-ui';ctx.fillText(tr('WASHER + DRYER • COMBINE MAINTENANCE','MESIN BASUH + PENGERING • COMBINE MAINTENANCE'),73,300);
+    const gap=50,areaX=110,areaY=345,areaW=1380,areaH=590,each=(areaW-gap)/2;const common=Math.min(each/Math.max(...dims.map(d=>d.w)),areaH/Math.max(...dims.map(d=>d.h)));await drawPhysicalProduct(ctx,imgs[0],dims[0],areaX,areaY,each,areaH,common);await drawPhysicalProduct(ctx,imgs[1],dims[1],areaX+each+gap,areaY,each,areaH,common);
+    ctx.fillStyle='#171717';ctx.font='900 30px system-ui';ctx.textAlign='center';ctx.fillText(modelShort(codes[0]),areaX+each/2,965);ctx.fillText(modelShort(codes[1]),areaX+each+gap+each/2,965);ctx.textAlign='left';
+    const years=[];if(posterDraft.show5)years.push(5);if(posterDraft.show7)years.push(7);const cardGap=28,cardY=1000,cardH=320,cardW=years.length===1?1040:(1490-cardGap)/2,cardStart=years.length===1?280:55;
+    years.forEach((yr,i)=>{const ps=codes.map(c=>findPlan(c,yr,'combine')||findPlan(c,yr,''));drawComboYearCard(ctx,yr,ps,cardStart+i*(cardW+cardGap),cardY,cardW,cardH,yr===5?'#b00020':'#5a1a1a')});
+    drawFeatureFooter(ctx,1342,112);drawContactFooter(ctx,1470);
+  }
+  function drawComboYearCard(ctx,yr,plans,x,y,w,h,color){
+    ctx.fillStyle=color;roundRect(ctx,x,y,w,h,28,true);ctx.fillStyle='#fff';ctx.font='900 31px system-ui';ctx.fillText(tr(`${yr} YEARS COMBINE MAINTENANCE`,`PELAN ${yr} TAHUN • COMBINE MAINTENANCE`),x+28,y+48);if(!plans.every(Boolean)){ctx.font='700 23px system-ui';ctx.fillText(tr('Price plan missing for one or both products','Pelan harga belum lengkap untuk salah satu produk'),x+28,y+112);return;}
+    const ranges=combinedSchedule(plans,yr),first=ranges[0];ctx.fillStyle='#ffd451';ctx.font='900 68px system-ui';ctx.fillText(`${money(first.price)}`,x+28,y+128);ctx.fillStyle='#fff';ctx.font='700 25px system-ui';ctx.fillText(tr('/month','/bulan'),x+300,y+120);ctx.font='700 22px system-ui';ctx.fillText(scheduleText(first),x+30,y+168);
+    let yy=y+218;ctx.font='700 20px system-ui';ranges.slice(1,4).forEach(r=>{ctx.fillText(`${scheduleText(r)}: ${money(r.price)}${tr('/month','/bulan')}`,x+30,yy);yy+=32});
+  }
+  async function drawCrossCombo(ctx){
+    await drawTemplateBackground(ctx,'kitchen');await drawBrand(ctx);const codes=[posterDraft.model1,posterDraft.model2],imgs=await Promise.all(codes.map(c=>c?assetImage(c):null)),dims=imgs.map((im,i)=>dimsFor(codes[i],im));ctx.fillStyle='#111';ctx.font='900 62px system-ui';ctx.fillText((posterDraft.title||tr('BUILD YOUR HOME COMBO','PAKEJ KOMBO RUMAH')).toUpperCase(),70,242);ctx.fillStyle='#c40025';ctx.font='800 36px system-ui';ctx.fillText(tr('INDIVIDUAL PRICES + COMBINED TOTAL','HARGA INDIVIDU + JUMLAH KOMBO'),73,296);
+    const gap=36,cardW=730;for(let i=0;i<2;i++){const x=52+i*(cardW+gap);ctx.fillStyle='rgba(255,255,255,.94)';roundRect(ctx,x,335,cardW,880,32,true);ctx.fillStyle='#111';ctx.font='900 34px system-ui';ctx.fillText(autoName(codes[i]),x+34,392);ctx.fillStyle='#c40025';ctx.font='900 37px system-ui';ctx.fillText(modelShort(codes[i]),x+34,438);await drawPhysicalProduct(ctx,imgs[i],dims[i],x+80,470,cardW-160,500);drawIndividualPlans(ctx,codes[i],x+36,1010,cardW-72);}
+    drawCrossTotals(ctx,codes);drawContactFooter(ctx,1484);
+  }
+  function drawIndividualPlans(ctx,code,x,y,w){
+    const rows=[];if(posterDraft.show5)rows.push([5,findPlan(code,5,'combine')||findPlan(code,5,'')]);if(posterDraft.show7)rows.push([7,findPlan(code,7,'combine')||findPlan(code,7,'')]);let yy=y;for(const [yr,p] of rows){ctx.fillStyle='#222';ctx.font='800 21px system-ui';ctx.fillText(`${yr}Y`,x,yy);if(!p){ctx.fillStyle='#9a6700';ctx.fillText(tr('plan missing','pelan tiada'),x+68,yy)}else{const rr=individualSchedule(p,yr);ctx.fillStyle='#b00020';ctx.font='900 30px system-ui';ctx.fillText(`${money(rr[0].price)}${tr('/mth','/bln')}`,x+68,yy);ctx.fillStyle='#555';ctx.font='600 17px system-ui';ctx.fillText(scheduleText(rr[0]),x+245,yy);if(rr[1]){ctx.fillStyle='#333';ctx.font='700 18px system-ui';ctx.fillText(`${scheduleText(rr[1])}: ${money(rr[1].price)}${tr('/mth','/bln')}`,x+68,yy+30)}}yy+=78;}
+  }
+  function drawCrossTotals(ctx,codes){
+    ctx.fillStyle='#7b0018';roundRect(ctx,90,1240,1420,220,28,true);ctx.fillStyle='#fff';ctx.font='900 31px system-ui';ctx.fillText(tr('COMBINED TOTAL','JUMLAH KOMBO'),130,1290);let x=455;for(const yr of [5,7]){if((yr===5&&!posterDraft.show5)||(yr===7&&!posterDraft.show7))continue;const ps=codes.map(c=>findPlan(c,yr,'combine')||findPlan(c,yr,''));ctx.fillStyle='#ffd451';ctx.font='900 25px system-ui';ctx.fillText(`${yr} ${tr('YEARS','TAHUN')}`,x,1288);if(ps.every(Boolean)){const rr=combinedSchedule(ps,yr);ctx.fillStyle='#fff';ctx.font='900 43px system-ui';ctx.fillText(`${money(rr[0].price)}${tr('/mth','/bln')}`,x,1338);ctx.font='600 16px system-ui';let yy=1370;rr.slice(0,3).forEach(r=>{ctx.fillText(`${scheduleText(r)}  ${money(r.price)}${tr('/mth','/bln')}`,x,yy);yy+=25})}else{ctx.fillStyle='#fff';ctx.font='700 22px system-ui';ctx.fillText(tr('plans missing','pelan tidak lengkap'),x,1340)}x+=500;}
+  }
+  function drawFeatureFooter(ctx,y=1342,h=112){ctx.fillStyle='rgba(255,255,255,.94)';roundRect(ctx,52,y,1496,h,25,true);const labels=posterDraft.language==='ms'?['PENGHANTARAN & PEMASANGAN ASAS PERCUMA','WARANTI','COMBINE MAINTENANCE','HARGA TERKINI DALAM SISTEM']:['FREE DELIVERY & BASIC INSTALLATION','WARRANTY','COMBINE MAINTENANCE','CURRENT DATABASE PRICING'];ctx.fillStyle='#171717';ctx.textAlign='center';labels.forEach((t,i)=>{ctx.font='800 19px system-ui';ctx.fillText(t,240+i*380,y+66)});ctx.textAlign='left'}
+  function drawContactFooter(ctx,y=1502){const who=[state.settings?.agentName||'Jason Yang',state.settings?.agentContact||'011-59726619'].filter(Boolean).join(' • ');ctx.fillStyle='#5b000f';roundRect(ctx,52,y,1496,68,22,true);ctx.fillStyle='#fff';ctx.font='800 30px system-ui';ctx.textAlign='center';ctx.fillText(who||'LG Subscribe',800,y+44);ctx.fillStyle='#555';ctx.font='17px system-ui';ctx.fillText(state.settings?.posterDisclaimer||(posterDraft.language==='ms'?'Imej untuk tujuan ilustrasi sahaja. Tertakluk kepada terma & syarat.':'Image for illustration purposes only. T&C apply.'),800,1592);ctx.textAlign='left'}
+  function autoPosterTitle(){const p=getSelectedPlan(1);if(!p)return 'LG SUBSCRIBE';if(p.promoType==='percent')return `${p.promoValue}% OFF FIRST ${p.promoMonths||''} MONTHS`;if(p.promoType==='rm')return `SAVE RM${p.promoValue} EVERY MONTH`;return 'LG SUBSCRIBE'}
+  function roundRect(ctx,x,y,w,h,r,fill){ctx.beginPath();ctx.roundRect(x,y,w,h,r);if(fill)ctx.fill()}
+  function drawCenteredWrapped(ctx,text,cx,y,maxWidth,lineHeight,maxLines){const words=text.split(/\s+/);let line='',lines=[];for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=word}else line=test}if(line)lines.push(line);lines=lines.slice(0,maxLines);ctx.textAlign='center';lines.forEach((l,i)=>ctx.fillText(l,cx,y+i*lineHeight));ctx.textAlign='left'}
+  async function drawPhysicalProduct(ctx,img,dim,x,y,w,h,forcedScale=null){
+    if(!img){ctx.strokeStyle='#d1d5db';ctx.setLineDash([10,10]);ctx.strokeRect(x+20,y+20,w-40,h-40);ctx.setLineDash([]);ctx.fillStyle='#6b7280';ctx.font='24px system-ui';ctx.textAlign='center';ctx.fillText('Product image needed',x+w/2,y+h/2);ctx.textAlign='left';return;}const b=trimTransparent(img);const scale=forcedScale||Math.min(w/dim.w,h/dim.h);const targetW=dim.w*scale,targetH=dim.h*scale;const imgRatio=b.sw/b.sh,boxRatio=targetW/targetH;let dw,dh;if(imgRatio>boxRatio){dw=targetW;dh=dw/imgRatio}else{dh=targetH;dw=dh*imgRatio}const dx=x+(w-dw)/2,dy=y+h-dh;ctx.save();ctx.shadowColor='rgba(0,0,0,.20)';ctx.shadowBlur=20;ctx.shadowOffsetY=12;ctx.drawImage(img,b.sx,b.sy,b.sw,b.sh,dx,dy,dw,dh);ctx.restore();
+  }
+  function drawProductName(ctx,p,cx,y,maxWidth=850){ctx.fillStyle='#202228';ctx.font='750 24px system-ui';ctx.textAlign='center';let text=`${p.description||p.category||''}  •  ${p.code}`;if(ctx.measureText(text).width>maxWidth)text=p.code;ctx.fillText(text,cx,y);ctx.textAlign='left'}
+  function drawPriceCard(ctx,plan,x,y,w,h){ctx.fillStyle='rgba(255,255,255,.95)';ctx.strokeStyle='#e3e5e9';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(x,y,w,h,18);ctx.fill();ctx.stroke();if(!plan){ctx.fillStyle='#6b7280';ctx.font='22px system-ui';ctx.fillText('Add a price plan',x+24,y+55);return;}const promo=calcPromoPrice(plan);ctx.fillStyle='#b00020';ctx.font='800 42px system-ui';ctx.fillText(`${money(promo)}/month`,x+24,y+55);ctx.fillStyle='#222';ctx.font='700 19px system-ui';ctx.fillText(plan.promoType==='none'?'Current plan':promoText(plan),x+24,y+89);ctx.fillStyle='#6b7280';ctx.font='17px system-ui';ctx.fillText(`Normal ${money(plan.normalPrice)}/month • ${plan.planYears} years • ${plan.serviceType||''}`,x+24,y+119)}
+  async function downloadAndRegisterPoster(){
+    await generatePoster();const codes=[posterDraft.model1,...(posterDraft.template!=='single'&&posterDraft.model2?[posterDraft.model2]:[])].filter(Boolean);if(!codes.length){toast('Choose a model');return}const restricted=codes.filter(c=>posterAvailability(c,posterDraft.region).restricted);if(restricted.length&&!posterDraft.overrideRestricted){toast('Generation blocked: STOP Submission / Discontinued model selected.');return;}const canvas=document.getElementById('posterCanvas');const blob=await new Promise(r=>canvas.toBlob(r,'image/png',1));const fileName=`LG_Poster_${codes.map(c=>c.split('.')[0]).join('_')}_${new Date().toISOString().slice(0,10)}.png`;const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fileName;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),3000);let cloudPosterPath=null;try{cloudPosterPath=await cloudUploadPoster(blob,fileName)}catch(e){console.warn(e)}const modelSnapshots={};codes.forEach(c=>{if(state.products[c])modelSnapshots[c]=modelFingerprint(state.products[c])});state.posters.push({id:uid('poster'),title:posterDraft.title||autoPosterTitle(),template:posterDraft.template,modelCodes:codes,planIds:[posterDraft.plan1,posterDraft.plan2].filter(Boolean),modelSnapshots,createdAt:nowIso(),status:'current',fileName,comboSettings:{show5:posterDraft.show5,show7:posterDraft.show7,region:posterDraft.region,language:posterDraft.language},availabilitySnapshot:Object.fromEntries(codes.map(c=>[c,posterAvailability(c,posterDraft.region)])),cloudPosterPath});saveState();toast('High-resolution poster downloaded and registered.');
+  }
+
+  function renderRevisions(view){
+    const outdated=state.posters.filter(posterIsOutdated).slice().reverse();const current=state.posters.filter(p=>!posterIsOutdated(p)).slice().reverse();const attention=current.filter(p=>(p.modelCodes||[]).some(c=>posterAvailability(c,p.comboSettings?.region||'AL8').balance<=0));
+    view.innerHTML=`<div class="card"><div class="card-title-row"><div><h2>Needs revision</h2><div class="small muted">A poster is flagged when a linked model, asset or price fingerprint changes.</div></div><span class="badge-num">${outdated.length}</span></div>
+      ${outdated.length?outdated.map(p=>revisionHtml(p,true)).join(''):'<div class="empty-state"><b>No outdated posters</b>Generate and register posters in Poster Studio. Future changes will appear here.</div>'}
+      </div><div class="card" style="margin-top:16px"><div class="card-title-row"><div><h2>Availability attention</h2><div class="small muted">Stock changes do not force a visual poster revision, but they are flagged here for sales use.</div></div><span class="badge-num">${attention.length}</span></div>${attention.length?attention.slice(0,20).map(p=>`<div class="revision-item"><div><h4>${esc(p.title||p.fileName||'Poster')}</h4><div class="small mono">${esc((p.modelCodes||[]).join(' + '))}</div><div class="revision-reason">${(p.modelCodes||[]).map(c=>`${modelShort(c)}: ${posterAvailability(c,p.comboSettings?.region||'AL8').text}`).join(' • ')}</div></div><span class="pill amber">Check stock</span></div>`).join(''):'<div class="empty-state">No stock attention for current posters.</div>'}</div><div class="card" style="margin-top:16px"><div class="card-title-row"><h2>Current registered posters</h2><span class="badge-num">${current.length}</span></div>${current.length?current.slice(0,20).map(p=>revisionHtml(p,false)).join(''):'<div class="empty-state">No current posters registered.</div>'}</div>`;
+    view.querySelectorAll('[data-regenerate]').forEach(b=>b.onclick=()=>{
+      const p=state.posters.find(x=>x.id===b.dataset.regenerate);if(!p)return;posterDraft.template=p.template||((p.modelCodes||[]).length>1?'combo':'single');posterDraft.model1=p.modelCodes?.[0]||'';posterDraft.model2=p.modelCodes?.[1]||'';posterDraft.plan1=p.planIds?.[0]||'';posterDraft.plan2=p.planIds?.[1]||'';posterDraft.title=p.title||'';navigate('posters');
+    });
+  }
+  function revisionHtml(p,isBad){
+    const reasons=(p.outdatedReasons||[]).slice(-3).map(r=>r.summary).filter(Boolean);return `<div class="revision-item"><div><h4>${esc(p.title||p.fileName||'Poster')}</h4><div class="small mono">${esc((p.modelCodes||[]).join(' + '))}</div><div class="${isBad?'revision-reason':'small muted'}">${isBad?esc(reasons.join(' • ')||'Linked product data no longer matches the poster snapshot.'):esc(`Generated ${fmtDate(p.createdAt)}`)}</div></div>${isBad?`<button class="btn btn-primary btn-sm" data-regenerate="${p.id}">Regenerate</button>`:'<span class="pill green">Current</span>'}</div>`;
+  }
+
+  function renderSettings(view){
+    const s=state.settings||{};
+    view.innerHTML=`
+      <div class="grid settings-grid">
+        <div class="card"><h2>Poster identity</h2><div class="field" style="margin-top:14px"><label>Name / business label</label><input id="agentName" class="input" style="width:100%" value="${esc(s.agentName||'')}"></div><div class="field" style="margin-top:10px"><label>Contact</label><input id="agentContact" class="input" style="width:100%" value="${esc(s.agentContact||'')}"></div><div class="field" style="margin-top:10px"><label>Footer disclaimer</label><input id="posterDisclaimer" class="input" style="width:100%" value="${esc(s.posterDisclaimer||'')}"></div><button id="saveSettings" class="btn btn-primary" style="margin-top:14px">Save settings</button></div>
+        <div class="card"><h2>Data status</h2><div class="change-row"><b>Products</b><span>${Object.keys(state.products).length}</span><span>from stock report</span></div><div class="change-row"><b>Price plans</b><span>${state.pricePlans.length}</span><span>seeded + manual / future PDF import</span></div><div class="change-row"><b>Posters</b><span>${state.posters.length}</span><span>${revisionCount()} need revision</span></div><div class="change-row"><b>Source</b><span>${esc(state.sourceReport||'—')}</span><span>${esc(fmtDate(state.reportDate))}</span></div></div>
+      </div>
+      <div class="card" style="margin-top:16px"><h2>Reset local cache</h2><p class="small muted">This clears only this browser cache. Your cloud workspace remains intact and reloads after sign-in.</p><button id="resetPrototype" class="btn btn-danger">Reset to baseline</button></div>`;
+    document.getElementById('saveSettings').onclick=()=>{state.settings={agentName:document.getElementById('agentName').value.trim(),agentContact:document.getElementById('agentContact').value.trim(),posterDisclaimer:document.getElementById('posterDisclaimer').value.trim()};saveState();toast('Settings saved.')};
+    document.getElementById('resetPrototype').onclick=async()=>{if(!confirm('Clear this browser cache and reload from cloud?'))return;localStorage.removeItem(STORAGE_KEY);await clearAssets();if(cloudReady){await cloudLoadOrSeedState();await hydrateAllCloudAssetsToLocal();localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}else state=loadState();render();toast(cloudReady?'Local cache reloaded from cloud.':'Local cache reset.')};
+  }
+
+  async function exportBackup(){
+    const assets=await getAllAssets();const payload={format:'LGSubscribeControlCentreBackup',version:1,exportedAt:nowIso(),state,assets};const blob=new Blob([JSON.stringify(payload)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`LG_Control_Centre_Backup_${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+  }
+  async function importBackup(file){
+    if(!file)return;try{const payload=JSON.parse(await file.text());if(!payload.state?.products)throw new Error('Invalid backup');state=payload.state;saveState();await clearAssets();for(const a of payload.assets||[])await putAsset(a.model,a.dataUrl,a.fileName);render();toast('Backup restored.')}catch(e){toast('Backup could not be restored.')}
+  }
+
+  document.getElementById('installAppBtn').addEventListener('click',handleInstallApp);
+  document.getElementById('quickUpdateBtn').addEventListener('click',()=>navigate('update'));
+  document.getElementById('exportBackupBtn').addEventListener('click',exportBackup);
+  document.getElementById('importBackupInput').addEventListener('change',e=>importBackup(e.target.files[0]));
+
+  async function seedBuiltinAssets(){
+    const dims=window.__LG_CONFIRMED_DIMS__||{};for(const [code,d] of Object.entries(dims)){if(!state.products[code])continue;const p=state.products[code];p.dimensions=p.dimensions||{};if(d.width)p.dimensions.width=d.width;if(d.height)p.dimensions.height=d.height;if(d.depth)p.dimensions.depth=d.depth;p.dimensionSource=d.note||p.dimensionSource||'';}
+    const built=window.__LG_BUILTIN_ASSETS__||{};for(const [code,a] of Object.entries(built)){if(!state.products[code])continue;const existing=await getAsset(code);if(!existing)await putAsset(code,a.dataUrl,a.fileName);const p=state.products[code];p.dimensions=p.dimensions||{};if(a.dimensions?.width)p.dimensions.width=a.dimensions.width;if(a.dimensions?.height)p.dimensions.height=a.dimensions.height;if(a.dimensions?.depth)p.dimensions.depth=a.dimensions.depth;p.imageApproved=true;p.assetNote=a.note||p.assetNote||'Seeded from supplied poster reference.';}
+    const seedPlans=window.__LG_SEEDED_PRICE_PLANS__||[];
+    state.pricePlans=state.pricePlans||[];
+    for(const sp of seedPlans){ if(!state.pricePlans.some(p=>p.id===sp.id)) state.pricePlans.push({...sp}); }
+    state.comboPresets=state.comboPresets||[];
+    state.settings=state.settings||{};if(!state.settings.agentName)state.settings.agentName='Jason Yang';if(!state.settings.agentContact)state.settings.agentContact='011-59726619';if(!state.settings.posterDisclaimer)state.settings.posterDisclaimer='Imej untuk tujuan ilustrasi sahaja. Tertakluk kepada terma & syarat.';
     saveState();
-    toast('Selected updates applied. '+applied.length+' model change'+(applied.length===1?'':'s')+' updated.');
-    render();
-  };
+  }
+  render(); initCloudAuth().catch(e=>console.error(e)); seedBuiltinAssets().then(()=>render()).catch(e=>console.warn(e));
 })();
+
 </script>
 </body>
 </html>
