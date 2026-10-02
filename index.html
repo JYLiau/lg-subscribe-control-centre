@@ -276,10 +276,10 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
 
   function validStockModelCode(value){
     const s=String(value??'').trim().toUpperCase();
-    if(!s || s.length<5 || s.length>45) return false;
-    if(['MODEL','TOTAL','GRAND TOTAL'].includes(s)) return false;
+    if(!s || s.length<4 || s.length>45) return false;
+    if(['MODEL','TOTAL','GRAND TOTAL','SUBTOTAL'].includes(s)) return false;
     if(!/^[A-Z0-9][A-Z0-9.\-]*$/.test(s)) return false;
-    return /[A-Z]/.test(s) && /[0-9]/.test(s);
+    return /[A-Z]/.test(s);
   }
   function validStockCategory(value){
     const s=String(value??'').trim();
@@ -582,46 +582,86 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     const reportCell=av?.[0]?.[3] ?? pf?.[0]?.[1] ?? null;
     const reportDate=excelDateToIso(reportCell) || nowIso();
     const products={}, rejectedRows=[];
+
     function findHeader(rows){
       for(let i=0;i<Math.min(rows.length,80);i++){
         const row=rows[i]||[];
         const lower=row.map(v=>String(v??'').trim().toLowerCase());
-        if(lower.includes('model') && lower.includes('category')) return i;
+        const modelIdx=lower.findIndex(v=>v==='model'||v==='model code'||v==='modelcode');
+        const catIdx=lower.findIndex(v=>v==='category'||v==='product category');
+        if(modelIdx>=0 && catIdx>=0) return {row:i,modelIdx,catIdx,lower};
       }
-      return -1;
+      return null;
     }
-    const avHeader=findHeader(av);
-    if(avHeader<0) throw new Error('Could not locate Category / Model header in “Available Sum”.');
+    function stockAt(r,idx){ return idx>=0 && idx<r.length ? safeNum(r[idx]) : 0; }
+
+    const ah=findHeader(av);
+    if(!ah) throw new Error('Could not locate Category / Model header in “Available Sum”.');
     let cat='';
-    for(let i=avHeader+1;i<av.length;i++){
+    for(let i=ah.row+1;i<av.length;i++){
       const r=av[i]||[];
-      if(validStockCategory(r[2])) cat=String(r[2]).trim();
-      const raw=r[3], code=normModel(raw);
+      if(validStockCategory(r[ah.catIdx])) cat=String(r[ah.catIdx]).trim();
+      const raw=r[ah.modelIdx], code=normModel(raw);
       if(!code) continue;
-      if(!validStockModelCode(code)){ if(String(raw??'').trim()) rejectedRows.push({sheet:'Available Sum',row:i+1,value:String(raw)}); continue; }
+      if(!validStockModelCode(code)){
+        if(String(raw??'').trim()) rejectedRows.push({sheet:'Available Sum',row:i+1,value:String(raw)});
+        continue;
+      }
+
+      // The recurring LG stock report keeps the regional stock blocks at fixed
+      // offsets from the Model column even when leading columns shift.
+      const m=ah.modelIdx;
       products[code]=Object.assign({},products[code]||{},{
         code,category:cat||products[code]?.category||'',
         stock:{
-          AL8:{opening:safeNum(r[4]),incoming:safeNum(r[5]),backorder:safeNum(r[6]),currentOrders:safeNum(r[7]),balance:safeNum(r[8])},
-          AL2:{opening:safeNum(r[21]),inTransit:safeNum(r[22]),pending:safeNum(r[23]),backorder:safeNum(r[24]),currentOrders:safeNum(r[25]),balance:safeNum(r[26])},
-          AL3:{opening:safeNum(r[27]),inTransit:safeNum(r[28]),pending:safeNum(r[29]),backorder:safeNum(r[30]),currentOrders:safeNum(r[31]),balance:safeNum(r[32])}
+          AL8:{
+            opening:stockAt(r,m+1),
+            incoming:stockAt(r,m+2),
+            backorder:stockAt(r,m+3),
+            currentOrders:stockAt(r,m+4),
+            balance:stockAt(r,m+5)
+          },
+          AL2:{
+            opening:stockAt(r,m+18),
+            inTransit:stockAt(r,m+19),
+            pending:stockAt(r,m+20),
+            backorder:stockAt(r,m+21),
+            currentOrders:stockAt(r,m+22),
+            balance:stockAt(r,m+23)
+          },
+          AL3:{
+            opening:stockAt(r,m+24),
+            inTransit:stockAt(r,m+25),
+            pending:stockAt(r,m+26),
+            backorder:stockAt(r,m+27),
+            currentOrders:stockAt(r,m+28),
+            balance:stockAt(r,m+29)
+          }
         }
       });
     }
-    const pfHeader=findHeader(pf);
-    if(pfHeader<0) throw new Error('Could not locate Category / Model header in “Portfolio Status”.');
+
+    const ph=findHeader(pf);
+    if(!ph) throw new Error('Could not locate Category / Model header in “Portfolio Status”.');
     cat='';
-    for(let i=pfHeader+1;i<pf.length;i++){
+    for(let i=ph.row+1;i<pf.length;i++){
       const r=pf[i]||[];
-      if(validStockCategory(r[0])) cat=String(r[0]).trim();
-      const raw=r[1], code=normModel(raw);
+      if(validStockCategory(r[ph.catIdx])) cat=String(r[ph.catIdx]).trim();
+      const raw=r[ph.modelIdx], code=normModel(raw);
       if(!code) continue;
-      if(!validStockModelCode(code)){ if(String(raw??'').trim()) rejectedRows.push({sheet:'Portfolio Status',row:i+1,value:String(raw)}); continue; }
+      if(!validStockModelCode(code)){
+        if(String(raw??'').trim()) rejectedRows.push({sheet:'Portfolio Status',row:i+1,value:String(raw)});
+        continue;
+      }
       products[code]=products[code]||{code,category:cat,stock:{AL8:{},AL2:{},AL3:{}}};
       if(cat) products[code].category=cat;
-      products[code].description=String(r[2]||'').trim();
-      products[code].lifecycleStatus=String(r[3]||'').trim();
-      products[code].submissionStatus=String(r[4]||'').trim();
+
+      const descIdx=ph.lower.findIndex(v=>v==='description'||v==='product description');
+      const lifeIdx=ph.lower.findIndex(v=>v.includes('portfolio')||v.includes('lifecycle'));
+      const submitIdx=ph.lower.findIndex(v=>v.includes('submission'));
+      products[code].description=String(r[descIdx>=0?descIdx:ph.modelIdx+1]||'').trim();
+      products[code].lifecycleStatus=String(r[lifeIdx>=0?lifeIdx:ph.modelIdx+2]||'').trim();
+      products[code].submissionStatus=String(r[submitIdx>=0?submitIdx:ph.modelIdx+3]||'').trim();
     }
     return {sourceReport:fileName,reportDate,products,rejectedRows};
   }
