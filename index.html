@@ -25,6 +25,91 @@
 <div class="boot" id="boot"><div class="card"><div class="logo">LG</div><h1>LG Subscribe Control Centre</h1><p id="status">Opening your secure cloud workspace…</p><div class="spinner" id="spin"></div></div></div>
 <script>
 const SOURCE_URL='https://jmnnesumjpkraugtzdkl.supabase.co/storage/v1/object/public/app-static/d257117f-df44-4da3-b7cb-7d0b84e6e0e4/lg-control-centre/index.html';
+
+const IMPORT_PATCH = String.raw`
+  function renderImportPreview(){
+    const el=document.getElementById('importPreview'); if(!el||!pendingImport) return;
+    const d=pendingImport.diff||[];
+    if(!(pendingImport.selected instanceof Set)) pendingImport.selected=new Set(d.filter(x=>x.type!=='missing').map(x=>x.model));
+    const counts={new:0,lifecycle:0,stock:0,missing:0};
+    d.forEach(x=>{if(x.type==='new-model')counts.new++;if(x.type==='missing')counts.missing++;if(x.summary.includes('Lifecycle')||x.summary.includes('Submission'))counts.lifecycle++;if(x.summary.includes('Stock:')||x.summary.includes('Balance'))counts.stock++;});
+    const sel=pendingImport.selected.size;
+    el.innerHTML=
+      '<div class="hr"></div>'+
+      '<div class="card-title-row"><div><h2>Review before applying</h2><div class="small muted">'+esc(pendingImport.fileName)+' • report '+esc(fmtDate(pendingImport.parsed.reportDate))+'</div></div>'+
+      '<div><button class="btn btn-secondary btn-sm" id="cancelImport">Cancel</button> <button class="btn btn-primary btn-sm" id="applyImport" '+(sel?'':'disabled')+'>Apply selected ('+sel+')</button></div></div>'+
+      '<div class="grid change-summary">'+
+        '<div class="mini-kpi"><b>'+counts.new+'</b><span>New models</span></div>'+
+        '<div class="mini-kpi"><b>'+counts.lifecycle+'</b><span>Lifecycle changes</span></div>'+
+        '<div class="mini-kpi"><b>'+counts.stock+'</b><span>Stock changes</span></div>'+
+        '<div class="mini-kpi"><b>'+counts.missing+'</b><span>Missing from report</span></div>'+
+      '</div>'+
+      '<div class="toolbar"><button class="btn btn-secondary btn-sm" id="selectAllImport">Select all</button><button class="btn btn-secondary btn-sm" id="clearImport">Clear all</button><span class="small muted">Tick only the model updates you want to apply. Missing models are unchecked by default.</span></div>'+
+      (d.length?'<div class="table-wrap" style="max-height:460px"><table class="table"><thead><tr><th style="width:58px">Apply</th><th>Model</th><th>Change</th><th>Details</th></tr></thead><tbody>'+
+        d.map(x=>'<tr><td><input class="import-choice" type="checkbox" data-model="'+esc(x.model)+'" '+(pendingImport.selected.has(x.model)?'checked':'')+'></td><td class="mono">'+esc(x.model)+'</td><td><span class="pill '+(x.type==='new-model'?'blue':x.type==='missing'?'red':'amber')+'"><span class="dot"></span>'+esc(x.type)+'</span></td><td>'+esc(x.summary)+'</td></tr>').join('')+
+        '</tbody></table></div>':'<div class="notice ok">No model lifecycle or availability changes were detected.</div>')+
+      '<div class="notice ok" style="margin-top:14px"><b>Import protection enabled:</b> numeric totals, repeated headers and non-model rows are ignored instead of being created as products.</div>'+
+      '<div class="notice warn" style="margin-top:10px"><b>Safe update behavior:</b> only selected models are updated. Price plans, saved images, dimensions and poster records are preserved.</div>';
+    document.getElementById('cancelImport').onclick=()=>{pendingImport=null;renderUpdate(document.getElementById('view'))};
+    document.getElementById('applyImport').onclick=applyPendingImport;
+    document.getElementById('selectAllImport').onclick=()=>{pendingImport.selected=new Set(d.map(x=>x.model));renderImportPreview();};
+    document.getElementById('clearImport').onclick=()=>{pendingImport.selected=new Set();renderImportPreview();};
+    el.querySelectorAll('.import-choice').forEach(cb=>cb.onchange=()=>{if(cb.checked)pendingImport.selected.add(cb.dataset.model);else pendingImport.selected.delete(cb.dataset.model);renderImportPreview();});
+  }
+
+  async function applyPendingImport(){
+    if(!pendingImport) return;
+    const selected=pendingImport.selected instanceof Set?pendingImport.selected:new Set();
+    const changes=pendingImport.diff.filter(c=>selected.has(c.model));
+    if(!changes.length){toast('Select at least one update to apply.');return;}
+    const sourceFile=pendingImport.file; let cloudSourcePath=null; try{cloudSourcePath=await cloudUploadSourceFile(sourceFile,'stock')}catch(e){console.warn(e)}
+    const parsed=pendingImport.parsed; const old=state.products||{}; const next=clone(old);
+    const chosenModels=new Set(changes.map(c=>c.model));
+    chosenModels.forEach(code=>{
+      const incoming=parsed.products[code],prev=old[code]||{};
+      if(incoming){
+        next[code]=Object.assign({},prev,incoming,{
+          dimensions:prev.dimensions||{width:null,height:null,depth:null},
+          imageApproved:!!prev.imageApproved,
+          reportMissing:false,
+          updatedAt:nowIso()
+        });
+      }else if(prev.code){
+        next[code]=Object.assign({},prev,{reportMissing:true,updatedAt:nowIso()});
+      }
+    });
+    state.products=next; state.sourceReport=parsed.sourceReport; state.reportDate=parsed.reportDate;
+    const applied=changes.map(c=>({...c,at:nowIso()}));
+    state.changeLog=[...(state.changeLog||[]),...applied].slice(-500);
+    const posterChanges=applied.filter(c=>c.type==='new-model'||c.type==='missing'||c.summary.includes('Lifecycle')||c.summary.includes('Submission'));
+    if(posterChanges.length) markPostersOutdated([...new Set(posterChanges.map(x=>x.model))],posterChanges);
+    state.importHistory=state.importHistory||[];
+    state.importHistory.push({id:uid('import'),fileName:pendingImport.fileName,reportDate:parsed.reportDate,appliedAt:nowIso(),changeCount:applied.length,detectedChangeCount:pendingImport.diff.length,storagePath:cloudSourcePath});
+    pendingImport=null; saveState(); toast(applied.length+' selected update'+(applied.length===1?'':'s')+' applied.'); render();
+  }
+`;
+
+function applyImporterFixes(html){
+  html=html.replace(
+    "function normModel(code){ return String(code||'').trim().toUpperCase(); }",
+    "function normModel(code){ return String(code||'').trim().toUpperCase(); }\\n  function isValidModelCell(v){if(typeof v!=='string')return false;const s=normModel(v);if(!s||['MODEL','EOL MODEL','NEW MODEL','REMOVAL FROM DST','GRAND TOTAL'].includes(s))return false;if(s.length<5||s.length>48||/\\\\s/.test(s)||!/[A-Z]/.test(s))return false;return /^[A-Z0-9._+\\\\/-]+$/.test(s);}\\n  function isValidCategoryCell(v){return typeof v==='string'&&/[A-Za-z]/.test(v)&&String(v).trim().toLowerCase()!=='category';}"
+  );
+  html=html.replace("if(r[2]) cat=String(r[2]).trim();","if(isValidCategoryCell(r[2])) cat=String(r[2]).trim();");
+  html=html.replace("const code=normModel(r[3]);\\n      if(!code || code==='MODEL') continue;","if(!isValidModelCell(r[3])) continue;\\n      const code=normModel(r[3]);");
+  html=html.replace("if(r[0] && String(r[0]).trim()!=='Category') cat=String(r[0]).trim();","if(isValidCategoryCell(r[0])) cat=String(r[0]).trim();");
+  html=html.replace("const code=normModel(r[1]);\\n      if(!code || code==='MODEL') continue;","if(!isValidModelCell(r[1])) continue;\\n      const code=normModel(r[1]);");
+  html=html.replace("pendingImport={fileName:file.name,file,parsed,diff};","pendingImport={fileName:file.name,file,parsed,diff,selected:new Set(diff.filter(x=>x.type!=='missing').map(x=>x.model))};");
+  html=html.replace(
+    /  function renderImportPreview\(\)\{[\s\S]*?\n  function renderProducts\(view\)\{/,
+    IMPORT_PATCH+"\\n  function renderProducts(view){"
+  );
+  html=html.replace(
+    '<div class="change-row"><b>2. Review</b><span>New / discontinued / stock changes</span><span class="muted">Approve only when correct.</span></div>',
+    '<div class="change-row"><b>2. Review</b><span>New / lifecycle / stock changes</span><span class="muted">Select individual model updates to apply.</span></div>'
+  );
+  return html;
+}
+
 async function boot(){
   try{
     const r=await fetch(SOURCE_URL,{cache:'no-store'});
@@ -34,6 +119,7 @@ async function boot(){
       "function isPublishedPwaLocation(){return location.protocol==='https:'&&location.pathname.includes('/storage/v1/object/public/app-static/');}",
       "function isPublishedPwaLocation(){return location.protocol==='https:';}"
     );
+    html=applyImporterFixes(html);
     html=html.replaceAll('./icon-192.png','./icon.svg').replaceAll('./icon-512.png','./icon.svg');
     document.open();
     document.write(html);
