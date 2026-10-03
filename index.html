@@ -27,7 +27,23 @@ button,input,select,textarea{font:inherit}.shell{min-height:100vh;display:grid;g
 
 
 .cloud-gate{position:fixed;inset:0;z-index:999;background:linear-gradient(135deg,#111318,#2a0c14);display:grid;place-items:center;padding:24px}.cloud-gate.hidden{display:none}.cloud-card{width:min(480px,94vw);background:#fff;border-radius:22px;padding:26px;box-shadow:0 30px 90px rgba(0,0,0,.35)}.cloud-card h1{margin:0 0 6px;font-size:25px}.cloud-card p{margin:0 0 18px;color:#667085;font-size:13px}.cloud-status{font-size:12px;margin-top:12px;min-height:18px;color:#667085}.cloud-user{font-size:11px;color:#aeb4bf;overflow:hidden;text-overflow:ellipsis}.sync-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#9aa1ad;margin-right:6px}.sync-dot.ok{background:#22c55e}.sync-dot.busy{background:#f59e0b}.sync-dot.err{background:#ef4444}
-</style>
+
+    .multi-filter{position:relative;min-width:190px}
+    .multi-filter>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .multi-filter>summary::-webkit-details-marker{display:none}
+    .multi-filter>summary::after{content:'⌄';font-size:16px;opacity:.7}
+    .multi-filter[open]>summary::after{content:'⌃'}
+    .multi-filter-panel{position:absolute;z-index:60;top:calc(100% + 8px);left:0;min-width:250px;background:#fff;border:1px solid #e2e6ec;border-radius:16px;box-shadow:0 16px 50px rgba(17,24,39,.18);padding:10px}
+    .multi-filter-option{display:flex;align-items:center;gap:12px;padding:11px 10px;border-radius:10px;font-size:15px}
+    .multi-filter-option:active{background:#f3f4f6}
+    .multi-filter-option input{width:20px;height:20px;accent-color:#c0002b}
+    .multi-filter-actions{display:flex;gap:8px;padding:8px 6px 2px;border-top:1px solid #eceff3;margin-top:6px}
+    .multi-filter-actions .btn{flex:1}
+    @media(max-width:700px){
+      .multi-filter{min-width:0;width:100%}
+      .multi-filter-panel{position:fixed;left:20px;right:20px;top:auto;bottom:86px;min-width:0;max-height:62vh;overflow:auto;border-radius:22px}
+    }
+  </style>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -263,7 +279,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
   let currentPage = 'dashboard';
   let pendingImport = null;
   let pendingDocImport = null;
-  let productFilter = { search:'', category:'all', lifecycle:'all', stock:'all', sort:'priority' };
+  let productFilter = { search:'', category:'all', lifecycle:['current','npi','discontinued','other'], stock:['In Stock','Incoming','Backorder / No Stock','No Stock'], sort:'priority' };
   let priceEditId = null;
   let posterDraft = { model1:'', model2:'', template:'single', title:'', badge:'', plan1:'', plan2:'', show5:true, show7:true, servicePreference:'Combine', crossShowIndividuals:true, region:'AL8', language:'ms', overrideRestricted:false };
 
@@ -407,6 +423,14 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     return 'No Stock';
   }
   function stockClass(st){ return st==='In Stock'?'green':st==='Incoming'?'blue':st.startsWith('Backorder')?'amber':'gray'; }
+  function lifecycleFilterKey(p){
+    const s=String(p?.lifecycleStatus||'').toLowerCase();
+    const sub=String(p?.submissionStatus||'').toLowerCase();
+    if(s.includes('current')) return 'current';
+    if(s.includes('npi')) return 'npi';
+    if(s.includes('discontinued')||sub.includes('stop')) return 'discontinued';
+    return 'other';
+  }
   function lifecycleRank(p){
     const s=String(p?.lifecycleStatus||'').toLowerCase();
     const sub=String(p?.submissionStatus||'').toLowerCase();
@@ -839,21 +863,63 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
 
   function renderProducts(view){
     const cats=[...new Set(Object.values(state.products||{}).map(x=>x.category).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b)));
+    const lifeOptions=[
+      {value:'current',label:'Current'},
+      {value:'npi',label:'NPI'},
+      {value:'discontinued',label:'Discontinued'},
+      {value:'other',label:'Other / Not classified'}
+    ];
+    const stockOptions=['In Stock','Incoming','Backorder / No Stock','No Stock'];
+
+    if(!Array.isArray(productFilter.lifecycle)){
+      productFilter.lifecycle=productFilter.lifecycle==='all'||!productFilter.lifecycle?lifeOptions.map(x=>x.value):[productFilter.lifecycle];
+    }
+    if(!Array.isArray(productFilter.stock)){
+      productFilter.stock=productFilter.stock==='all'||!productFilter.stock?[...stockOptions]:[productFilter.stock];
+    }
+
+    const lifeSelected=new Set(productFilter.lifecycle);
+    const stockSelected=new Set(productFilter.stock);
+    const lifeLabel=lifeSelected.size===lifeOptions.length?'All lifecycle':lifeSelected.size===1?(lifeOptions.find(x=>lifeSelected.has(x.value))?.label||'1 selected'):`${lifeSelected.size} lifecycle selected`;
+    const stockLabel=stockSelected.size===stockOptions.length?'All stock':stockSelected.size===1?([...stockSelected][0]||'1 selected'):`${stockSelected.size} stock selected`;
+
     const products=Object.values(state.products||{}).filter(p=>{ if(!validStockModelCode(p.code)) return false;
       const q=productFilter.search.toLowerCase();
       if(q && !`${p.code} ${p.description} ${p.category}`.toLowerCase().includes(q)) return false;
       if(productFilter.category!=='all' && (p.category||'')!==productFilter.category) return false;
-      if(productFilter.lifecycle!=='all' && !(p.lifecycleStatus||'').toLowerCase().includes(productFilter.lifecycle)) return false;
-      if(productFilter.stock!=='all' && stockState(p)!==productFilter.stock) return false;
+      if(lifeSelected.size && !lifeSelected.has(lifecycleFilterKey(p))) return false;
+      if(stockSelected.size && !stockSelected.has(stockState(p))) return false;
       return true;
     });
+
     view.innerHTML=`
       <div class="card">
         <div class="toolbar">
           <input id="productSearch" class="input search grow" placeholder="Search model, category or description" value="${esc(productFilter.search)}">
           <select id="categoryFilter" class="select"><option value="all">All categories</option>${cats.map(x=>`<option value="${esc(x)}" ${productFilter.category===x?'selected':''}>${esc(x)}</option>`).join('')}</select>
-          <select id="lifeFilter" class="select"><option value="all">All lifecycle</option><option value="current" ${productFilter.lifecycle==='current'?'selected':''}>Current</option><option value="npi" ${productFilter.lifecycle==='npi'?'selected':''}>NPI</option><option value="discontinued" ${productFilter.lifecycle==='discontinued'?'selected':''}>Discontinued</option></select>
-          <select id="stockFilter" class="select"><option value="all">All stock</option>${['In Stock','Incoming','Backorder / No Stock','No Stock'].map(x=>`<option ${productFilter.stock===x?'selected':''}>${x}</option>`).join('')}</select>
+
+          <details class="multi-filter" id="lifeFilterBox">
+            <summary class="select">${esc(lifeLabel)}</summary>
+            <div class="multi-filter-panel">
+              ${lifeOptions.map(x=>`<label class="multi-filter-option"><input type="checkbox" data-life-value="${x.value}" ${lifeSelected.has(x.value)?'checked':''}> <span>${x.label}</span></label>`).join('')}
+              <div class="multi-filter-actions">
+                <button type="button" class="btn btn-secondary btn-sm" id="lifeSelectAll">Select all</button>
+                <button type="button" class="btn btn-primary btn-sm" id="lifeApply">Apply</button>
+              </div>
+            </div>
+          </details>
+
+          <details class="multi-filter" id="stockFilterBox">
+            <summary class="select">${esc(stockLabel)}</summary>
+            <div class="multi-filter-panel">
+              ${stockOptions.map(x=>`<label class="multi-filter-option"><input type="checkbox" data-stock-value="${esc(x)}" ${stockSelected.has(x)?'checked':''}> <span>${esc(x)}</span></label>`).join('')}
+              <div class="multi-filter-actions">
+                <button type="button" class="btn btn-secondary btn-sm" id="stockSelectAll">Select all</button>
+                <button type="button" class="btn btn-primary btn-sm" id="stockApply">Apply</button>
+              </div>
+            </div>
+          </details>
+
           <select id="sortFilter" class="select">
             <option value="priority" ${productFilter.sort==='priority'?'selected':''}>Sort: Priority</option>
             <option value="availability" ${productFilter.sort==='availability'?'selected':''}>Sort: Availability</option>
@@ -872,11 +938,29 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
           </tr>`).join('')}
         </tbody></table></div>
       </div>`;
+
     document.getElementById('productSearch').oninput=e=>{productFilter.search=e.target.value;renderProducts(view)};
     document.getElementById('categoryFilter').onchange=e=>{productFilter.category=e.target.value;renderProducts(view)};
-    document.getElementById('lifeFilter').onchange=e=>{productFilter.lifecycle=e.target.value;renderProducts(view)};
-    document.getElementById('stockFilter').onchange=e=>{productFilter.stock=e.target.value;renderProducts(view)};
     document.getElementById('sortFilter').onchange=e=>{productFilter.sort=e.target.value;renderProducts(view)};
+
+    document.getElementById('lifeSelectAll').onclick=()=>{
+      document.querySelectorAll('[data-life-value]').forEach(cb=>cb.checked=true);
+    };
+    document.getElementById('lifeApply').onclick=()=>{
+      productFilter.lifecycle=[...document.querySelectorAll('[data-life-value]:checked')].map(cb=>cb.dataset.lifeValue);
+      document.getElementById('lifeFilterBox').open=false;
+      renderProducts(view);
+    };
+
+    document.getElementById('stockSelectAll').onclick=()=>{
+      document.querySelectorAll('[data-stock-value]').forEach(cb=>cb.checked=true);
+    };
+    document.getElementById('stockApply').onclick=()=>{
+      productFilter.stock=[...document.querySelectorAll('[data-stock-value]:checked')].map(cb=>cb.dataset.stockValue);
+      document.getElementById('stockFilterBox').open=false;
+      renderProducts(view);
+    };
+
     view.querySelectorAll('[data-product]').forEach(b=>b.onclick=()=>openProductModal(b.dataset.product));
   }
   function openProductModal(code){
