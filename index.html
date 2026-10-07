@@ -222,7 +222,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
       await cloudSaveState();
       const base=`${cloudWorkspaceId}/lg-control-centre`;
       const manifest={name:'LG Subscribe Control Centre',short_name:'LG Control',description:'LG Subscribe product, stock, pricing and poster control centre.',id:'./index.html',start_url:'./index.html',scope:'./',display:'standalone',orientation:'any',background_color:'#f4f6f8',theme_color:'#b00020',icons:[{src:'./icon-192.png',sizes:'192x192',type:'image/png',purpose:'any maskable'},{src:'./icon-512.png',sizes:'512x512',type:'image/png',purpose:'any maskable'}]};
-      const sw=`const CACHE='lg-subscribe-control-v08';\nself.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['./index.html','./manifest.webmanifest','./icon-192.png'])))});\nself.addEventListener('activate',e=>{e.waitUntil(Promise.all([clients.claim(),caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('lg-subscribe-control-')&&k!==CACHE).map(k=>caches.delete(k))))]))});\nself.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;const u=new URL(e.request.url);if(u.origin!==self.location.origin)return;e.respondWith(fetch(e.request).then(r=>{if(r&&r.ok&&e.request.mode==='navigate'){const copy=r.clone();caches.open(CACHE).then(c=>c.put('./index.html',copy))}return r}).catch(()=>caches.match(e.request).then(r=>r||caches.match('./index.html'))))});`;
+      const sw=`const CACHE='lg-subscribe-control-v09';\nself.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['./index.html','./manifest.webmanifest','./icon-192.png'])))});\nself.addEventListener('activate',e=>{e.waitUntil(Promise.all([clients.claim(),caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('lg-subscribe-control-')&&k!==CACHE).map(k=>caches.delete(k))))]))});\nself.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;const u=new URL(e.request.url);if(u.origin!==self.location.origin)return;e.respondWith(fetch(e.request).then(r=>{if(r&&r.ok&&e.request.mode==='navigate'){const copy=r.clone();caches.open(CACHE).then(c=>c.put('./index.html',copy))}return r}).catch(()=>caches.match(e.request).then(r=>r||caches.match('./index.html'))))});`;
       const [i192,i512]=await Promise.all([makeIconBlob(192),makeIconBlob(512)]);
       await uploadPwaFile(`${base}/manifest.webmanifest`,new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'}),'application/manifest+json');
       await uploadPwaFile(`${base}/sw.js`,new Blob([sw],{type:'application/javascript'}),'application/javascript');
@@ -279,7 +279,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
   let currentPage = 'dashboard';
   let pendingImport = null;
   let pendingDocImport = null;
-  let productFilter = { search:'', category:'all', lifecycle:['current','npi','discontinued','other'], stock:['In Stock','Incoming','Backorder / No Stock','No Stock'], sort:'priority' };
+  let productFilter = { search:'', category:'all', lifecycle:['current','npi','discontinued','other'], submission:'all', stock:['In Stock','Incoming','Backorder / No Stock','No Stock'], sort:'priority' };
   let priceEditId = null;
   let posterDraft = { model1:'', model2:'', template:'single', title:'', badge:'', plan1:'', plan2:'', show5:true, show7:true, servicePreference:'Combine', crossShowIndividuals:true, region:'AL8', language:'ms', overrideRestricted:false };
 
@@ -870,6 +870,8 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
       {value:'other',label:'Other / Not classified'}
     ];
     const stockOptions=['In Stock','Incoming','Backorder / No Stock','No Stock'];
+    const submissionRaw=[...new Set(Object.values(state.products||{}).map(p=>String(p.submissionStatus||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+    const submissionOptions=[{value:'__none__',label:'— / No restriction'},...submissionRaw.map(x=>({value:x,label:x}))];
 
     if(!Array.isArray(productFilter.lifecycle)){
       productFilter.lifecycle=productFilter.lifecycle==='all'||!productFilter.lifecycle?lifeOptions.map(x=>x.value):[productFilter.lifecycle];
@@ -879,8 +881,11 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     }
 
     const lifeSelected=new Set(productFilter.lifecycle);
+    const submissionAll=productFilter.submission==='all'||!Array.isArray(productFilter.submission);
+    const submissionSelected=new Set(submissionAll?submissionOptions.map(x=>x.value):productFilter.submission);
     const stockSelected=new Set(productFilter.stock);
     const lifeLabel=lifeSelected.size===lifeOptions.length?'All lifecycle':lifeSelected.size===1?(lifeOptions.find(x=>lifeSelected.has(x.value))?.label||'1 selected'):`${lifeSelected.size} lifecycle selected`;
+    const submissionLabel=submissionAll||submissionSelected.size===submissionOptions.length?'All submission':submissionSelected.size===1?(submissionOptions.find(x=>submissionSelected.has(x.value))?.label||'1 selected'):`${submissionSelected.size} submission selected`;
     const stockLabel=stockSelected.size===stockOptions.length?'All stock':stockSelected.size===1?([...stockSelected][0]||'1 selected'):`${stockSelected.size} stock selected`;
 
     const products=Object.values(state.products||{}).filter(p=>{ if(!validStockModelCode(p.code)) return false;
@@ -888,6 +893,8 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
       if(q && !`${p.code} ${p.description} ${p.category}`.toLowerCase().includes(q)) return false;
       if(productFilter.category!=='all' && (p.category||'')!==productFilter.category) return false;
       if(lifeSelected.size && !lifeSelected.has(lifecycleFilterKey(p))) return false;
+      const submissionKey=String(p.submissionStatus||'').trim()||'__none__';
+      if(!submissionAll && submissionSelected.size && !submissionSelected.has(submissionKey)) return false;
       if(stockSelected.size && !stockSelected.has(stockState(p))) return false;
       return true;
     });
@@ -905,6 +912,17 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
               <div class="multi-filter-actions">
                 <button type="button" class="btn btn-secondary btn-sm" id="lifeSelectAll">Select all</button>
                 <button type="button" class="btn btn-primary btn-sm" id="lifeApply">Apply</button>
+              </div>
+            </div>
+          </details>
+
+          <details class="multi-filter" id="submissionFilterBox">
+            <summary class="select">${esc(submissionLabel)}</summary>
+            <div class="multi-filter-panel">
+              ${submissionOptions.map(x=>`<label class="multi-filter-option"><input type="checkbox" data-submission-value="${esc(x.value)}" ${submissionSelected.has(x.value)?'checked':''}> <span>${esc(x.label)}</span></label>`).join('')}
+              <div class="multi-filter-actions">
+                <button type="button" class="btn btn-secondary btn-sm" id="submissionSelectAll">Select all</button>
+                <button type="button" class="btn btn-primary btn-sm" id="submissionApply">Apply</button>
               </div>
             </div>
           </details>
@@ -949,6 +967,16 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     document.getElementById('lifeApply').onclick=()=>{
       productFilter.lifecycle=[...document.querySelectorAll('[data-life-value]:checked')].map(cb=>cb.dataset.lifeValue);
       document.getElementById('lifeFilterBox').open=false;
+      renderProducts(view);
+    };
+
+    document.getElementById('submissionSelectAll').onclick=()=>{
+      document.querySelectorAll('[data-submission-value]').forEach(cb=>cb.checked=true);
+    };
+    document.getElementById('submissionApply').onclick=()=>{
+      const selected=[...document.querySelectorAll('[data-submission-value]:checked')].map(cb=>cb.dataset.submissionValue);
+      productFilter.submission=selected.length===submissionOptions.length?'all':selected;
+      document.getElementById('submissionFilterBox').open=false;
       renderProducts(view);
     };
 
