@@ -4,6 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#b00020" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -222,7 +225,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
       await cloudSaveState();
       const base=`${cloudWorkspaceId}/lg-control-centre`;
       const manifest={name:'LG Subscribe Control Centre',short_name:'LG Control',description:'LG Subscribe product, stock, pricing and poster control centre.',id:'./index.html',start_url:'./index.html',scope:'./',display:'standalone',orientation:'any',background_color:'#f4f6f8',theme_color:'#b00020',icons:[{src:'./icon-192.png',sizes:'192x192',type:'image/png',purpose:'any maskable'},{src:'./icon-512.png',sizes:'512x512',type:'image/png',purpose:'any maskable'}]};
-      const sw=`const CACHE='lg-subscribe-control-v10';\nself.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['./index.html','./manifest.webmanifest','./icon-192.png'])))});\nself.addEventListener('activate',e=>{e.waitUntil(Promise.all([clients.claim(),caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('lg-subscribe-control-')&&k!==CACHE).map(k=>caches.delete(k))))]))});\nself.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;const u=new URL(e.request.url);if(u.origin!==self.location.origin)return;e.respondWith(fetch(e.request).then(r=>{if(r&&r.ok&&e.request.mode==='navigate'){const copy=r.clone();caches.open(CACHE).then(c=>c.put('./index.html',copy))}return r}).catch(()=>caches.match(e.request).then(r=>r||caches.match('./index.html'))))});`;
+      const sw=`const CACHE='lg-subscribe-control-v11';\nself.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['./index.html','./manifest.webmanifest','./icon-192.png'])))});\nself.addEventListener('activate',e=>{e.waitUntil(Promise.all([clients.claim(),caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('lg-subscribe-control-')&&k!==CACHE).map(k=>caches.delete(k))))]))});\nself.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;const u=new URL(e.request.url);if(u.origin!==self.location.origin)return;e.respondWith(fetch(e.request).then(r=>{if(r&&r.ok&&e.request.mode==='navigate'){const copy=r.clone();caches.open(CACHE).then(c=>c.put('./index.html',copy))}return r}).catch(()=>caches.match(e.request).then(r=>r||caches.match('./index.html'))))});`;
       const [i192,i512]=await Promise.all([makeIconBlob(192),makeIconBlob(512)]);
       await uploadPwaFile(`${base}/manifest.webmanifest`,new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'}),'application/manifest+json');
       await uploadPwaFile(`${base}/sw.js`,new Blob([sw],{type:'application/javascript'}),'application/javascript');
@@ -1288,5 +1291,6 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
 })();
 
 </script>
+  <script src="./control-opening-v2.js?v=20261007i"></script>
 </body>
 </html>
