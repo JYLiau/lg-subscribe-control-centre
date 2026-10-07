@@ -21,14 +21,12 @@ function D(){
   if(t.dataset.stockSig===sig)return;t.dataset.stockSig=sig;
   t.innerHTML=B(s)+(s?.as_of_date?'<div class="stock-asof-v2">As of '+s.as_of_date+'</div>':'');
 }
-document.addEventListener('DOMContentLoaded',async()=>{
+document.addEventListener('DOMContentLoaded',()=>{
   const p=document.getElementById('products'),d=document.getElementById('modal');
   if(p)new MutationObserver(()=>requestAnimationFrame(P)).observe(p,{childList:true});
   if(d)new MutationObserver(()=>{if(d.open)requestAnimationFrame(D)}).observe(d,{attributes:true,attributeFilter:['open']});
-  try{
-    const r=await fetch(U+'/rest/v1/rpc/get_public_stock_v4',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'},body:'{}',cache:'no-store'});
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    const a=await r.json();M=new Map(a.map(x=>[N(x.model_code),x]));requestAnimationFrame(P);
-  }catch(e){console.warn('stock breakdown',e)}
+  const use=a=>{M=new Map((a||[]).map(x=>[N(x.model_code),x]));requestAnimationFrame(P)};
+  if(window.__LG_PUBLIC_STOCK_ROWS__)use(window.__LG_PUBLIC_STOCK_ROWS__);
+  window.addEventListener('lg-stock-ready',()=>use(window.__LG_PUBLIC_STOCK_ROWS__),{once:true});
 });
 })();
