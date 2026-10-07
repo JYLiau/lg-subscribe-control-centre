@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f0f10">
+<title>Build My Home · Jason LG Subscribe</title>
+<meta name="description" content="Bina pakej LG Subscribe anda, banding pelan, promosi dan semak stok semasa.">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="topin">
+    <div class="mark">LG</div>
+    <div class="brand"><b>JASON LG Subscribe</b><span>Build My Home · Customer Showroom</span></div>
+    <div class="top-spacer"></div>
+    <div class="live"><i id="liveDot" class="live-dot busy"></i><span id="liveText">Menyambung stok Control Centre…</span></div>
+    <button class="header-btn" onclick="scrollToCatalog()">Produk</button>
+    <button class="header-btn primary" onclick="scrollToPackage()">Pakej saya</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow">● Public showroom · no login required</div>
+      <h1>Rumah anda.<br>Pilihan anda.</h1>
+      <p>Pilih produk, bandingkan pelan 5 atau 7 tahun, cuba promosi, dan lihat jadual bayaran pakej anda — semuanya dalam satu halaman.</p>
+    </div>
+    <div class="agent-card">
+      <div class="agent-avatar">JY</div>
+      <div><b>Jason Yang</b><span>LG PuriCare Manager · LGM122989</span></div>
+      <small>Harga & stok dipaparkan sebagai rujukan. Jason akan sahkan promosi, kelayakan dan stok akhir sebelum permohonan.</small>
+    </div>
+  </div>
+</section>
+
+<main class="shell">
+<div class="builder-grid">
+  <div class="maincol">
+    <section class="panel preview" id="packagePreview">
+      <div class="panel-head">
+        <div><h2>PAKEJ RUMAH ANDA</h2><p>Susunan responsif — produk ke-3 dan seterusnya kekal sejajar.</p></div>
+        <div class="tiny" id="selectedCount">0 produk dipilih</div>
+      </div>
+      <div class="room-grid" id="roomGrid"></div>
+    </section>
+
+    <section class="panel catalog" id="catalogSection">
+      <div class="panel-head">
+        <div><h2>Pilih perkakas anda</h2><p>Harga kad ialah harga pelan standard terendah. Promosi dipilih semasa tambah produk.</p></div>
+        <div class="tiny">Harga rujukan · Oktober 2026</div>
+      </div>
+      <div class="tools">
+        <input id="search" class="input" placeholder="Cari model atau produk…">
+        <select id="sort" class="select">
+          <option value="featured">Susun: Disyorkan</option>
+          <option value="price">Harga terendah</option>
+          <option value="model">Model A–Z</option>
+        </select>
+      </div>
+      <div class="catrow" id="catRow"></div>
+      <div class="catalog-meta"><span id="catalogCount"></span><span id="stockStamp">Stok sedang disambungkan…</span></div>
+      <div class="products" id="products"></div>
+    </section>
+  </div>
+
+  <aside class="side" id="packageSide">
+    <section class="panel cart">
+      <div class="panel-head" style="margin-bottom:10px">
+        <div><h2>PAKEJ PILIHAN ANDA</h2><p>Bayaran berubah ikut promosi & tempoh.</p></div>
+      </div>
+      <div class="cart-total"><div><span>Bayaran sekarang</span><br><strong id="currentMonthly">RM0</strong> <em>/bulan</em></div><div class="tiny" id="cartUnits">0 unit</div></div>
+      <div class="cart-items" id="cartItems"></div>
+
+      <div class="budget">
+        <label>Bajet bulanan</label>
+        <div class="budget-row"><span>RM</span><input id="budget" class="input" type="number" min="0" step="10" value="350"></div>
+        <div id="budgetResult" class="budget-result"></div>
+      </div>
+
+      <div class="schedule">
+        <h3>Jadual bayaran</h3>
+        <div id="scheduleRows"></div>
+        <div class="kpis">
+          <div class="kpi"><span>Jumlah penjimatan</span><b id="saving">RM0</b></div>
+          <div class="kpi"><span>Jumlah kontrak</span><b id="contractTotal">RM0</b></div>
+        </div>
+      </div>
+
+      <div class="ctas">
+        <button class="cta wa" id="waBtn">Tanya Jason di WhatsApp</button>
+        <button class="cta share" id="shareBtn">Salin link pakej ini</button>
+        <button class="cta reset" id="resetBtn">Kosongkan pakej</button>
+      </div>
+      <div class="disclaimer">Promosi 50% dan RM10 combo ialah pilihan berasingan dan tidak digabungkan. RM10 combo hanya dikira apabila pakej mempunyai sekurang-kurangnya 2 unit. Stok boleh berubah selepas laporan terakhir.</div>
+    </section>
+    <section class="panel info-panel">
+      <b>Stok live daripada Control Centre</b>
+      <p id="stockInfo">Setiap kad memaparkan jumlah baki positif AL2 + AL3 + AL8 daripada sumber stok yang sama dengan LG Subscribe Control Centre.</p>
+    </section>
+  </aside>
+</div>
+<div class="footer">Jason Yang · 011-5972 6619 · LGM122989<br>Imej produk daripada bahan rujukan yang dibekalkan. T&C apply.</div>
+</main>
+
+<dialog class="modal" id="modal">
+  <div class="modal-in">
+    <div class="modal-top">
+      <div><h2 id="modalModel"></h2><p id="modalSub"></p></div>
+      <button class="close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-stock" id="modalStock"></div>
+    <div class="plan-title"><b>1. Pilih pelan</b></div>
+    <div class="plan-grid" id="planGrid"></div>
+    <div class="plan-title"><b>2. Pilih promosi</b></div>
+    <div class="promo-grid" id="promoGrid"></div>
+    <div class="modal-bottom">
+      <div class="qtywrap"><label>Kuantiti</label><div class="qty"><button onclick="stepQty(-1)">−</button><input id="qtyInput" type="number" min="1" max="9" value="1"><button onclick="stepQty(1)">+</button></div></div>
+      <button class="modal-add" id="modalAdd">Tambah ke pakej</button>
+    </div>
+  </div>
+</dialog>
+<div class="toast" id="toast"></div>
+
+<script src="./catalog.js"></script><script src="./app.js"></script>
+</body>
+</html>
