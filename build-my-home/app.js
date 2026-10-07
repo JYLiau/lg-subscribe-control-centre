@@ -7,7 +7,11 @@ const icons={'Aircond':'❄️','Laundry':'🧺','Fridge':'🧊','Air Purifier':
 let activeCat='All',cart=[],activeProduct=null,chosenPlan=null,chosenPromo='standard',stocks=new Map(),stockLoaded=false;
 const $=id=>document.getElementById(id);
 const money=n=>'RM'+Math.max(0,Math.round(Number(n)||0)).toLocaleString('en-MY');
-const baseCode=s=>String(s||'').split('.')[0].toUpperCase().replace(/\s+/g,'');
+const baseCode=s=>{
+  let x=String(s||'').split('.')[0].toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(x.startsWith('S3NQ')) x='S3Q'+x.slice(4);
+  return x;
+};
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const minPrice=p=>Math.min(...p.plans.map(x=>Number(x.monthly)||999999));
 const stockFor=p=>{
@@ -21,7 +25,10 @@ const stockFor=p=>{
 const stopSubmission=p=>String(stockFor(p)?.submission_status||'').toLowerCase().includes('stop');
 const icon=p=>icons[p.category]||'LG';
 function stockBadge(p){const s=stockFor(p);if(!s)return stockLoaded?'<span class="stock-badge loading">Stock not listed</span>':'<span class="stock-badge loading">Stock: syncing…</span>';const n=Math.max(0,Math.round(Number(s.total_stock)||0));const c=n<=0?'out':n<=3?'low':'good';return '<span class="stock-badge '+c+'">'+(n<=0?'Out of stock':n<=3?'Low stock: '+n:'Stock: '+n)+'</span>';}
-function visual(p){return p.imageData?'<img src="'+p.imageData+'" alt="'+esc(p.name)+'">':'<div class="generic-icon">'+icon(p)+'</div>';}
+function visual(p){
+  const src=p.imageData||p.imageUrl||'';
+  return src?'<img loading="lazy" decoding="async" referrerpolicy="no-referrer" src="'+src+'" alt="'+esc(p.name)+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\'"><div class="generic-icon" style="display:none">'+icon(p)+'</div>':'<div class="generic-icon">'+icon(p)+'</div>';
+}
 function renderCats(){const cats=['All',...new Set(CATALOG.map(x=>x.category))];$('catRow').innerHTML=cats.map(c=>'<button class="cat '+(c===activeCat?'active':'')+'" data-cat="'+esc(c)+'">'+esc(c)+'</button>').join('');$('catRow').querySelectorAll('.cat').forEach(b=>b.onclick=()=>{activeCat=b.dataset.cat;renderCats();renderProducts();});}
 function visibleProducts(){const q=($('search')?.value||'').trim().toLowerCase(),sort=$('sort')?.value||'featured';let rows=CATALOG.filter(p=>!stopSubmission(p)&&(activeCat==='All'||p.category===activeCat)&&(!q||((p.code+' '+p.name+' '+p.category).toLowerCase().includes(q))));if(sort==='price')rows.sort((a,b)=>minPrice(a)-minPrice(b));else if(sort==='model')rows.sort((a,b)=>a.code.localeCompare(b.code));else rows.sort((a,b)=>a.order-b.order);return rows;}
 function renderProducts(){const rows=visibleProducts();$('catalogCount').textContent=rows.length+' model';$('products').innerHTML=rows.map(p=>{const s=stockFor(p),n=s?Math.max(0,Math.round(Number(s.total_stock)||0)):null,out=n===0;return '<article class="product '+(out?'unavailable':'')+'"><div class="pvisual">'+stockBadge(p)+visual(p)+'</div><div class="pbody"><div class="pcat">'+esc(p.category)+'</div><h3>'+esc(p.code)+'</h3><div class="psub">'+esc(p.name)+'</div><span class="lifecycle current">Current selection</span><div class="price"><div><small>From</small><strong>'+money(minPrice(p))+'</strong><em>/month</em></div></div><button class="addbtn" data-id="'+p.id+'">View plans</button></div></article>';}).join('');$('products').querySelectorAll('.addbtn').forEach(b=>b.onclick=()=>openProduct(b.dataset.id));}
