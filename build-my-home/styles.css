@@ -102,3 +102,34 @@ a{color:inherit}
   .combo-thumb{width:68px;height:68px}
   .combo-pics{height:82px}
 }
+
+
+.combo-refine-modal .combo-refine-in{width:min(760px,94vw);max-height:min(88vh,900px);overflow:auto}
+.combo-refine-help{font-size:11px;color:var(--muted);background:#f7f3ee;border:1px solid #ece5dd;border-radius:13px;padding:10px 12px;margin-bottom:12px}
+.combo-refine-items{display:grid;gap:12px}
+.combo-refine-card{border:1px solid #e7e0d8;border-radius:17px;background:#fff;padding:12px}
+.combo-refine-product{display:grid;grid-template-columns:74px 1fr;gap:10px;align-items:center;margin-bottom:10px}
+.combo-refine-img{width:74px;height:74px;border-radius:14px;background:#f7f4ef;display:grid;place-items:center;overflow:hidden}
+.combo-refine-img img{max-width:92%;max-height:68px;object-fit:contain}
+.combo-refine-product>div:last-child{display:grid;gap:2px}
+.combo-refine-product b{font-size:13px}
+.combo-refine-product span{font-size:10px;color:var(--muted)}
+.combo-refine-product strong{font-size:11px;color:#4f4a45;margin-top:2px}
+.combo-refine-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.combo-refine-fields label{font-size:9px;font-weight:800;color:#777;display:grid;gap:4px}
+.combo-refine-fields .select{font-size:11px;padding:9px 10px}
+.combo-refine-error{display:none;margin:12px 0 0;border-radius:12px;padding:9px 11px;background:#fff2f0;border:1px solid #f0c9c3;color:#9f2d22;font-size:10px;font-weight:700}
+.combo-refine-error.show{display:block}
+.combo-refine-summary{position:sticky;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-top:1px solid #ebe5de;margin:14px -18px -18px;padding:12px 18px 18px;display:flex;gap:12px;align-items:end;justify-content:space-between}
+.combo-refine-summary>div{min-width:0}
+.combo-refine-summary span{display:block;font-size:9px;color:var(--muted)}
+.combo-refine-summary strong{font-size:27px;letter-spacing:-.04em}
+.combo-refine-summary em{font-size:10px;color:var(--muted);font-style:normal}
+.combo-refine-summary .modal-add{min-width:210px}
+.combo-refine-summary .modal-add:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:560px){
+  .combo-refine-modal .combo-refine-in{width:96vw;padding:14px}
+  .combo-refine-fields{grid-template-columns:1fr}
+  .combo-refine-summary{margin-left:-14px;margin-right:-14px;margin-bottom:-14px;padding:11px 14px 14px;align-items:stretch;flex-direction:column}
+  .combo-refine-summary .modal-add{width:100%;min-width:0}
+}
