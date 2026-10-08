@@ -321,22 +321,181 @@ function comboLineCount(){return cart.filter(x=>x.promo==='combo10').length;}
 function comboEligible(){return comboLineCount()>=2;}
 function promoLabelFor(item){const raw=(item.product.promos.find(p=>p.id===item.promo)||{}).label||'';const base=promoLabelById(item.promo,raw);return item.promo==='combo10'&&!comboEligible()?base+' — '+tr('comboInactive'):base;}
 function monthlyFor(item,month){let m=Number(item.plan.monthly)||0;if(item.promo==='half9'&&month<=9)m*=.5;if(item.promo==='combo10'&&comboEligible())m=Math.max(0,m-10);return m*item.qty;}
+
+const PRODUCT_FEATURE_GROUPS={
+  acPremium:{
+    bm:['Plasmaster™ Ionizer++','Pemampat DUAL Inverter™','Penyejukan lebih pantas & jimat tenaga','Kawalan pintar LG ThinQ™'],
+    en:['Plasmaster™ Ionizer++','DUAL Inverter Compressor™','Faster cooling & energy saving','LG ThinQ™ smart control'],
+    zh:['Plasmaster™ Ionizer++','DUAL Inverter 双变频压缩机','快速制冷，更节能','LG ThinQ™ 智能控制']
+  },
+  artcool:{
+    bm:['Plasmaster™ Ionizer+','Reka bentuk cermin ARTCOOL™','Penyejukan pantas dengan DUAL Inverter','Kawalan pintar LG ThinQ™'],
+    en:['Plasmaster™ Ionizer+','Stylish ARTCOOL™ mirror design','Fast cooling with DUAL Inverter','LG ThinQ™ smart control'],
+    zh:['Plasmaster™ Ionizer+','ARTCOOL™ 镜面设计','DUAL Inverter 快速制冷','LG ThinQ™ 智能控制']
+  },
+  acAI:{
+    bm:['AI Air dengan LG ThinQ™','Soft Air untuk aliran udara lebih selesa','Comfort Humidity Control','kW Manager untuk kawalan penggunaan tenaga'],
+    en:['AI Air with LG ThinQ™','Soft Air for gentler airflow','Comfort Humidity Control','kW Manager for energy control'],
+    zh:['AI Air + LG ThinQ™ 智能送风','Soft Air 柔风模式','舒适湿度控制','kW Manager 能耗管理']
+  },
+  wt25:{
+    bm:['Sistem satu badan Washer 25kg + Dryer 20kg','Panel kawalan tengah all-in-one','AI Direct Drive™','TurboWash™ 360°','Serasi dengan LG ThinQ™'],
+    en:['One-body 25kg Washer + 20kg Dryer','All-in-one center control','AI Direct Drive™','TurboWash™ 360°','LG ThinQ™ compatible'],
+    zh:['25kg洗衣 + 20kg烘干一体式洗衣塔','中央一体控制面板','AI Direct Drive™','TurboWash™ 360°','支持 LG ThinQ™']
+  },
+  wt14:{
+    bm:['Sistem WashTower™ bersepadu 14/10kg','Center Control','AI DD™ + Smart Pairing™','TurboWash™ 360° + Dry Ready','DUAL Inverter HeatPump™'],
+    en:['Integrated 14/10kg WashTower™','Center Control','AI DD™ + Smart Pairing™','TurboWash™ 360° + Dry Ready','DUAL Inverter HeatPump™'],
+    zh:['14/10kg 一体式 WashTower™','中央控制面板','AI DD™ + Smart Pairing™','TurboWash™ 360° + Dry Ready','DUAL Inverter HeatPump™ 热泵']
+  },
+  fx1412:{
+    bm:['Kapasiti besar 12kg','AI DD™ untuk penjagaan fabrik pintar','TurboWash™ 360° untuk cucian pantas','Steam+™ membantu mengurangkan alergen'],
+    en:['Large 12kg capacity','AI DD™ intelligent fabric care','TurboWash™ 360° for faster washing','Steam+™ helps reduce allergens'],
+    zh:['12公斤大容量','AI DD™ 智能衣物护理','TurboWash™ 360° 快速洗涤','Steam+™ 帮助减少过敏原']
+  },
+  rx10:{
+    bm:['Kapasiti pengeringan 10kg','AI Dry™','Turbo Dry untuk pengeringan pantas','DUAL Inverter Heat Pump™','Auto Cleaning Condenser'],
+    en:['10kg drying capacity','AI Dry™','Turbo Dry for faster drying','DUAL Inverter Heat Pump™','Auto Cleaning Condenser'],
+    zh:['10公斤烘干容量','AI Dry™ 智能烘干','Turbo Dry 快速烘干','DUAL Inverter Heat Pump™ 热泵','自动清洁冷凝器']
+  },
+  f2520:{
+    bm:['Kapasiti besar 20kg','AI Direct Drive™','TurboWash™ 360°','Steam+™','Kawalan pintar LG ThinQ™'],
+    en:['Large 20kg capacity','AI Direct Drive™','TurboWash™ 360°','Steam+™','LG ThinQ™ smart control'],
+    zh:['20公斤大容量','AI Direct Drive™','TurboWash™ 360°','Steam+™','LG ThinQ™ 智能控制']
+  },
+  tx2522:{
+    bm:['Kapasiti besar 22kg','AI Wash dengan AI DD™','TurboWash™','EasyUnload™ untuk keluarkan pakaian dengan mudah','Easy Control dengan LCD dial'],
+    en:['Large 22kg capacity','AI Wash powered by AI DD™','TurboWash™','EasyUnload™ for easier reach','Easy Control with LCD dial'],
+    zh:['22公斤超大容量','AI Wash + AI DD™ 智能洗涤','TurboWash™ 快速洗涤','EasyUnload™ 更容易取放衣物','Easy Control LCD 旋钮']
+  },
+  f2515:{
+    bm:['Kapasiti 15kg basuh + 8kg kering','AI DD™ untuk cucian pintar','TurboWash™ 360°','Steam™ membantu mengurangkan alergen','LG ThinQ™'],
+    en:['15kg wash + 8kg dry capacity','AI DD™ intelligent washing','TurboWash™ 360°','Steam™ helps reduce allergens','LG ThinQ™'],
+    zh:['15kg洗衣 + 8kg烘干','AI DD™ 智能洗涤','TurboWash™ 360°','Steam™ 帮助减少过敏原','LG ThinQ™ 智能连接']
+  },
+  fx1411:{
+    bm:['Mesin 2-dalam-1 11kg basuh + 7kg kering','AI DD™','Steam™','TurboWash™ 360°','Basuh & kering dalam satu mesin'],
+    en:['2-in-1 11kg wash + 7kg dry','AI DD™','Steam™','TurboWash™ 360°','Wash and dry in one machine'],
+    zh:['11kg洗衣 + 7kg烘干二合一','AI DD™','Steam™ 蒸汽护理','TurboWash™ 360°','洗烘一体']
+  },
+  gnf452:{
+    bm:['Kapasiti besar 493L','LinearCooling™','DoorCooling+™','Dispenser air + Auto Ice Maker','LG ThinQ™'],
+    en:['Large 493L capacity','LinearCooling™','DoorCooling+™','Water dispenser + Auto Ice Maker','LG ThinQ™'],
+    zh:['493L 大容量','LinearCooling™ 线性恒温','DoorCooling+™ 门冷技术','饮水机 + 自动制冰机','LG ThinQ™ 智能控制']
+  },
+  gcb257:{
+    bm:['Kapasiti besar 665L','Linear Cooling™','Multi Air Flow','Pencahayaan LED','Kemasan Silver'],
+    en:['Large 665L capacity','Linear Cooling™','Multi Air Flow','LED lighting','Silver finish'],
+    zh:['665L 大容量','Linear Cooling™ 线性恒温','Multi Air Flow 多重气流','LED 照明','银色机身']
+  },
+  gcj257:{
+    bm:['Kapasiti besar 635L','InstaView Door-in-Door™','UVnano® Water Dispenser','DoorCooling+™','LG ThinQ™'],
+    en:['Large 635L capacity','InstaView Door-in-Door™','UVnano® Water Dispenser','DoorCooling+™','LG ThinQ™'],
+    zh:['635L 大容量','InstaView Door-in-Door™ 敲敲门','UVnano® 饮水机','DoorCooling+™ 门冷技术','LG ThinQ™']
+  },
+  gvk25:{
+    bm:['Kapasiti 612L French Door','InstaView™ — ketuk dua kali untuk lihat dalam','Dispenser air','Ruang simpanan peti sejuk lebih luas','Teknologi pengekalan kesegaran'],
+    en:['612L French Door capacity','InstaView™ — knock twice to see inside','Water dispenser','Expanded fridge storage','Freshness-preserving technology'],
+    zh:['612L 法式多门大容量','InstaView™ 敲两下即可查看内部','饮水机','更宽敞的冷藏空间','保鲜技术']
+  },
+  as10:{
+    bm:['Penapisan udara 360°','Sistem multi-filtration','Clean Booster','Pet Mode + Allergy Care','Reka bentuk Alpha Pet Double'],
+    en:['360° air purification','Multi-filtration system','Clean Booster','Pet Mode + Allergy Care','Alpha Pet Double design'],
+    zh:['360°全方位空气净化','多重过滤系统','Clean Booster 净化增压','Pet Mode + Allergy Care 宠物/过敏护理','Alpha Pet Double 双层设计']
+  },
+  as65:{
+    bm:['Penapisan udara 360°','Sistem multi-filtration','Clean Booster','Pet Care','Allergy Care'],
+    en:['360° purification','Multi-filtration system','Clean Booster','Pet Care','Allergy Care'],
+    zh:['360°全方位净化','多重过滤系统','Clean Booster 净化增压','宠物护理','过敏护理']
+  },
+  as60hit:{
+    bm:['Reka bentuk kompak tetapi berkuasa','Sistem multi-filtration','Pet Care untuk rumah dengan haiwan','Penapisan udara menyeluruh','Kawalan pintar LG ThinQ™'],
+    en:['Compact yet powerful design','Multi-filtration system','Pet Care for pet-friendly homes','Thorough air purification','LG ThinQ™ smart control'],
+    zh:['小巧但净化力强','多重过滤系统','Pet Care 宠物护理','全面空气净化','LG ThinQ™ 智能控制']
+  },
+  as55:{
+    bm:['Aero V Pet Filter','DUAL Airflow + Clean Booster','Pet Mode','Reka bentuk slim & premium','Mudah dibersihkan'],
+    en:['Aero V Pet Filter','DUAL Airflow + Clean Booster','Pet Mode','Slim & premium design','Easy-to-clean design'],
+    zh:['Aero V 宠物滤网','DUAL Airflow + Clean Booster','Pet Mode 宠物模式','纤薄高级设计','易于清洁']
+  },
+  as25:{
+    bm:['Tempat rehat dome dengan pemanas','Penapisan udara menyeluruh','Cat Relax Mode','Pet Care Tracking melalui LG ThinQ™','Penimbang terbina dalam untuk pantau berat kucing'],
+    en:['Heated dome seat','Total air purification','Cat Relax Mode','Pet Care Tracking via LG ThinQ™','Built-in scale for cat weight tracking'],
+    zh:['恒温加热猫咪座舱','全面空气净化','Cat Relax 猫咪休息模式','通过 LG ThinQ™ 追踪宠物状态','内置体重秤监测猫咪体重']
+  },
+  wallfit:{
+    bm:['Dual Airflow','Reka bentuk slim & rata yang menjimatkan ruang','AI Mode','Smart Air Control melalui LG ThinQ™','Liputan sehingga 59.4m²'],
+    en:['Dual Airflow','Slim & flat space-saving design','AI Mode','Smart Air Control via LG ThinQ™','Coverage up to 59.4m²'],
+    zh:['Dual Airflow 双向气流','纤薄平面节省空间设计','AI 智能模式','通过 LG ThinQ™ 智能控制空气','净化面积高达 59.4m²']
+  },
+  wu525:{
+    bm:['Sistem All Puri Filter yang diperakui WQA','Auto-sanitization paip & outlet air','Reka bentuk built-in yang kemas','Kawalan pintar LG ThinQ™'],
+    en:['WQA-certified All Puri Filter system','Auto-sanitization of water pipes & outlet','Sleek built-in design','LG ThinQ™ smart control'],
+    zh:['WQA认证 All Puri 过滤系统','水管与出水口自动杀菌','简洁嵌入式设计','LG ThinQ™ 智能控制']
+  },
+  wd518:{
+    bm:['Sistem tanpa tangki untuk air panas, sejuk & suhu bilik','4-Stage Filtration','Auto Sterilization','Tetapan suhu & isipadu boleh disesuaikan','LG ThinQ™'],
+    en:['Tankless hot, cold & ambient water','4-Stage Filtration','Auto Sterilization','Customizable temperature & volume','LG ThinQ™'],
+    zh:['无水箱即热/冷/常温水','四阶段过滤系统','自动杀菌','可自定义温度与出水量','LG ThinQ™']
+  },
+  wd516:{
+    bm:['Pilihan air panas, suhu bilik & sejuk','Rekaan tanpa tangki','Auto Sterilization + 4-Stage All-Puri Filter','Rekaan ultra nipis 17cm','LG ThinQ™'],
+    en:['Hot, ambient & cold water','Tankless design','Auto Sterilization + 4-Stage All-Puri Filter','Ultra-slim 17cm design','LG ThinQ™'],
+    zh:['热水、常温水与冷水','无水箱设计','自动杀菌 + 四阶段 All-Puri 过滤','17cm 超纤薄设计','LG ThinQ™']
+  },
+  qned55:{
+    bm:['QNED evo AI Mini LED 4K','Dynamic QNED Color Pro','Precision Dimming untuk kontras lebih tepat','α8 AI Processor 4K','webOS dengan pengalaman AI pintar'],
+    en:['QNED evo AI Mini LED 4K','Dynamic QNED Color Pro','Precision Dimming for refined contrast','α8 AI Processor 4K','webOS with advanced AI experiences'],
+    zh:['QNED evo AI Mini LED 4K','Dynamic QNED Color Pro 广色域','Precision Dimming 精准控光','α8 AI Processor 4K AI处理器','webOS 智能AI体验']
+  },
+  nanoTV:{
+    bm:['NANO 4K UHD AI','Nano Detail Enhancer','HDR10 Pro','α7 AI Processor 4K','webOS dengan AI Hub'],
+    en:['NANO 4K UHD AI','Nano Detail Enhancer','HDR10 Pro','α7 AI Processor 4K','webOS with AI Hub'],
+    zh:['NANO 4K UHD AI','Nano Detail Enhancer 细节增强','HDR10 Pro','α7 AI Processor 4K','webOS + AI Hub 智能中心']
+  }
+};
+const PRODUCT_FEATURE_GROUP_BY_CODE={
+  'S3-Q09JAYPP':'acPremium','S3-Q12JAYPP':'acPremium','S3-Q18KAYPA':'acPremium','S3-Q24KLYPA':'acPremium',
+  'S3-Q24K2RPA':'artcool','S3-Q120AGZB':'acAI','S3-Q2412GZC':'acAI',
+  'WT2520NHEGR':'wt25','WT1410NHB':'wt14','FX1412S5GR':'fx1412','RX10VHP3KR':'rx10',
+  'F2520SNEKR':'f2520','TX2522AT9GR':'tx2522','F2515RNTKAR':'f2515','FX1411R5WR':'fx1411',
+  'GN-F452':'gnf452','GC-B257KLJR':'gcb257','GC-J257SQNW':'gcj257','GV-K25FFGER':'gvk25',
+  'AS10GDBY0':'as10','AS65GDBY0':'as65','AS60GHBT0':'as60hit','AS55GGSY0':'as55','AS25GCBZ0':'as25','AS60GLSG0':'wallfit',
+  'WU525BS':'wu525','WD518AN':'wd518','WD516AN':'wd516',
+  '55QNED87BSA':'qned55','50NU865BPSA':'nanoTV','65NU865BPSA':'nanoTV'
+};
+function productFeatureLines(product){
+  const base=String(product?.code||'').split('.')[0].toUpperCase();
+  const group=PRODUCT_FEATURE_GROUP_BY_CODE[base],pack=group&&PRODUCT_FEATURE_GROUPS[group];
+  return pack?(pack[currentLang]||pack.en||[]):[];
+}
+function featureHeading(){return currentLang==='zh'?'✨ 主要特点：':currentLang==='en'?'✨ Key features:':'✨ Ciri-ciri utama:';}
+function warrantyLine(years){return currentLang==='zh'?('🛡️ '+years+'年保修'):currentLang==='en'?('🛡️ '+years+'-year warranty'):('🛡️ Waranti '+years+' tahun');}
+
 function selectedCopywriting(){
   if(!activeProduct||!chosenPlan)return'';
   const normal=Math.round(Number(chosenPlan.monthly)||0),promo=activeProduct.promos.find(p=>p.id===chosenPromo)||{id:'standard'},end=Number(chosenPlan.years)*12;
   const promoPrice=promo.id==='half9'?Math.round(normal*.5):promo.id==='combo10'?Math.max(0,normal-10):normal;
   let offer=promo.id==='half9'?tr('copyHalf9',{promo:money(promoPrice),end,normal:money(normal)}):promo.id==='combo10'?tr('copyCombo',{promo:money(promoPrice)}):promo.id==='octevergreen'?tr('copyOctober'):tr('copyStandard',{normal:money(normal)});
-  return [
+  const features=productFeatureLines(activeProduct);
+  const lines=[
     tr('copyHeadline',{name:activeProduct.name}),
-    tr('copyModel',{code:activeProduct.code}),
+    tr('copyModel',{code:activeProduct.code})
+  ];
+  if(features.length){
+    lines.push('',featureHeading(),...features.map(x=>'✔️ '+x));
+  }
+  lines.push(
     '',
     tr('copyPlan',{years:chosenPlan.years,service:serviceLabel(chosenPlan.service)}),
     offer,
     '',
     tr('copyPackageIncludes'),
     tr('copyDelivery'),
+    warrantyLine(chosenPlan.years),
     tr('copyServiceLine',{service:serviceLabel(chosenPlan.service)})
-  ].join('\n');
+  );
+  return lines.join('\n');
 }
 function copySelectedCopywriting(){
   const txt=selectedCopywriting();if(!txt)return;
