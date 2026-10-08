@@ -198,3 +198,22 @@ a{color:inherit}
   .modal-bottom .modal-add{grid-column:1/-1;width:100%}
   .copywriting-btn{min-height:48px}
 }
+
+.lang-menu{display:flex;align-items:center;gap:4px;margin-left:2px;flex:0 0 auto}
+.lang-globe{font-size:14px;line-height:1}
+@media(max-width:720px){
+  .topin{flex-wrap:nowrap}
+  .top-spacer{min-width:2px}
+  .lang-menu{margin-left:auto}
+  .lang-select{min-width:86px;max-width:100px}
+}
+@media(max-width:560px){
+  .top .header-btn{display:none}
+  .brand b{font-size:13px;white-space:nowrap}
+  .mark{width:44px;height:44px;border-radius:14px}
+  .lang-menu{margin-left:auto}
+  .lang-select{min-width:90px;max-width:104px}
+  .modal-bottom{grid-template-columns:minmax(132px,1fr) auto!important;align-items:end}
+  .modal-bottom .copywriting-btn{grid-column:2;grid-row:1;min-width:112px}
+  .modal-bottom .modal-add{grid-column:1/-1!important;width:100%}
+}
