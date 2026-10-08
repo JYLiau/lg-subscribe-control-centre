@@ -7,7 +7,7 @@
 <title>Build My Home · Jason LG Subscribe</title>
 <meta name="description" content="Bina pakej LG Subscribe anda, banding pelan, promosi dan semak stok semasa.">
 <link rel="preconnect" href="https://wsrv.nl" crossorigin>
-<link rel="stylesheet" href="./styles.css?v=20261008n">
+<link rel="stylesheet" href="./styles.css?v=20261008o">
 <style id="share-view-inline-fix">
 .shared-package-view .budget{display:none!important}
 .shared-package-view .kpis{grid-template-columns:1fr!important}
@@ -23,7 +23,7 @@
     <div class="live"><i id="liveDot" class="live-dot busy"></i><span id="liveText" data-i18n="liveConnecting">Menyambung stok Control Centre…</span></div>
     <button class="header-btn" onclick="scrollToCatalog()" data-i18n="navProducts">Produk</button>
     <button class="header-btn primary" onclick="scrollToPackage()" data-i18n="navPackage">Pakej saya</button>
-    <select id="langSelect" class="lang-select" aria-label="Language"><option value="ms">BM</option><option value="en">EN</option><option value="zh">中文</option></select>
+    <label class="lang-menu" aria-label="Choose language"><span class="lang-globe">🌐</span><select id="langSelect" class="lang-select" aria-label="Language"><option value="ms">BM</option><option value="en">English</option><option value="zh">中文</option></select></label>
   </div>
 </header>
 
@@ -154,13 +154,13 @@
     <div class="promo-grid" id="promoGrid"></div>
     <div class="modal-bottom">
       <div class="qtywrap"><label data-i18n="qty">Kuantiti</label><div class="qty"><button onclick="stepQty(-1)">−</button><input id="qtyInput" type="number" min="1" max="9" value="1"><button onclick="stepQty(1)">+</button></div></div>
-      <button class="copywriting-btn" id="copyCopyBtn" type="button">📋 <span data-i18n="copy">Salin ayat</span></button>
+      <button class="copywriting-btn" id="copyCopyBtn" type="button" title="Copy selected plan and promotion copywriting">📋 <span data-i18n="copy">Salin ayat</span></button>
       <button class="modal-add" id="modalAdd" data-i18n="addPackage">Tambah ke pakej</button>
     </div>
   </div>
 </dialog>
 <div class="toast" id="toast"></div>
 
-<script src="./catalog.js?v=20261008n"></script><script src="./app.js?v=20261008n"></script><script src="./stock-breakdown-v2.js?v=20261008n"></script><script src="./image-lite-v2.js?v=20261008n"></script>
+<script src="./catalog.js?v=20261008o"></script><script src="./app.js?v=20261008o"></script><script src="./stock-breakdown-v2.js?v=20261008o"></script><script src="./image-lite-v2.js?v=20261008o"></script>
 </body>
 </html>
