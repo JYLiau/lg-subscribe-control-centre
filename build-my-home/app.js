@@ -65,7 +65,7 @@ function comboPlanFor(d){
     || d.product.plans[0];
 }
 function comboEligibleDraft(){
-  return comboDraft.filter(x=>x.promo==='combo10').length>=2;
+  return cart.filter(x=>x.promo==='combo10').length+comboDraft.filter(x=>x.promo==='combo10').length>=2;
 }
 function comboDraftMonthly(item,month=1){
   const plan=comboPlanFor(item);let m=Number(plan?.monthly)||0;
@@ -114,7 +114,8 @@ function renderComboRefine(){
 }
 function updateComboRefineSummary(){
   const comboCount=comboDraft.filter(x=>x.promo==='combo10').length;
-  const err=comboCount===1?'RM10 OFF combo perlukan sekurang-kurangnya 2 produk dalam set ini yang kedua-duanya memilih RM10 OFF combo.':'';
+  const combinedComboCount=cart.filter(x=>x.promo==='combo10').length+comboCount;
+  const err=comboCount>0&&combinedComboCount<2?'RM10 OFF combo perlukan sekurang-kurangnya 2 produk/order dalam pakej yang kedua-duanya memilih RM10 OFF combo.':'';
   $('comboRefineError').textContent=err;
   $('comboRefineError').classList.toggle('show',!!err);
   const total=comboDraft.reduce((a,x)=>a+comboDraftMonthly(x,1),0);
@@ -123,7 +124,8 @@ function updateComboRefineSummary(){
 }
 function addRefinedCombo(){
   if(!activeComboPreset||!comboDraft.length)return;
-  if(comboDraft.filter(x=>x.promo==='combo10').length===1){updateComboRefineSummary();return;}
+  const draftComboCount=comboDraft.filter(x=>x.promo==='combo10').length;
+  if(draftComboCount>0&&cart.filter(x=>x.promo==='combo10').length+draftComboCount<2){updateComboRefineSummary();return;}
   const seed=Date.now();
   cart.push(...comboDraft.map((d,i)=>({key:seed+i+Math.random(),product:d.product,plan:{...comboPlanFor(d)},promo:d.promo,qty:1})));
   const name=activeComboPreset.name;
