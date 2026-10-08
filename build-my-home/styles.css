@@ -170,3 +170,8 @@ a{color:inherit}
   .share-photo-grid .room-item .miniimg{height:68px}
   .share-photo-grid .miniimg img{max-height:66px}
 }
+
+
+.shared-package-view .budget{display:none!important}
+.shared-package-view .kpis{grid-template-columns:1fr}
+.shared-package-view .kpis .kpi:last-child{display:none!important}
