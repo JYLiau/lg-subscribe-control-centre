@@ -11,7 +11,7 @@ const COMBO_PRESETS=[
   {id:'setD',tag:'SET D',name:'Whole Home Trio',desc:'Aircond + Fridge + Washer',items:[{id:'ac1',plan:0},{id:'ref1',plan:0},{id:'lau1',plan:0}]},
   {id:'setE',tag:'SET E',name:'Laundry Duo',desc:'12kg Washer + 10kg Dryer',items:[{id:'lau1',plan:0},{id:'lau2',plan:0}]}
 ];
-let activeCat='All',cart=[],activeProduct=null,chosenPlan=null,chosenPromo='standard',stocks=new Map(),stockLoaded=false;
+let activeCat='All',cart=[],activeProduct=null,chosenPlan=null,chosenPromo='standard',stocks=new Map(),stockLoaded=false,activeComboPreset=null,comboDraft=[];
 const $=id=>document.getElementById(id);
 const money=n=>'RM'+Math.max(0,Math.round(Number(n)||0)).toLocaleString('en-MY');
 const baseCode=s=>{
@@ -53,18 +53,81 @@ function renderComboMenu(){
       '<h3>'+esc(p.name)+'</h3>'+
       '<p>'+esc(p.desc)+'</p>'+
       '<div class="combo-price"><span>RM</span><b>'+Math.round(d.monthly)+'</b><em>/bulan</em></div>'+
-      '<small>Pelan standard 5 tahun · '+d.items.length+' produk</small>'+
-      '<button class="combo-pick" data-combo="'+p.id+'" '+(d.blocked?'disabled':'')+'>'+(d.blocked?'Tidak tersedia':'Pilih set')+'</button>'+
+      '<small>Dari pelan standard · '+d.items.length+' produk · boleh ubah tempoh/servis/promosi</small>'+
+      '<button class="combo-pick" data-combo="'+p.id+'" '+(d.blocked?'disabled':'')+'>'+(d.blocked?'Tidak tersedia':'Pilih & ubah suai')+'</button>'+
     '</article>';
   }).join('');
-  el.querySelectorAll('.combo-pick:not(:disabled)').forEach(b=>b.onclick=()=>applyComboPreset(b.dataset.combo));
+  el.querySelectorAll('.combo-pick:not(:disabled)').forEach(b=>b.onclick=()=>openComboRefine(b.dataset.combo));
 }
-function applyComboPreset(id){
+function comboPlanFor(d){
+  return d.product.plans.find(p=>Number(p.years)===Number(d.years)&&p.service===d.service)
+    || d.product.plans.find(p=>Number(p.years)===Number(d.years))
+    || d.product.plans[0];
+}
+function comboEligibleDraft(){
+  return comboDraft.filter(x=>x.promo==='combo10').length>=2;
+}
+function comboDraftMonthly(item,month=1){
+  const plan=comboPlanFor(item);let m=Number(plan?.monthly)||0;
+  if(item.promo==='half9'&&month<=9)m*=.5;
+  if(item.promo==='combo10'&&comboEligibleDraft())m=Math.max(0,m-10);
+  return m;
+}
+function openComboRefine(id){
   const preset=COMBO_PRESETS.find(x=>x.id===id);if(!preset)return;
-  const d=comboPresetData(preset);if(d.blocked)return toast('Set ini mengandungi model yang tidak menerima submission sekarang.');
-  if(cart.length&&!confirm('Gantikan pakej semasa dengan '+preset.name+'?'))return;
-  cart=d.items.map(x=>({key:Date.now()+Math.random(),product:x.product,plan:{...x.plan},promo:'standard',qty:1}));
-  renderCart();scrollToPackage();toast(preset.name+' ditambah ke pakej');
+  const d=comboPresetData(preset);
+  if(d.blocked)return toast('Set ini mengandungi model yang tidak menerima submission sekarang.');
+  activeComboPreset=preset;
+  comboDraft=d.items.map(x=>({product:x.product,years:Number(x.plan.years),service:x.plan.service,promo:'standard'}));
+  $('comboModalTag').textContent=preset.tag;
+  $('comboModalTitle').textContent=preset.name;
+  $('comboModalSub').textContent=preset.desc;
+  renderComboRefine();
+  $('comboModal').showModal();
+}
+window.closeComboModal=()=>{$('comboModal').close();activeComboPreset=null;comboDraft=[];};
+function renderComboRefine(){
+  const el=$('comboRefineItems');if(!el)return;
+  el.innerHTML=comboDraft.map((d,i)=>{
+    const years=[...new Set(d.product.plans.map(p=>Number(p.years)))].sort((a,b)=>a-b);
+    if(!years.includes(Number(d.years)))d.years=years[0];
+    const services=[...new Set(d.product.plans.filter(p=>Number(p.years)===Number(d.years)).map(p=>p.service))];
+    if(!services.includes(d.service))d.service=services[0];
+    const plan=comboPlanFor(d);
+    return '<article class="combo-refine-card">'+
+      '<div class="combo-refine-product"><div class="combo-refine-img">'+visual(d.product)+'</div><div><b>'+esc(d.product.code)+'</b><span>'+esc(d.product.name)+'</span><strong>'+money(plan.monthly)+'/bulan standard</strong></div></div>'+
+      '<div class="combo-refine-fields">'+
+        '<label>Tempoh<select class="select combo-years" data-i="'+i+'">'+years.map(y=>'<option value="'+y+'" '+(Number(d.years)===y?'selected':'')+'>'+y+' tahun</option>').join('')+'</select></label>'+
+        '<label>Servis<select class="select combo-service" data-i="'+i+'">'+services.map(v=>'<option value="'+esc(v)+'" '+(d.service===v?'selected':'')+'>'+esc(v)+'</option>').join('')+'</select></label>'+
+        '<label>Promosi<select class="select combo-promo" data-i="'+i+'">'+d.product.promos.map(p=>'<option value="'+p.id+'" '+(d.promo===p.id?'selected':'')+'>'+esc(p.label)+'</option>').join('')+'</select></label>'+
+      '</div>'+
+    '</article>';
+  }).join('');
+  el.querySelectorAll('.combo-years').forEach(x=>x.onchange=()=>{
+    const i=Number(x.dataset.i),d=comboDraft[i];d.years=Number(x.value);
+    const services=d.product.plans.filter(p=>Number(p.years)===d.years).map(p=>p.service);
+    d.service=services[0];renderComboRefine();
+  });
+  el.querySelectorAll('.combo-service').forEach(x=>x.onchange=()=>{comboDraft[Number(x.dataset.i)].service=x.value;updateComboRefineSummary();});
+  el.querySelectorAll('.combo-promo').forEach(x=>x.onchange=()=>{comboDraft[Number(x.dataset.i)].promo=x.value;updateComboRefineSummary();});
+  updateComboRefineSummary();
+}
+function updateComboRefineSummary(){
+  const comboCount=comboDraft.filter(x=>x.promo==='combo10').length;
+  const err=comboCount===1?'RM10 OFF combo perlukan sekurang-kurangnya 2 produk dalam set ini yang kedua-duanya memilih RM10 OFF combo.':'';
+  $('comboRefineError').textContent=err;
+  $('comboRefineError').classList.toggle('show',!!err);
+  const total=comboDraft.reduce((a,x)=>a+comboDraftMonthly(x,1),0);
+  $('comboRefineMonthly').textContent=money(total);
+  $('comboAddBtn').disabled=!!err;
+}
+function addRefinedCombo(){
+  if(!activeComboPreset||!comboDraft.length)return;
+  if(comboDraft.filter(x=>x.promo==='combo10').length===1){updateComboRefineSummary();return;}
+  const seed=Date.now();
+  cart.push(...comboDraft.map((d,i)=>({key:seed+i+Math.random(),product:d.product,plan:{...comboPlanFor(d)},promo:d.promo,qty:1})));
+  const name=activeComboPreset.name;
+  closeComboModal();renderCart();scrollToPackage();toast(name+' ditambah ke pakej');
 }
 function renderCats(){const cats=['All',...new Set(CATALOG.map(x=>x.category))];$('catRow').innerHTML=cats.map(c=>'<button class="cat '+(c===activeCat?'active':'')+'" data-cat="'+esc(c)+'">'+esc(c)+'</button>').join('');$('catRow').querySelectorAll('.cat').forEach(b=>b.onclick=()=>{activeCat=b.dataset.cat;renderCats();renderProducts();});}
 function visibleProducts(){const q=($('search')?.value||'').trim().toLowerCase(),sort=$('sort')?.value||'featured';let rows=CATALOG.filter(p=>!stopSubmission(p)&&(activeCat==='All'||p.category===activeCat)&&(!q||((p.code+' '+p.name+' '+p.category).toLowerCase().includes(q))));if(sort==='price')rows.sort((a,b)=>minPrice(a)-minPrice(b));else if(sort==='model')rows.sort((a,b)=>a.code.localeCompare(b.code));else rows.sort((a,b)=>a.order-b.order);return rows;}
@@ -92,5 +155,5 @@ function wa(){const lines=['Hi Jason, saya berminat dengan pakej LG Subscribe in
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1800);}
 window.scrollToCatalog=()=>$('catalogSection').scrollIntoView({behavior:'smooth',block:'start'});
 window.scrollToPackage=()=>$('packageSide').scrollIntoView({behavior:'smooth',block:'start'});
-document.addEventListener('DOMContentLoaded',()=>{renderCats();renderComboMenu();loadFromUrl();renderProducts();renderCart();loadStock();$('search').addEventListener('input',renderProducts);$('sort').addEventListener('change',renderProducts);$('budget').addEventListener('input',budgetCheck);$('modalAdd').onclick=addActive;$('shareBtn').onclick=sharePackage;$('waBtn').onclick=wa;$('resetBtn').onclick=()=>{cart=[];renderCart();toast('Package cleared');};$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal();});});
+document.addEventListener('DOMContentLoaded',()=>{renderCats();renderComboMenu();loadFromUrl();renderProducts();renderCart();loadStock();$('search').addEventListener('input',renderProducts);$('sort').addEventListener('change',renderProducts);$('budget').addEventListener('input',budgetCheck);$('modalAdd').onclick=addActive;$('comboAddBtn').onclick=addRefinedCombo;$('shareBtn').onclick=sharePackage;$('waBtn').onclick=wa;$('resetBtn').onclick=()=>{cart=[];renderCart();toast('Package cleared');};$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal();});$('comboModal').addEventListener('click',e=>{if(e.target===$('comboModal'))closeComboModal();});});
 })();
