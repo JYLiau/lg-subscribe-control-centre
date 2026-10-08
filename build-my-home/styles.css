@@ -182,3 +182,19 @@ a{color:inherit}
 .product.unavailable .psub,
 .product.unavailable .price{opacity:1}
 .product.unavailable .addbtn:disabled{background:#777;color:#fff;opacity:1}
+
+.lang-select{appearance:none;border:1px solid rgba(255,255,255,.2);background:#202023;color:#fff;border-radius:12px;padding:9px 28px 9px 11px;font-size:12px;font-weight:800;min-width:72px;background-image:linear-gradient(45deg,transparent 50%,#fff 50%),linear-gradient(135deg,#fff 50%,transparent 50%);background-position:calc(100% - 14px) 50%,calc(100% - 9px) 50%;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+.copywriting-btn{border:1px solid #d8d1c8;background:#fff;color:#111;border-radius:13px;padding:11px 13px;font-size:11px;font-weight:850;white-space:nowrap;align-self:stretch}
+.copywriting-btn:active{background:#f4f0ea}
+.modal-bottom{grid-template-columns:150px auto minmax(160px,1fr)}
+@media(max-width:720px){
+  .topin{padding:11px 14px;gap:9px}
+  .brand span,.live{display:none}
+  .header-btn{padding:8px 10px}
+  .lang-select{padding:8px 26px 8px 9px;min-width:66px}
+}
+@media(max-width:560px){
+  .modal-bottom{grid-template-columns:minmax(132px,1fr) auto;align-items:end}
+  .modal-bottom .modal-add{grid-column:1/-1;width:100%}
+  .copywriting-btn{min-height:48px}
+}
