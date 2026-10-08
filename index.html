@@ -456,17 +456,30 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
   function productSortCompare(a,b,mode='priority'){
     const codeCmp=String(a.code||'').localeCompare(String(b.code||''));
     const catCmp=String(a.category||'').localeCompare(String(b.category||''));
+    const priorityTie=()=>lifecycleRank(a)-lifecycleRank(b) || stockRank(a)-stockRank(b) || catCmp || codeCmp;
     if(mode==='availability'){
       return stockRank(a)-stockRank(b) || lifecycleRank(a)-lifecycleRank(b) || catCmp || codeCmp;
     }
     if(mode==='lifecycle'){
       return lifecycleRank(a)-lifecycleRank(b) || stockRank(a)-stockRank(b) || catCmp || codeCmp;
     }
+    if(mode==='opening'){
+      return totalOpeningStock(b)-totalOpeningStock(a) || priorityTie();
+    }
+    if(mode==='al8'){
+      return stockQty(b?.stock?.AL8?.balance)-stockQty(a?.stock?.AL8?.balance) || priorityTie();
+    }
+    if(mode==='al2'){
+      return stockQty(b?.stock?.AL2?.balance)-stockQty(a?.stock?.AL2?.balance) || priorityTie();
+    }
+    if(mode==='al3'){
+      return stockQty(b?.stock?.AL3?.balance)-stockQty(a?.stock?.AL3?.balance) || priorityTie();
+    }
     if(mode==='model') return codeCmp;
     if(mode==='category') return catCmp || lifecycleRank(a)-lifecycleRank(b) || stockRank(a)-stockRank(b) || codeCmp;
     // Recommended priority: Current first, then NPI/other, Discontinued last;
     // inside each lifecycle group, In Stock first and No Stock last.
-    return lifecycleRank(a)-lifecycleRank(b) || stockRank(a)-stockRank(b) || catCmp || codeCmp;
+    return priorityTie();
   }
   function totalPositiveStock(p){
     const s=p.stock||{}; return [s.AL8?.balance,s.AL2?.balance,s.AL3?.balance].reduce((a,b)=>a+Math.max(0,safeNum(b)),0);
@@ -950,7 +963,11 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
 
           <select id="sortFilter" class="select">
             <option value="priority" ${productFilter.sort==='priority'?'selected':''}>Sort: Priority</option>
-            <option value="availability" ${productFilter.sort==='availability'?'selected':''}>Sort: Availability</option>
+            <option value="availability" ${productFilter.sort==='availability'?'selected':''}>Sort: Availability status</option>
+            <option value="opening" ${productFilter.sort==='opening'?'selected':''}>Sort: Opening stock ↓</option>
+            <option value="al8" ${productFilter.sort==='al8'?'selected':''}>Sort: AL8 stock ↓</option>
+            <option value="al2" ${productFilter.sort==='al2'?'selected':''}>Sort: AL2 stock ↓</option>
+            <option value="al3" ${productFilter.sort==='al3'?'selected':''}>Sort: AL3 stock ↓</option>
             <option value="lifecycle" ${productFilter.sort==='lifecycle'?'selected':''}>Sort: Lifecycle</option>
             <option value="category" ${productFilter.sort==='category'?'selected':''}>Sort: Category</option>
             <option value="model" ${productFilter.sort==='model'?'selected':''}>Sort: Model</option>
