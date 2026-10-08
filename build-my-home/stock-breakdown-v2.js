@@ -3,12 +3,12 @@ const U='https://jmnnesumjpkraugtzdkl.supabase.co',K='sb_publishable__CO_CJqvrVq
 const N=s=>{let x=String(s||'').split('.')[0].toUpperCase().replace(/[^A-Z0-9]/g,'');return x.startsWith('S3NQ')?'S3Q'+x.slice(4):x};
 const G=a=>{let g=new Map;for(const x of a||[]){let k=N(x.model_code);if(!g.has(k))g.set(k,[]);g.get(k).push(x)}let o=new Map;for(const[k,l]of g){let a=l.filter(x=>!String(x.submission_status||'').toLowerCase().includes('stop')),u=a.length?a:l,sm=f=>u.reduce((q,x)=>q+(Number(x[f])||0),0),d=u.map(x=>x.as_of_date).filter(Boolean).sort();o.set(k,{...u[0],model_code:k,submission_status:a.length?null:(u[0]?.submission_status||'STOP Submission'),opening_stock:sm('opening_stock'),available_stock:sm('available_stock'),al8_balance:sm('al8_balance'),al2_balance:sm('al2_balance'),al3_balance:sm('al3_balance'),as_of_date:d.at(-1)||u[0]?.as_of_date||null})}return o};
 const F=m=>{let k=N(m);if(M.has(k))return M.get(k);for(const[r,v]of M)if(r.startsWith(k)||k.startsWith(r))return v};
-const Q=v=>Math.round(Number(v)||0);
-const B=s=>!s?'<div class="stock-mini-v2">Stock not listed</div>':'<div class="stock-mini-v2"><span>Opening stock <b>'+Q(s.opening_stock)+'</b></span><span>West Malaysia (AL8) <b>'+Q(s.al8_balance)+'</b></span><span>Sabah <b>'+Q(s.al2_balance)+'</b></span><span>Sarawak <b>'+Q(s.al3_balance)+'</b></span></div>';
+const Q=v=>Math.round(Number(v)||0);const T=(k,v)=>window.LG_I18N_T?window.LG_I18N_T(k,v):k;const L=()=>window.LG_CURRENT_LANG?window.LG_CURRENT_LANG():'en';
+const B=s=>!s?'<div class="stock-mini-v2">'+T('stockNotListed')+'</div>':'<div class="stock-mini-v2"><span>'+T('opening')+' <b>'+Q(s.opening_stock)+'</b></span><span>'+T('westMalaysia')+' <b>'+Q(s.al8_balance)+'</b></span><span>'+T('sabah')+' <b>'+Q(s.al2_balance)+'</b></span><span>'+T('sarawak')+' <b>'+Q(s.al3_balance)+'</b></span></div>';
 function P(){
   document.querySelectorAll('#products .product').forEach(c=>{
     const m=c.querySelector('.pbody h3')?.textContent?.trim(),p=c.querySelector('.psub');if(!m||!p)return;
-    const s=F(m),sig=[m,Q(s?.opening_stock),Q(s?.al8_balance),Q(s?.al2_balance),Q(s?.al3_balance)].join('|');
+    const s=F(m),sig=[L(),m,Q(s?.opening_stock),Q(s?.al8_balance),Q(s?.al2_balance),Q(s?.al3_balance)].join('|');
     if(c.dataset.stockSig===sig)return;
     c.dataset.stockSig=sig;
     c.querySelector('.stock-badge')?.remove();
@@ -18,9 +18,9 @@ function P(){
 }
 function D(){
   const m=document.getElementById('modalModel')?.textContent?.trim(),t=document.getElementById('modalStock');if(!m||!t)return;
-  const s=F(m),sig=[m,Q(s?.opening_stock),Q(s?.al8_balance),Q(s?.al2_balance),Q(s?.al3_balance)].join('|');
+  const s=F(m),sig=[L(),m,Q(s?.opening_stock),Q(s?.al8_balance),Q(s?.al2_balance),Q(s?.al3_balance)].join('|');
   if(t.dataset.stockSig===sig)return;t.dataset.stockSig=sig;
-  t.innerHTML=B(s)+(s?.as_of_date?'<div class="stock-asof-v2">As of '+s.as_of_date+'</div>':'');
+  t.innerHTML=B(s)+(s?.as_of_date?'<div class="stock-asof-v2">'+T('asOf')+' '+s.as_of_date+'</div>':'');
 }
 document.addEventListener('DOMContentLoaded',()=>{
   const p=document.getElementById('products'),d=document.getElementById('modal');
@@ -28,6 +28,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(d)new MutationObserver(()=>{if(d.open)requestAnimationFrame(D)}).observe(d,{attributes:true,attributeFilter:['open']});
   const use=a=>{M=G(a||[]);requestAnimationFrame(P)};
   if(window.__LG_PUBLIC_STOCK_ROWS__)use(window.__LG_PUBLIC_STOCK_ROWS__);
-  window.addEventListener('lg-stock-ready',()=>use(window.__LG_PUBLIC_STOCK_ROWS__),{once:true});
+  window.addEventListener('lg-stock-ready',()=>use(window.__LG_PUBLIC_STOCK_ROWS__),{once:true});window.addEventListener('lg-language-change',()=>{document.querySelectorAll('[data-stock-sig]').forEach(x=>delete x.dataset.stockSig);requestAnimationFrame(()=>{P();D();});});
 });
 })();
