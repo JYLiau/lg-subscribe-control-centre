@@ -21,6 +21,33 @@ const baseCode=s=>{
 };
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const minPrice=p=>Math.min(...p.plans.map(x=>Number(x.monthly)||999999));
+function aggregateStockRows(rows){
+  const grouped=new Map();
+  for(const r of rows||[]){
+    const k=baseCode(r.model_code);
+    if(!grouped.has(k))grouped.set(k,[]);
+    grouped.get(k).push(r);
+  }
+  const out=new Map();
+  for(const [k,list] of grouped){
+    const active=list.filter(r=>!String(r.submission_status||'').toLowerCase().includes('stop'));
+    const use=active.length?active:list;
+    const sum=field=>use.reduce((a,r)=>a+(Number(r[field])||0),0);
+    const dates=use.map(r=>r.as_of_date).filter(Boolean).sort();
+    out.set(k,{
+      ...use[0],
+      model_code:k,
+      submission_status:active.length?null:(use[0]?.submission_status||'STOP Submission'),
+      opening_stock:sum('opening_stock'),
+      available_stock:sum('available_stock'),
+      al8_balance:sum('al8_balance'),
+      al2_balance:sum('al2_balance'),
+      al3_balance:sum('al3_balance'),
+      as_of_date:dates.at(-1)||use[0]?.as_of_date||null
+    });
+  }
+  return out;
+}
 const stockFor=p=>{
   const k=baseCode(p.code);
   if(stocks.has(k))return stocks.get(k);
@@ -148,7 +175,7 @@ function totalUnits(){return cart.reduce((a,x)=>a+x.qty,0);}
 function renderCart(){const units=totalUnits();$('cartUnits').textContent=units+' unit';$('selectedCount').textContent=units+' product selected';if(!cart.length){$('cartItems').innerHTML='<div class="room-empty" style="padding:16px">No products yet.</div>';$('roomGrid').innerHTML='<div class="room-empty"><b>Start with one appliance</b><br>Select a product below to build a package for your home.</div>';$('currentMonthly').textContent='RM0';$('scheduleRows').innerHTML='';$('saving').textContent='RM0';$('contractTotal').textContent='RM0';budgetCheck();syncUrl(false);return;}$('cartItems').innerHTML=cart.map((x,i)=>'<div class="cart-item"><div><b>'+esc(x.product.code)+'</b><span>'+x.qty+' × '+x.plan.years+'Y · '+esc(x.plan.service)+'</span><small>'+esc((x.product.promos.find(p=>p.id===x.promo)||{}).label||'')+'</small></div><button data-i="'+i+'" class="remove">×</button></div>').join('');$('cartItems').querySelectorAll('.remove').forEach(b=>b.onclick=()=>{cart.splice(Number(b.dataset.i),1);renderCart();});$('roomGrid').innerHTML=cart.map(x=>'<div class="room-item"><div class="qtydot">×'+x.qty+'</div><div class="miniimg">'+visual(x.product)+'</div><b>'+esc(x.product.code)+'</b><span>'+esc(x.product.name)+'</span></div>').join('');$('currentMonthly').textContent=money(cart.reduce((a,x)=>a+monthlyFor(x,1),0));renderSchedule();budgetCheck();syncUrl(false);}
 function renderSchedule(){const units=totalUnits(),maxMonths=Math.max(...cart.map(x=>x.plan.years*12)),cuts=new Set([1,maxMonths+1]);cart.forEach(x=>{if(x.promo==='half9')cuts.add(10);cuts.add(x.plan.years*12+1);});const pts=[...cuts].filter(n=>n>=1&&n<=maxMonths+1).sort((a,b)=>a-b);let rows=[],total=0,standard=0;for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1]-1;if(a>b)continue;const m=cart.reduce((s,x)=>a<=x.plan.years*12?s+monthlyFor(x,a):s,0),normal=cart.reduce((s,x)=>a<=x.plan.years*12?s+(Number(x.plan.monthly)||0)*x.qty:s,0),months=b-a+1;total+=m*months;standard+=normal*months;rows.push('<div class="schedule-row"><span>Month '+a+(b>a?'–'+b:'')+'</span><b>'+money(m)+'/month</b></div>');}$('scheduleRows').innerHTML=rows.join('')+(comboLineCount()===1?'<div class="schedule-row combo-warning"><span>RM10 OFF combo</span><b>Not active — add 1 more item using RM10 OFF combo</b></div>':'');$('saving').textContent=money(Math.max(0,standard-total));$('contractTotal').textContent=money(total);}
 function budgetCheck(){const budget=Number($('budget')?.value)||0,cur=Number($('currentMonthly')?.textContent.replace(/[^\d.]/g,''))||0,e=$('budgetResult');if(!cart.length){e.textContent='Build your package to compare with budget.';e.className='budget-result';return;}if(cur<=budget){e.textContent='Within budget by '+money(budget-cur)+'/month';e.className='budget-result ok';}else{e.textContent='Over budget by '+money(cur-budget)+'/month';e.className='budget-result over';}}
-async function loadStock(){try{const r=await fetch(SUPABASE_URL+'/rest/v1/rpc/get_public_stock_v4',{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'},body:'{}'});if(!r.ok)throw new Error('HTTP '+r.status);const rows=await r.json();window.__LG_PUBLIC_STOCK_ROWS__=rows;stocks=new Map(rows.map(x=>[baseCode(x.model_code),x]));stockLoaded=true;window.dispatchEvent(new Event('lg-stock-ready'));const dates=rows.map(x=>x.as_of_date).filter(Boolean).sort(),d=dates.at(-1)||'latest';$('liveDot').className='live-dot ok';$('liveText').textContent='Live stock connected';$('stockStamp').textContent='Stock synced · '+d;$('stockInfo').textContent='Current stock counts positive balances in AL2 + AL3 + AL8. If current stock is zero, the card shows the report opening stock instead. Refresh after a Control Centre stock upload for the latest figures.';renderCats();renderProducts();renderComboMenu();}catch(e){console.warn(e);stockLoaded=true;$('liveDot').className='live-dot err';$('liveText').textContent='Stock temporarily unavailable';$('stockStamp').textContent='Stock sync unavailable';renderProducts();renderComboMenu();}}
+async function loadStock(){try{const r=await fetch(SUPABASE_URL+'/rest/v1/rpc/get_public_stock_v4',{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'},body:'{}'});if(!r.ok)throw new Error('HTTP '+r.status);const rows=await r.json();window.__LG_PUBLIC_STOCK_ROWS__=rows;stocks=aggregateStockRows(rows);stockLoaded=true;window.dispatchEvent(new Event('lg-stock-ready'));const dates=rows.map(x=>x.as_of_date).filter(Boolean).sort(),d=dates.at(-1)||'latest';$('liveDot').className='live-dot ok';$('liveText').textContent='Live stock connected';$('stockStamp').textContent='Stock synced · '+d;$('stockInfo').textContent='Current stock counts positive balances in AL2 + AL3 + AL8. If current stock is zero, the card shows the report opening stock instead. Refresh after a Control Centre stock upload for the latest figures.';renderCats();renderProducts();renderComboMenu();}catch(e){console.warn(e);stockLoaded=true;$('liveDot').className='live-dot err';$('liveText').textContent='Stock temporarily unavailable';$('stockStamp').textContent='Stock sync unavailable';renderProducts();renderComboMenu();}}
 function payload(){return cart.map(x=>({id:x.product.id,plan:x.product.plans.findIndex(p=>p.years===x.plan.years&&p.service===x.plan.service&&p.monthly===x.plan.monthly),years:x.plan.years,service:x.plan.service,monthly:x.plan.monthly,promo:x.promo,qty:x.qty}));}
 function packageToken(){return btoa(unescape(encodeURIComponent(JSON.stringify(payload())))).replace(/=+$/,'');}
 function customerShareUrl(){
