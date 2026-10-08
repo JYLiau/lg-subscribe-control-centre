@@ -57,7 +57,7 @@ en:{
   brandSub:'Build My Home · Customer Showroom',navProducts:'Products',navPackage:'My package',liveConnecting:'Connecting to Control Centre stock…',
   heroEyebrow:'● Public showroom · no login required',heroTitle:'Your home.<br>Your choice.',heroText:'Choose products, compare 5- or 7-year plans, try promotions, and see your package payment schedule — all on one page.',
   agentNote:'Prices & stock are for reference. Jason will confirm the promotion, eligibility and final stock before application.',
-  popularTitle:'POPULAR PACKAGE MENU',popularIntro:'Pick a preset combo, then add or remove products ala carte.',popularTiny:'Choose set → adjust term, service & promotion',popularNote:'Each set is a starting point. Before adding it, you can choose the 5/7-year term, service and promotion for each product.',
+  popularTitle:'POPULAR PACKAGES',popularIntro:'Choose a suggested package as a starting point, then add or remove products to suit your needs.',popularTiny:'Choose a package → adjust term, service & promotion',popularNote:'A suggested package is only a starting point. Before adding it, you can choose the 5/7-year term, service and promotion for each product.',
   homeTitle:'YOUR HOME PACKAGE',homeIntro:'Responsive layout — the 3rd product and beyond stay aligned.',
   catalogTitle:'Choose your appliances',catalogIntro:'Card price shows the lowest standard plan. Choose the promotion when adding a product.',priceRef:'Reference pricing · October 2026',
   searchPH:'Search model or product…',sortFeatured:'Sort: Recommended',sortPrice:'Lowest price',sortModel:'Model A–Z',stockConnecting:'Connecting stock…',
