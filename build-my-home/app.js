@@ -27,7 +27,7 @@ ms:{
   liveStockTitle:'Stok live daripada Control Centre',liveStockText:'Setiap kad memaparkan jumlah baki positif AL2 + AL3 + AL8 daripada sumber stok yang sama dengan LG Subscribe Control Centre.',
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Imej produk daripada bahan rujukan yang dibekalkan. T&C apply.',
   comboHelp:'Pilih tempoh, servis dan promosi untuk setiap produk. Harga pakej akan dikira semula sebelum ditambah.',comboEstimate:'Anggaran bayaran bulan pertama',comboAdd:'Tambah set ke pakej',
-  choosePlan:'1. Pilih pelan',choosePromo:'2. Pilih promosi',qty:'Kuantiti',copy:'Salin ayat',addPackage:'Tambah ke pakej',
+  choosePlan:'1. Pilih pelan',choosePromo:'2. Pilih promosi',qty:'Kuantiti',copy:'Salin ayat',copyTitle:'Salin copywriting untuk pelan & promosi dipilih',addPackage:'Tambah ke pakej',
   all:'Semua',years:'tahun',month:'bulan',months:'bulan',from:'Dari',viewPlans:'Lihat pelan',currentSelection:'Pilihan semasa',
   noProducts:'Belum ada produk.',startAppliance:'Mulakan dengan satu perkakas',startAppliance2:'Pilih produk di bawah untuk bina pakej rumah anda.',
   productSelected:'produk dipilih',unit:'unit',model:'model',standard:'standard',period:'Tempoh',service:'Servis',promotion:'Promosi',
@@ -68,7 +68,7 @@ en:{
   liveStockTitle:'Live stock from Control Centre',liveStockText:'Each card shows positive AL2 + AL3 + AL8 balances from the same source as LG Subscribe Control Centre.',
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Product images are from supplied reference materials. T&C apply.',
   comboHelp:'Choose the term, service and promotion for each product. The package price will be recalculated before adding.',comboEstimate:'Estimated first-month payment',comboAdd:'Add set to package',
-  choosePlan:'1. Choose plan',choosePromo:'2. Choose promotion',qty:'Quantity',copy:'Copy text',addPackage:'Add to package',
+  choosePlan:'1. Choose plan',choosePromo:'2. Choose promotion',qty:'Quantity',copy:'Copy text',copyTitle:'Copy copywriting for the selected plan & promotion',addPackage:'Add to package',
   all:'All',years:'years',month:'month',months:'months',from:'From',viewPlans:'View plans',currentSelection:'Current selection',
   noProducts:'No products yet.',startAppliance:'Start with one appliance',startAppliance2:'Choose a product below to build your home package.',
   productSelected:'products selected',unit:'unit',model:'model',standard:'standard',period:'Term',service:'Service',promotion:'Promotion',
@@ -109,7 +109,7 @@ zh:{
   liveStockTitle:'Control Centre 实时库存',liveStockText:'每张产品卡显示与 LG Subscribe Control Centre 同一来源的 AL2 + AL3 + AL8 正数库存余额。',
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>产品图片来自所提供的参考资料。须符合条款与条件。',
   comboHelp:'为每件产品选择年限、服务和优惠。加入前会重新计算配套价格。',comboEstimate:'首月预计月费',comboAdd:'加入整套配套',
-  choosePlan:'1. 选择方案',choosePromo:'2. 选择优惠',qty:'数量',copy:'复制文案',addPackage:'加入配套',
+  choosePlan:'1. 选择方案',choosePromo:'2. 选择优惠',qty:'数量',copy:'复制文案',copyTitle:'复制所选方案与优惠的文案',addPackage:'加入配套',
   all:'全部',years:'年',month:'月',months:'个月',from:'每月低至',viewPlans:'查看方案',currentSelection:'当前可选',
   noProducts:'尚未选择产品。',startAppliance:'从一件家电开始',startAppliance2:'从下方选择产品，建立你的家电配套。',
   productSelected:'件产品已选择',unit:'件',model:'型号',standard:'标准价',period:'年限',service:'服务',promotion:'优惠',
@@ -148,7 +148,7 @@ function applyI18n(){
   document.querySelectorAll('[data-i18n]').forEach(e=>{e.textContent=tr(e.dataset.i18n);});
   document.querySelectorAll('[data-i18n-html]').forEach(e=>{e.innerHTML=tr(e.dataset.i18nHtml);});
   document.querySelectorAll('[data-i18n-placeholder]').forEach(e=>{e.placeholder=tr(e.dataset.i18nPlaceholder);});
-  if($('langSelect'))$('langSelect').value=currentLang;
+  if($('langSelect'))$('langSelect').value=currentLang;if($('copyCopyBtn'))$('copyCopyBtn').title=tr('copyTitle');
 }
 function setLanguage(lang){
   if(!['ms','en','zh'].includes(lang))return;
