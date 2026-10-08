@@ -7,7 +7,7 @@
 <title>Build My Home · Jason LG Subscribe</title>
 <meta name="description" content="Bina pakej LG Subscribe anda, banding pelan, promosi dan semak stok semasa.">
 <link rel="preconnect" href="https://wsrv.nl" crossorigin>
-<link rel="stylesheet" href="./styles.css?v=20261008a">
+<link rel="stylesheet" href="./styles.css?v=20261008b">
 </head>
 <body>
 <header class="top">
@@ -42,10 +42,10 @@
     <section class="panel combo-menu-panel" id="comboMenuSection">
       <div class="panel-head">
         <div><h2>MENU PAKEJ POPULAR</h2><p>Pilih set macam menu combo — kemudian anda masih boleh tambah atau buang produk secara ala carte.</p></div>
-        <div class="tiny">Preset pelan standard 5 tahun</div>
+        <div class="tiny">Pilih set → ubah tempoh, servis & promosi</div>
       </div>
       <div class="combo-menu" id="comboMenu"></div>
-      <div class="combo-note">Memilih set akan menggantikan pakej semasa. Promosi 50% OFF dan RM10 combo tidak dipilih secara automatik.</div>
+      <div class="combo-note">Set ialah titik mula. Sebelum tambah ke pakej, anda boleh pilih tempoh 5/7 tahun, servis dan promosi bagi setiap produk.</div>
     </section>
 
     <section class="panel preview" id="packagePreview">
@@ -114,6 +114,22 @@
 <div class="footer">Jason Yang · 011-5972 6619 · LGM122989<br>Imej produk daripada bahan rujukan yang dibekalkan. T&C apply.</div>
 </main>
 
+<dialog class="modal combo-refine-modal" id="comboModal">
+  <div class="modal-in combo-refine-in">
+    <div class="modal-top">
+      <div><div class="combo-tag" id="comboModalTag"></div><h2 id="comboModalTitle" style="margin-top:8px"></h2><p id="comboModalSub"></p></div>
+      <button class="close" onclick="closeComboModal()">×</button>
+    </div>
+    <div class="combo-refine-help">Pilih tempoh, servis dan promosi untuk setiap produk. Harga pakej akan dikira semula sebelum ditambah.</div>
+    <div id="comboRefineItems" class="combo-refine-items"></div>
+    <div id="comboRefineError" class="combo-refine-error"></div>
+    <div class="combo-refine-summary">
+      <div><span>Anggaran bayaran bulan pertama</span><strong id="comboRefineMonthly">RM0</strong><em>/bulan</em></div>
+      <button class="modal-add" id="comboAddBtn">Tambah set ke pakej</button>
+    </div>
+  </div>
+</dialog>
+
 <dialog class="modal" id="modal">
   <div class="modal-in">
     <div class="modal-top">
@@ -133,6 +149,6 @@
 </dialog>
 <div class="toast" id="toast"></div>
 
-<script src="./catalog.js?v=20261008a"></script><script src="./app.js?v=20261008a"></script><script src="./stock-breakdown-v2.js?v=20261008a"></script><script src="./image-lite-v2.js?v=20261008a"></script>
+<script src="./catalog.js?v=20261008b"></script><script src="./app.js?v=20261008b"></script><script src="./stock-breakdown-v2.js?v=20261008b"></script><script src="./image-lite-v2.js?v=20261008b"></script>
 </body>
 </html>
