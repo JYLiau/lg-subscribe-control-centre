@@ -4,6 +4,13 @@ const SUPABASE_URL='https://jmnnesumjpkraugtzdkl.supabase.co';
 const SUPABASE_KEY='sb_publishable__CO_CJqvrVqG-LClfcD_Wg_CVdZZZU8';
 const CATALOG=(window.LG_CATALOG||[]).map((p,i)=>({...p,order:i}));
 const icons={'Aircond':'❄️','Laundry':'🧺','Fridge':'🧊','Air Purifier':'🌿','Water Purifier':'💧','TV':'📺'};
+const COMBO_PRESETS=[
+  {id:'setA',tag:'SET A',name:'Sejuk + Segar',desc:'1.0HP Aircond + 493L Fridge',items:[{id:'ac1',plan:0},{id:'ref1',plan:0}]},
+  {id:'setB',tag:'SET B',name:'Segar + Laundry',desc:'493L Fridge + 12kg Washer',items:[{id:'ref1',plan:0},{id:'lau1',plan:0}]},
+  {id:'setC',tag:'SET C',name:'Sejuk + Laundry',desc:'1.0HP Aircond + 12kg Washer',items:[{id:'ac1',plan:0},{id:'lau1',plan:0}]},
+  {id:'setD',tag:'SET D',name:'Whole Home Trio',desc:'Aircond + Fridge + Washer',items:[{id:'ac1',plan:0},{id:'ref1',plan:0},{id:'lau1',plan:0}]},
+  {id:'setE',tag:'SET E',name:'Laundry Duo',desc:'12kg Washer + 10kg Dryer',items:[{id:'lau1',plan:0},{id:'lau2',plan:0}]}
+];
 let activeCat='All',cart=[],activeProduct=null,chosenPlan=null,chosenPromo='standard',stocks=new Map(),stockLoaded=false;
 const $=id=>document.getElementById(id);
 const money=n=>'RM'+Math.max(0,Math.round(Number(n)||0)).toLocaleString('en-MY');
@@ -29,6 +36,36 @@ function visual(p){
   const src=p.imageData||p.imageUrl||'';
   return src?'<img loading="lazy" decoding="async" referrerpolicy="no-referrer" src="'+src+'" alt="'+esc(p.name)+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\'"><div class="generic-icon" style="display:none">'+icon(p)+'</div>':'<div class="generic-icon">'+icon(p)+'</div>';
 }
+function comboPresetData(preset){
+  const items=preset.items.map(x=>{const product=CATALOG.find(p=>p.id===x.id);if(!product)return null;return{product,plan:product.plans[x.plan]||product.plans[0]};}).filter(Boolean);
+  const monthly=items.reduce((sum,x)=>sum+(Number(x.plan.monthly)||0),0);
+  const blocked=items.some(x=>stopSubmission(x.product));
+  return{items,monthly,blocked};
+}
+function renderComboMenu(){
+  const el=$('comboMenu');if(!el)return;
+  el.innerHTML=COMBO_PRESETS.map(p=>{
+    const d=comboPresetData(p);
+    const pics=d.items.map(x=>'<div class="combo-thumb">'+visual(x.product)+'</div>').join('');
+    return '<article class="combo-card '+(d.blocked?'disabled':'')+'">'+
+      '<div class="combo-tag">'+esc(p.tag)+'</div>'+
+      '<div class="combo-pics">'+pics+'</div>'+
+      '<h3>'+esc(p.name)+'</h3>'+
+      '<p>'+esc(p.desc)+'</p>'+
+      '<div class="combo-price"><span>RM</span><b>'+Math.round(d.monthly)+'</b><em>/bulan</em></div>'+
+      '<small>Pelan standard 5 tahun · '+d.items.length+' produk</small>'+
+      '<button class="combo-pick" data-combo="'+p.id+'" '+(d.blocked?'disabled':'')+'>'+(d.blocked?'Tidak tersedia':'Pilih set')+'</button>'+
+    '</article>';
+  }).join('');
+  el.querySelectorAll('.combo-pick:not(:disabled)').forEach(b=>b.onclick=()=>applyComboPreset(b.dataset.combo));
+}
+function applyComboPreset(id){
+  const preset=COMBO_PRESETS.find(x=>x.id===id);if(!preset)return;
+  const d=comboPresetData(preset);if(d.blocked)return toast('Set ini mengandungi model yang tidak menerima submission sekarang.');
+  if(cart.length&&!confirm('Gantikan pakej semasa dengan '+preset.name+'?'))return;
+  cart=d.items.map(x=>({key:Date.now()+Math.random(),product:x.product,plan:{...x.plan},promo:'standard',qty:1}));
+  renderCart();scrollToPackage();toast(preset.name+' ditambah ke pakej');
+}
 function renderCats(){const cats=['All',...new Set(CATALOG.map(x=>x.category))];$('catRow').innerHTML=cats.map(c=>'<button class="cat '+(c===activeCat?'active':'')+'" data-cat="'+esc(c)+'">'+esc(c)+'</button>').join('');$('catRow').querySelectorAll('.cat').forEach(b=>b.onclick=()=>{activeCat=b.dataset.cat;renderCats();renderProducts();});}
 function visibleProducts(){const q=($('search')?.value||'').trim().toLowerCase(),sort=$('sort')?.value||'featured';let rows=CATALOG.filter(p=>!stopSubmission(p)&&(activeCat==='All'||p.category===activeCat)&&(!q||((p.code+' '+p.name+' '+p.category).toLowerCase().includes(q))));if(sort==='price')rows.sort((a,b)=>minPrice(a)-minPrice(b));else if(sort==='model')rows.sort((a,b)=>a.code.localeCompare(b.code));else rows.sort((a,b)=>a.order-b.order);return rows;}
 function renderProducts(){const rows=visibleProducts();$('catalogCount').textContent=rows.length+' model';$('products').innerHTML=rows.map(p=>{const s=stockFor(p),n=s?Math.max(0,Math.round(Number(s.total_stock)||0)):null,out=n===0;return '<article class="product '+(out?'unavailable':'')+'"><div class="pvisual">'+stockBadge(p)+visual(p)+'</div><div class="pbody"><div class="pcat">'+esc(p.category)+'</div><h3>'+esc(p.code)+'</h3><div class="psub">'+esc(p.name)+'</div><span class="lifecycle current">Current selection</span><div class="price"><div><small>From</small><strong>'+money(minPrice(p))+'</strong><em>/month</em></div></div><button class="addbtn" data-id="'+p.id+'">View plans</button></div></article>';}).join('');$('products').querySelectorAll('.addbtn').forEach(b=>b.onclick=()=>openProduct(b.dataset.id));}
@@ -46,7 +83,7 @@ function totalUnits(){return cart.reduce((a,x)=>a+x.qty,0);}
 function renderCart(){const units=totalUnits();$('cartUnits').textContent=units+' unit';$('selectedCount').textContent=units+' product selected';if(!cart.length){$('cartItems').innerHTML='<div class="room-empty" style="padding:16px">No products yet.</div>';$('roomGrid').innerHTML='<div class="room-empty"><b>Start with one appliance</b><br>Select a product below to build a package for your home.</div>';$('currentMonthly').textContent='RM0';$('scheduleRows').innerHTML='';$('saving').textContent='RM0';$('contractTotal').textContent='RM0';budgetCheck();syncUrl(false);return;}$('cartItems').innerHTML=cart.map((x,i)=>'<div class="cart-item"><div><b>'+esc(x.product.code)+'</b><span>'+x.qty+' × '+x.plan.years+'Y · '+esc(x.plan.service)+'</span><small>'+esc((x.product.promos.find(p=>p.id===x.promo)||{}).label||'')+'</small></div><button data-i="'+i+'" class="remove">×</button></div>').join('');$('cartItems').querySelectorAll('.remove').forEach(b=>b.onclick=()=>{cart.splice(Number(b.dataset.i),1);renderCart();});$('roomGrid').innerHTML=cart.map(x=>'<div class="room-item"><div class="qtydot">×'+x.qty+'</div><div class="miniimg">'+visual(x.product)+'</div><b>'+esc(x.product.code)+'</b><span>'+esc(x.product.name)+'</span></div>').join('');$('currentMonthly').textContent=money(cart.reduce((a,x)=>a+monthlyFor(x,1),0));renderSchedule();budgetCheck();syncUrl(false);}
 function renderSchedule(){const units=totalUnits(),maxMonths=Math.max(...cart.map(x=>x.plan.years*12)),cuts=new Set([1,maxMonths+1]);cart.forEach(x=>{if(x.promo==='half9')cuts.add(10);cuts.add(x.plan.years*12+1);});const pts=[...cuts].filter(n=>n>=1&&n<=maxMonths+1).sort((a,b)=>a-b);let rows=[],total=0,standard=0;for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1]-1;if(a>b)continue;const m=cart.reduce((s,x)=>a<=x.plan.years*12?s+monthlyFor(x,a):s,0),normal=cart.reduce((s,x)=>a<=x.plan.years*12?s+(Number(x.plan.monthly)||0)*x.qty:s,0),months=b-a+1;total+=m*months;standard+=normal*months;rows.push('<div class="schedule-row"><span>Month '+a+(b>a?'–'+b:'')+'</span><b>'+money(m)+'/month</b></div>');}$('scheduleRows').innerHTML=rows.join('')+(comboLineCount()===1?'<div class="schedule-row combo-warning"><span>RM10 OFF combo</span><b>Not active — add 1 more item using RM10 OFF combo</b></div>':'');$('saving').textContent=money(Math.max(0,standard-total));$('contractTotal').textContent=money(total);}
 function budgetCheck(){const budget=Number($('budget')?.value)||0,cur=Number($('currentMonthly')?.textContent.replace(/[^\d.]/g,''))||0,e=$('budgetResult');if(!cart.length){e.textContent='Build your package to compare with budget.';e.className='budget-result';return;}if(cur<=budget){e.textContent='Within budget by '+money(budget-cur)+'/month';e.className='budget-result ok';}else{e.textContent='Over budget by '+money(cur-budget)+'/month';e.className='budget-result over';}}
-async function loadStock(){try{const r=await fetch(SUPABASE_URL+'/rest/v1/rpc/get_public_stock_v4',{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'},body:'{}'});if(!r.ok)throw new Error('HTTP '+r.status);const rows=await r.json();window.__LG_PUBLIC_STOCK_ROWS__=rows;stocks=new Map(rows.map(x=>[baseCode(x.model_code),x]));stockLoaded=true;window.dispatchEvent(new Event('lg-stock-ready'));const dates=rows.map(x=>x.as_of_date).filter(Boolean).sort(),d=dates.at(-1)||'latest';$('liveDot').className='live-dot ok';$('liveText').textContent='Live stock connected';$('stockStamp').textContent='Stock synced · '+d;$('stockInfo').textContent='Current stock counts positive balances in AL2 + AL3 + AL8. If current stock is zero, the card shows the report opening stock instead. Refresh after a Control Centre stock upload for the latest figures.';renderCats();renderProducts();}catch(e){console.warn(e);stockLoaded=true;$('liveDot').className='live-dot err';$('liveText').textContent='Stock temporarily unavailable';$('stockStamp').textContent='Stock sync unavailable';renderProducts();}}
+async function loadStock(){try{const r=await fetch(SUPABASE_URL+'/rest/v1/rpc/get_public_stock_v4',{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'},body:'{}'});if(!r.ok)throw new Error('HTTP '+r.status);const rows=await r.json();window.__LG_PUBLIC_STOCK_ROWS__=rows;stocks=new Map(rows.map(x=>[baseCode(x.model_code),x]));stockLoaded=true;window.dispatchEvent(new Event('lg-stock-ready'));const dates=rows.map(x=>x.as_of_date).filter(Boolean).sort(),d=dates.at(-1)||'latest';$('liveDot').className='live-dot ok';$('liveText').textContent='Live stock connected';$('stockStamp').textContent='Stock synced · '+d;$('stockInfo').textContent='Current stock counts positive balances in AL2 + AL3 + AL8. If current stock is zero, the card shows the report opening stock instead. Refresh after a Control Centre stock upload for the latest figures.';renderCats();renderProducts();renderComboMenu();}catch(e){console.warn(e);stockLoaded=true;$('liveDot').className='live-dot err';$('liveText').textContent='Stock temporarily unavailable';$('stockStamp').textContent='Stock sync unavailable';renderProducts();renderComboMenu();}}
 function payload(){return cart.map(x=>({id:x.product.id,plan:x.product.plans.findIndex(p=>p.years===x.plan.years&&p.service===x.plan.service&&p.monthly===x.plan.monthly),promo:x.promo,qty:x.qty}));}
 function syncUrl(push=true){const u=new URL(location.href);if(cart.length)u.searchParams.set('pkg',btoa(unescape(encodeURIComponent(JSON.stringify(payload())))).replace(/=+$/,''));else u.searchParams.delete('pkg');if(push)history.pushState({},'',u);else history.replaceState({},'',u);}
 function loadFromUrl(){const v=new URL(location.href).searchParams.get('pkg');if(!v)return;try{const pad=v+'==='.slice((v.length+3)%4),data=JSON.parse(decodeURIComponent(escape(atob(pad))));cart=data.map(x=>{const p=CATALOG.find(y=>y.id===x.id);if(!p)return null;const plan=p.plans[x.plan]||p.plans[0];return{key:Date.now()+Math.random(),product:p,plan:{...plan},promo:p.promos.some(z=>z.id===x.promo)?x.promo:'standard',qty:Math.max(1,Math.min(9,Number(x.qty)||1))};}).filter(Boolean);}catch(e){console.warn('bad package link',e);}}
@@ -55,5 +92,5 @@ function wa(){const lines=['Hi Jason, saya berminat dengan pakej LG Subscribe in
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1800);}
 window.scrollToCatalog=()=>$('catalogSection').scrollIntoView({behavior:'smooth',block:'start'});
 window.scrollToPackage=()=>$('packageSide').scrollIntoView({behavior:'smooth',block:'start'});
-document.addEventListener('DOMContentLoaded',()=>{renderCats();loadFromUrl();renderProducts();renderCart();loadStock();$('search').addEventListener('input',renderProducts);$('sort').addEventListener('change',renderProducts);$('budget').addEventListener('input',budgetCheck);$('modalAdd').onclick=addActive;$('shareBtn').onclick=sharePackage;$('waBtn').onclick=wa;$('resetBtn').onclick=()=>{cart=[];renderCart();toast('Package cleared');};$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal();});});
+document.addEventListener('DOMContentLoaded',()=>{renderCats();renderComboMenu();loadFromUrl();renderProducts();renderCart();loadStock();$('search').addEventListener('input',renderProducts);$('sort').addEventListener('change',renderProducts);$('budget').addEventListener('input',budgetCheck);$('modalAdd').onclick=addActive;$('shareBtn').onclick=sharePackage;$('waBtn').onclick=wa;$('resetBtn').onclick=()=>{cart=[];renderCart();toast('Package cleared');};$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal();});});
 })();
