@@ -73,3 +73,32 @@ a{color:inherit}
 .cart-item small{display:block;color:#8b8177;font-size:9px;margin-top:3px}
 .live-dot.ok{background:#21a56b}.live-dot.err{background:#c94d4d}
 @media(max-width:560px){.plan-grid,.promo-grid{grid-template-columns:1fr}}
+
+
+.combo-menu-panel{padding:21px;margin-bottom:22px;overflow:hidden}
+.combo-menu{display:flex;gap:12px;overflow-x:auto;padding:2px 1px 8px;scroll-snap-type:x proximity;scrollbar-width:none}
+.combo-menu::-webkit-scrollbar{display:none}
+.combo-card{position:relative;flex:0 0 245px;scroll-snap-align:start;border:1px solid #e4ddd5;border-radius:20px;background:linear-gradient(155deg,#fff,#f7f3ee);padding:14px;box-shadow:0 8px 22px rgba(30,20,10,.05)}
+.combo-card.disabled{opacity:.5}
+.combo-tag{display:inline-flex;background:#111;color:#fff;border-radius:999px;padding:5px 8px;font-size:9px;font-weight:850;letter-spacing:.07em}
+.combo-pics{height:92px;display:flex;align-items:center;justify-content:center;margin:5px 0 4px}
+.combo-thumb{width:76px;height:76px;border-radius:16px;background:#fff;border:1px solid #eee7df;display:grid;place-items:center;margin-left:-10px;box-shadow:0 5px 12px rgba(20,15,10,.05);overflow:hidden}
+.combo-thumb:first-child{margin-left:0}
+.combo-thumb img{max-width:92%;max-height:68px;object-fit:contain}
+.combo-thumb .generic-icon{width:50px;height:50px;font-size:23px}
+.combo-card h3{font-size:16px;margin:3px 0 2px;letter-spacing:-.02em}
+.combo-card p{font-size:10px;color:var(--muted);min-height:28px;line-height:1.35;margin:0 0 8px}
+.combo-price{display:flex;align-items:flex-end;gap:2px;margin:5px 0 1px}
+.combo-price span{font-size:11px;font-weight:800;margin-bottom:4px}
+.combo-price b{font-size:28px;line-height:1;letter-spacing:-.05em}
+.combo-price em{font-size:10px;color:var(--muted);font-style:normal;margin-bottom:3px}
+.combo-card small{display:block;font-size:9px;color:#8a8178;margin-bottom:10px}
+.combo-pick{width:100%;border:0;border-radius:12px;background:#111;color:#fff;padding:10px;font-weight:800;font-size:11px;cursor:pointer}
+.combo-pick:disabled{background:#aaa}
+.combo-note{font-size:9px;color:#8a8178;margin-top:6px}
+@media(max-width:560px){
+  .combo-menu-panel{padding:17px}
+  .combo-card{flex-basis:225px}
+  .combo-thumb{width:68px;height:68px}
+  .combo-pics{height:82px}
+}
