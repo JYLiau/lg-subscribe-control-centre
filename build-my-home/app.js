@@ -11,6 +11,156 @@ const COMBO_PRESETS=[
   {id:'setD',tag:'SET D',name:'Whole Home Trio',desc:'Aircond + Fridge + Washer',items:[{id:'ac1',plan:0},{id:'ref1',plan:0},{id:'lau1',plan:0}]},
   {id:'setE',tag:'SET E',name:'Laundry Duo',desc:'12kg Washer + 10kg Dryer',items:[{id:'lau1',plan:0},{id:'lau2',plan:0}]}
 ];
+const I18N={
+ms:{
+  brandSub:'Bina Rumah · Bilik Pameran Pelanggan',navProducts:'Produk',navPackage:'Pakej saya',liveConnecting:'Menyambung stok Control Centre…',
+  heroEyebrow:'● Bilik pameran awam · tiada log masuk diperlukan',heroTitle:'Rumah anda.<br>Pilihan anda.',heroText:'Pilih produk, bandingkan pelan 5 atau 7 tahun, cuba promosi, dan lihat jadual bayaran pakej anda — semuanya dalam satu halaman.',
+  agentNote:'Harga & stok dipaparkan sebagai rujukan. Jason akan sahkan promosi, kelayakan dan stok akhir sebelum permohonan.',
+  popularTitle:'MENU PAKEJ POPULAR',popularIntro:'Pilih set macam menu combo — kemudian anda masih boleh tambah atau buang produk secara ala carte.',popularTiny:'Pilih set → ubah tempoh, servis & promosi',popularNote:'Set ialah titik mula. Sebelum tambah ke pakej, anda boleh pilih tempoh 5/7 tahun, servis dan promosi bagi setiap produk.',
+  homeTitle:'PAKEJ RUMAH ANDA',homeIntro:'Susunan responsif — produk ke-3 dan seterusnya kekal sejajar.',
+  catalogTitle:'Pilih perkakas anda',catalogIntro:'Harga kad ialah harga pelan standard terendah. Promosi dipilih semasa tambah produk.',priceRef:'Harga rujukan · Oktober 2026',
+  searchPH:'Cari model atau produk…',sortFeatured:'Susun: Disyorkan',sortPrice:'Harga terendah',sortModel:'Model A–Z',stockConnecting:'Stok sedang disambungkan…',
+  shareTitle:'Pakej khas untuk anda',shareText:'Produk, tempoh, servis dan promosi di bawah telah dipilih berdasarkan permintaan anda.',editChoice:'Ubah pilihan',
+  packageTitle:'PAKEJ PILIHAN ANDA',packageIntro:'Bayaran berubah ikut promosi & tempoh.',selectedProducts:'Produk dipilih',paymentNow:'Bayaran sekarang',budget:'Bajet bulanan',
+  schedule:'Jadual bayaran',savings:'Jumlah penjimatan',contract:'Jumlah kontrak',askWa:'Tanya Jason di WhatsApp',copyLink:'Salin link untuk customer',clearPackage:'Kosongkan pakej',
+  disclaimer:'Promosi 50% dan RM10 combo ialah pilihan berasingan dan tidak digabungkan. RM10 combo hanya aktif apabila sekurang-kurangnya 2 produk/order kedua-duanya memilih pakej RM10 combo. Stok boleh berubah selepas laporan terakhir.',
+  liveStockTitle:'Stok live daripada Control Centre',liveStockText:'Setiap kad memaparkan jumlah baki positif AL2 + AL3 + AL8 daripada sumber stok yang sama dengan LG Subscribe Control Centre.',
+  footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Imej produk daripada bahan rujukan yang dibekalkan. T&C apply.',
+  comboHelp:'Pilih tempoh, servis dan promosi untuk setiap produk. Harga pakej akan dikira semula sebelum ditambah.',comboEstimate:'Anggaran bayaran bulan pertama',comboAdd:'Tambah set ke pakej',
+  choosePlan:'1. Pilih pelan',choosePromo:'2. Pilih promosi',qty:'Kuantiti',copy:'Salin ayat',addPackage:'Tambah ke pakej',
+  all:'Semua',years:'tahun',month:'bulan',months:'bulan',from:'Dari',viewPlans:'Lihat pelan',currentSelection:'Pilihan semasa',
+  noProducts:'Belum ada produk.',startAppliance:'Mulakan dengan satu perkakas',startAppliance2:'Pilih produk di bawah untuk bina pakej rumah anda.',
+  productSelected:'produk dipilih',unit:'unit',model:'model',standard:'standard',period:'Tempoh',service:'Servis',promotion:'Promosi',
+  notAvailable:'Tidak tersedia',chooseCustomize:'Pilih & ubah suai',standardPlanFrom:'Dari pelan standard',canCustomize:'boleh ubah tempoh/servis/promosi',
+  comboNeed2:'RM10 OFF combo perlukan sekurang-kurangnya 2 produk/order dalam pakej yang kedua-duanya memilih RM10 OFF combo.',
+  addedPackage:'Ditambah ke pakej',comboAdded:'ditambah ke pakej',comboNeedAnother:'Ditambah. RM10 combo perlukan satu lagi item dengan pakej RM10 OFF combo yang sama.',
+  stockNotListed:'Stok tidak disenaraikan',stockSyncing:'Stok: sedang diselaraskan…',lowStock:'Stok rendah: {n}',stock:'Stok: {n}',openingStock:'Stok pembukaan: {n}',outStock:'Tiada stok',
+  currentStock:'Stok semasa',opening:'Pembukaan',asOf:'Setakat',stockDataSync:'Data stok sedang diselaraskan…',
+  promoStandard:'Harga standard',promoHalf9:'50% OFF 9 bulan',promoCombo10:'RM10 OFF combo',promoOctober:'Promosi Oktober / Evergreen · Jason sahkan',
+  promoStandardDesc:'Tiada diskaun pengenalan.',promoHalf9Desc:'Tidak boleh digabungkan dengan RM10 OFF combo pada item yang sama.',promoCombo10Desc:'Perlu sekurang-kurangnya 2 produk/order dan kedua-duanya mesti pilih RM10 OFF combo. Tidak boleh campur satu item combo dengan item 50% OFF.',promoOctoberDesc:'Helaian pelancaran mengesahkan Promosi Oktober & Evergreen tetapi kadar/tempoh diskaun tidak dinyatakan. Jason akan sahkan tawaran semasa.',
+  comboInactive:'belum aktif (perlu 2 item combo)',monthWord:'Bulan',notActiveAdd:'Belum aktif — tambah 1 lagi item menggunakan RM10 OFF combo',
+  withinBudget:'Dalam bajet sebanyak {amount}/bulan',overBudget:'Melebihi bajet sebanyak {amount}/bulan',buildToCompare:'Bina pakej untuk banding dengan bajet.',
+  liveConnected:'Stok live disambungkan',stockSynced:'Stok diselaraskan · {date}',stockInfoFull:'Stok semasa mengira baki positif AL2 + AL3 + AL8. Jika stok semasa sifar, kad memaparkan stok pembukaan laporan. Muat semula selepas kemas kini stok Control Centre untuk angka terkini.',
+  liveUnavailable:'Stok sementara tidak tersedia',syncUnavailable:'Penyelarasan stok tidak tersedia',
+  addFirst:'Tambah produk dahulu sebelum jana link customer.',linkCopied:'Link customer disalin',copyLinkPrompt:'Salin link customer ini',packageCleared:'Pakej dikosongkan',
+  copyDone:'Copywriting disalin',copyFail:'Salin copywriting ini',waIntro:'Hi Jason, saya berminat dengan pakej LG Subscribe ini:',estimateNow:'Anggaran sekarang',
+  catAircond:'Penyaman Udara',catLaundry:'Dobi',catFridge:'Peti Sejuk',catAP:'Penapis Udara',catWP:'Penapis Air',catTV:'TV',
+  svcRV:'Regular Visit',svcRV1:'Regular Visit 1x/tahun',svcRV2:'Regular Visit 2x/tahun',svcSS:'Self-Service',svcCM:'Combine Maintenance',svcSub:'Subscription',
+  copyHeadline:'✨ LG Subscribe — {name}',copyModel:'Model: {code}',copyPlan:'Pelan {years} Tahun · {service}',copyNormal:'Harga biasa: {price}/bulan',
+  copyHalf9:'🔥 50% OFF untuk 9 bulan pertama: {promo}/bulan\nBulan 10–{end}: {normal}/bulan',
+  copyCombo:'🎁 RM10 OFF Combo: {promo}/bulan\n*Aktif apabila sekurang-kurangnya 2 produk/order memilih pakej RM10 OFF combo.',
+  copyStandard:'💳 Bayaran bulanan: {normal}/bulan',copyOctober:'🎉 Promosi Oktober / Evergreen tersedia. Kadar promosi semasa akan disahkan oleh Jason.',
+  copyCTA:'Nak saya semak stok & pakej yang sesuai untuk anda? 😊\nWhatsApp Jason: 011-5972 6619',
+  combo_setA_name:'Sejuk + Segar',combo_setA_desc:'Aircond 1.0HP + Peti Sejuk 493L',combo_setB_name:'Segar + Dobi',combo_setB_desc:'Peti Sejuk 493L + Mesin Basuh 12kg',combo_setC_name:'Sejuk + Dobi',combo_setC_desc:'Aircond 1.0HP + Mesin Basuh 12kg',combo_setD_name:'Trio Lengkap Rumah',combo_setD_desc:'Aircond + Peti Sejuk + Mesin Basuh',combo_setE_name:'Duo Dobi',combo_setE_desc:'Mesin Basuh 12kg + Pengering 10kg'
+},
+en:{
+  brandSub:'Build My Home · Customer Showroom',navProducts:'Products',navPackage:'My package',liveConnecting:'Connecting to Control Centre stock…',
+  heroEyebrow:'● Public showroom · no login required',heroTitle:'Your home.<br>Your choice.',heroText:'Choose products, compare 5- or 7-year plans, try promotions, and see your package payment schedule — all on one page.',
+  agentNote:'Prices & stock are for reference. Jason will confirm the promotion, eligibility and final stock before application.',
+  popularTitle:'POPULAR PACKAGE MENU',popularIntro:'Pick a preset combo, then add or remove products ala carte.',popularTiny:'Choose set → adjust term, service & promotion',popularNote:'Each set is a starting point. Before adding it, you can choose the 5/7-year term, service and promotion for each product.',
+  homeTitle:'YOUR HOME PACKAGE',homeIntro:'Responsive layout — the 3rd product and beyond stay aligned.',
+  catalogTitle:'Choose your appliances',catalogIntro:'Card price shows the lowest standard plan. Choose the promotion when adding a product.',priceRef:'Reference pricing · October 2026',
+  searchPH:'Search model or product…',sortFeatured:'Sort: Recommended',sortPrice:'Lowest price',sortModel:'Model A–Z',stockConnecting:'Connecting stock…',
+  shareTitle:'A package selected for you',shareText:'The products, term, service and promotion below were selected based on your request.',editChoice:'Change selection',
+  packageTitle:'YOUR SELECTED PACKAGE',packageIntro:'Payment changes with promotion & term.',selectedProducts:'Selected products',paymentNow:'Payment now',budget:'Monthly budget',
+  schedule:'Payment schedule',savings:'Total savings',contract:'Contract total',askWa:'Ask Jason on WhatsApp',copyLink:'Copy customer link',clearPackage:'Clear package',
+  disclaimer:'50% promotion and RM10 combo are separate choices and cannot be combined. RM10 combo is active only when at least 2 products/orders both use the RM10 combo package. Stock may change after the latest report.',
+  liveStockTitle:'Live stock from Control Centre',liveStockText:'Each card shows positive AL2 + AL3 + AL8 balances from the same source as LG Subscribe Control Centre.',
+  footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Product images are from supplied reference materials. T&C apply.',
+  comboHelp:'Choose the term, service and promotion for each product. The package price will be recalculated before adding.',comboEstimate:'Estimated first-month payment',comboAdd:'Add set to package',
+  choosePlan:'1. Choose plan',choosePromo:'2. Choose promotion',qty:'Quantity',copy:'Copy text',addPackage:'Add to package',
+  all:'All',years:'years',month:'month',months:'months',from:'From',viewPlans:'View plans',currentSelection:'Current selection',
+  noProducts:'No products yet.',startAppliance:'Start with one appliance',startAppliance2:'Choose a product below to build your home package.',
+  productSelected:'products selected',unit:'unit',model:'model',standard:'standard',period:'Term',service:'Service',promotion:'Promotion',
+  notAvailable:'Unavailable',chooseCustomize:'Choose & customise',standardPlanFrom:'From standard plan',canCustomize:'term/service/promotion can be changed',
+  comboNeed2:'RM10 OFF combo requires at least 2 products/orders in the package, and both must select RM10 OFF combo.',
+  addedPackage:'Added to package',comboAdded:'added to package',comboNeedAnother:'Added. RM10 combo needs one more item using the same RM10 OFF combo package.',
+  stockNotListed:'Stock not listed',stockSyncing:'Stock: syncing…',lowStock:'Low stock: {n}',stock:'Stock: {n}',openingStock:'Opening stock: {n}',outStock:'Out of stock',
+  currentStock:'Current stock',opening:'Opening',asOf:'As of',stockDataSync:'Stock data syncing…',
+  promoStandard:'Standard price',promoHalf9:'50% OFF 9 months',promoCombo10:'RM10 OFF combo',promoOctober:'October / Evergreen promo · Jason confirms',
+  promoStandardDesc:'No introductory discount.',promoHalf9Desc:'Cannot be combined with RM10 OFF combo on the same item.',promoCombo10Desc:'Requires at least 2 products/orders and both must select RM10 OFF combo. Cannot mix one combo item with a 50% OFF item.',promoOctoberDesc:'The launch sheet confirms October & Evergreen promotions but does not state the discount amount/duration. Jason will confirm the current offer.',
+  comboInactive:'not active (need 2 combo items)',monthWord:'Month',notActiveAdd:'Not active — add 1 more item using RM10 OFF combo',
+  withinBudget:'Within budget by {amount}/month',overBudget:'Over budget by {amount}/month',buildToCompare:'Build your package to compare with budget.',
+  liveConnected:'Live stock connected',stockSynced:'Stock synced · {date}',stockInfoFull:'Current stock counts positive AL2 + AL3 + AL8 balances. If current stock is zero, the card shows report opening stock. Refresh after a Control Centre stock upload for the latest figures.',
+  liveUnavailable:'Stock temporarily unavailable',syncUnavailable:'Stock sync unavailable',
+  addFirst:'Add a product before generating a customer link.',linkCopied:'Customer link copied',copyLinkPrompt:'Copy this customer link',packageCleared:'Package cleared',
+  copyDone:'Copywriting copied',copyFail:'Copy this copywriting',waIntro:'Hi Jason, I am interested in this LG Subscribe package:',estimateNow:'Estimated now',
+  catAircond:'Air Conditioner',catLaundry:'Laundry',catFridge:'Refrigerator',catAP:'Air Purifier',catWP:'Water Purifier',catTV:'TV',
+  svcRV:'Regular Visit',svcRV1:'Regular Visit 1x/year',svcRV2:'Regular Visit 2x/year',svcSS:'Self-Service',svcCM:'Combined Maintenance',svcSub:'Subscription',
+  copyHeadline:'✨ LG Subscribe — {name}',copyModel:'Model: {code}',copyPlan:'{years}-Year Plan · {service}',copyNormal:'Normal price: {price}/month',
+  copyHalf9:'🔥 50% OFF for the first 9 months: {promo}/month\nMonth 10–{end}: {normal}/month',
+  copyCombo:'🎁 RM10 OFF Combo: {promo}/month\n*Active when at least 2 products/orders select the RM10 OFF combo package.',
+  copyStandard:'💳 Monthly payment: {normal}/month',copyOctober:'🎉 October / Evergreen promotion is available. Jason will confirm the current promotional rate.',
+  copyCTA:'Want me to check current stock and the most suitable package for you? 😊\nWhatsApp Jason: 011-5972 6619',
+  combo_setA_name:'Cool + Fresh',combo_setA_desc:'1.0HP Air Conditioner + 493L Refrigerator',combo_setB_name:'Fresh + Laundry',combo_setB_desc:'493L Refrigerator + 12kg Washer',combo_setC_name:'Cool + Laundry',combo_setC_desc:'1.0HP Air Conditioner + 12kg Washer',combo_setD_name:'Whole Home Trio',combo_setD_desc:'Air Conditioner + Refrigerator + Washer',combo_setE_name:'Laundry Duo',combo_setE_desc:'12kg Washer + 10kg Dryer'
+},
+zh:{
+  brandSub:'打造我的家 · 客户展示厅',navProducts:'产品',navPackage:'我的配套',liveConnecting:'正在连接 Control Centre 库存…',
+  heroEyebrow:'● 公开展示厅 · 无需登录',heroTitle:'你的家。<br>你的选择。',heroText:'选择产品、比较 5 年或 7 年方案、选择优惠，并查看整套配套的付款时间表 — 一页完成。',
+  agentNote:'价格与库存仅供参考。申请前，Jason 会确认最新优惠、资格与最终库存。',
+  popularTitle:'热门配套菜单',popularIntro:'先选择预设组合，再像单点菜单一样增加或删除产品。',popularTiny:'选择配套 → 调整年限、服务与优惠',popularNote:'预设配套只是起点。加入前，你可为每件产品选择 5/7 年、服务方案与优惠。',
+  homeTitle:'你的家电配套',homeIntro:'响应式排列 — 第 3 件及之后的产品会保持整齐对齐。',
+  catalogTitle:'选择你的家电',catalogIntro:'产品卡显示最低标准月费。加入产品时再选择优惠。',priceRef:'参考价格 · 2026 年 10 月',
+  searchPH:'搜索型号或产品…',sortFeatured:'排序：推荐',sortPrice:'最低价格',sortModel:'型号 A–Z',stockConnecting:'正在连接库存…',
+  shareTitle:'为你挑选的配套',shareText:'以下产品、年限、服务和优惠是根据你的需求预先选择。',editChoice:'修改选择',
+  packageTitle:'你选择的配套',packageIntro:'月费会根据优惠与年限变化。',selectedProducts:'已选产品',paymentNow:'目前月费',budget:'每月预算',
+  schedule:'付款时间表',savings:'总节省',contract:'合约总额',askWa:'WhatsApp 咨询 Jason',copyLink:'复制客户链接',clearPackage:'清空配套',
+  disclaimer:'50% 优惠与 RM10 组合优惠为不同方案，不可叠加。RM10 组合优惠只有在至少 2 件产品/订单都选择 RM10 combo 时才生效。库存以最新报告为准。',
+  liveStockTitle:'Control Centre 实时库存',liveStockText:'每张产品卡显示与 LG Subscribe Control Centre 同一来源的 AL2 + AL3 + AL8 正数库存余额。',
+  footer:'Jason Yang · 011-5972 6619 · LGM122989<br>产品图片来自所提供的参考资料。须符合条款与条件。',
+  comboHelp:'为每件产品选择年限、服务和优惠。加入前会重新计算配套价格。',comboEstimate:'首月预计月费',comboAdd:'加入整套配套',
+  choosePlan:'1. 选择方案',choosePromo:'2. 选择优惠',qty:'数量',copy:'复制文案',addPackage:'加入配套',
+  all:'全部',years:'年',month:'月',months:'个月',from:'每月低至',viewPlans:'查看方案',currentSelection:'当前可选',
+  noProducts:'尚未选择产品。',startAppliance:'从一件家电开始',startAppliance2:'从下方选择产品，建立你的家电配套。',
+  productSelected:'件产品已选择',unit:'件',model:'型号',standard:'标准价',period:'年限',service:'服务',promotion:'优惠',
+  notAvailable:'暂不可用',chooseCustomize:'选择并调整',standardPlanFrom:'标准方案起',canCustomize:'可更改年限/服务/优惠',
+  comboNeed2:'RM10 OFF 组合优惠需要至少 2 件产品/订单，而且两件都必须选择 RM10 OFF combo。',
+  addedPackage:'已加入配套',comboAdded:'已加入配套',comboNeedAnother:'已加入。RM10 combo 还需要另一件产品选择相同 RM10 OFF combo 才会生效。',
+  stockNotListed:'未列出库存',stockSyncing:'库存同步中…',lowStock:'库存偏低：{n}',stock:'库存：{n}',openingStock:'期初库存：{n}',outStock:'无库存',
+  currentStock:'当前库存',opening:'期初',asOf:'截至',stockDataSync:'库存资料同步中…',
+  promoStandard:'标准价格',promoHalf9:'首 9 个月 50% OFF',promoCombo10:'RM10 OFF 组合优惠',promoOctober:'10 月 / Evergreen 优惠 · Jason 确认',
+  promoStandardDesc:'没有首期折扣。',promoHalf9Desc:'同一件产品不可与 RM10 OFF combo 叠加。',promoCombo10Desc:'至少需要 2 件产品/订单，而且两件都必须选择 RM10 OFF combo。不可一件选 combo、另一件选 50% OFF。',promoOctoberDesc:'新品资料确认有 10 月及 Evergreen 优惠，但没有注明折扣金额/期限。Jason 会确认当前优惠。',
+  comboInactive:'尚未生效（需 2 件 combo 产品）',monthWord:'第',notActiveAdd:'尚未生效 — 再加入 1 件使用 RM10 OFF combo 的产品',
+  withinBudget:'每月比预算少 {amount}',overBudget:'每月超出预算 {amount}',buildToCompare:'先建立配套以比较预算。',
+  liveConnected:'实时库存已连接',stockSynced:'库存已同步 · {date}',stockInfoFull:'当前库存以 AL2 + AL3 + AL8 的正数余额计算。如当前库存为 0，产品卡会显示报告的期初库存。Control Centre 上传新库存后刷新即可查看最新数据。',
+  liveUnavailable:'库存暂时无法取得',syncUnavailable:'库存同步失败',
+  addFirst:'请先加入产品再生成客户链接。',linkCopied:'客户链接已复制',copyLinkPrompt:'复制此客户链接',packageCleared:'配套已清空',
+  copyDone:'文案已复制',copyFail:'复制此文案',waIntro:'Hi Jason，我对以下 LG Subscribe 配套有兴趣：',estimateNow:'目前预计',
+  catAircond:'空调',catLaundry:'洗衣家电',catFridge:'冰箱',catAP:'空气净化器',catWP:'净水器',catTV:'电视',
+  svcRV:'定期上门服务',svcRV1:'每年 1 次上门服务',svcRV2:'每年 2 次上门服务',svcSS:'自助服务',svcCM:'综合保养',svcSub:'订阅方案',
+  copyHeadline:'✨ LG Subscribe — {name}',copyModel:'型号：{code}',copyPlan:'{years} 年方案 · {service}',copyNormal:'原价：{price}/月',
+  copyHalf9:'🔥 首 9 个月 50% OFF：{promo}/月\n第 10–{end} 个月：{normal}/月',
+  copyCombo:'🎁 RM10 OFF 组合优惠：{promo}/月\n*至少 2 件产品/订单都选择 RM10 OFF combo 后才生效。',
+  copyStandard:'💳 月费：{normal}/月',copyOctober:'🎉 可享 10 月 / Evergreen 优惠。当前优惠价格由 Jason 确认。',
+  copyCTA:'要我帮你查看最新库存和适合的配套吗？😊\nWhatsApp Jason：011-5972 6619',
+  combo_setA_name:'凉爽 + 保鲜',combo_setA_desc:'1.0HP 空调 + 493L 冰箱',combo_setB_name:'保鲜 + 洗衣',combo_setB_desc:'493L 冰箱 + 12kg 洗衣机',combo_setC_name:'凉爽 + 洗衣',combo_setC_desc:'1.0HP 空调 + 12kg 洗衣机',combo_setD_name:'全屋三件套',combo_setD_desc:'空调 + 冰箱 + 洗衣机',combo_setE_name:'洗衣双组合',combo_setE_desc:'12kg 洗衣机 + 10kg 烘干机'
+}};
+let currentLang=(()=>{const q=new URL(location.href).searchParams.get('lang');const s=q||localStorage.getItem('lg-bmh-lang')||'ms';return ['ms','en','zh'].includes(s)?s:'ms';})();
+function tr(key,vars={}){let s=(I18N[currentLang]&&I18N[currentLang][key])??I18N.en[key]??key;for(const[k,v]of Object.entries(vars))s=String(s).replaceAll('{'+k+'}',String(v));return s;}
+function categoryLabel(c){return c==='Aircond'?tr('catAircond'):c==='Laundry'?tr('catLaundry'):c==='Fridge'?tr('catFridge'):c==='Air Purifier'?tr('catAP'):c==='Water Purifier'?tr('catWP'):c==='TV'?tr('catTV'):c;}
+function serviceLabel(s){return s==='Regular Visit 1x/year'?tr('svcRV1'):s==='Regular Visit 2x/year'?tr('svcRV2'):s==='Regular Visit'?tr('svcRV'):s==='Self-Service'?tr('svcSS'):s==='Combine Maintenance'?tr('svcCM'):s==='Subscription'?tr('svcSub'):s;}
+function promoLabelById(id,fallback=''){return id==='standard'?tr('promoStandard'):id==='half9'?tr('promoHalf9'):id==='combo10'?tr('promoCombo10'):id==='octevergreen'?tr('promoOctober'):fallback;}
+function promoDescById(id){return id==='half9'?tr('promoHalf9Desc'):id==='combo10'?tr('promoCombo10Desc'):id==='octevergreen'?tr('promoOctoberDesc'):tr('promoStandardDesc');}
+function comboName(p){return tr('combo_'+p.id+'_name')||p.name;}
+function comboDesc(p){return tr('combo_'+p.id+'_desc')||p.desc;}
+function applyI18n(){
+  document.documentElement.lang=currentLang==='zh'?'zh-CN':currentLang;
+  document.querySelectorAll('[data-i18n]').forEach(e=>{e.textContent=tr(e.dataset.i18n);});
+  document.querySelectorAll('[data-i18n-html]').forEach(e=>{e.innerHTML=tr(e.dataset.i18nHtml);});
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(e=>{e.placeholder=tr(e.dataset.i18nPlaceholder);});
+  if($('langSelect'))$('langSelect').value=currentLang;
+}
+function setLanguage(lang){
+  if(!['ms','en','zh'].includes(lang))return;
+  currentLang=lang;localStorage.setItem('lg-bmh-lang',lang);
+  const u=new URL(location.href);u.searchParams.set('lang',lang);history.replaceState({},'',u);
+  applyI18n();renderCats();renderComboMenu();renderProducts();renderCart();
+  if($('modal')?.open&&activeProduct){renderProductStock();renderPlans();renderPromos();}
+  if($('comboModal')?.open&&comboDraft.length)renderComboRefine();
+  window.dispatchEvent(new CustomEvent('lg-language-change',{detail:{lang}}));
+}
+window.LG_I18N_T=(key,vars)=>tr(key,vars);window.LG_CURRENT_LANG=()=>currentLang;
+
 let activeCat='All',cart=[],activeProduct=null,chosenPlan=null,chosenPromo='standard',stocks=new Map(),stockLoaded=false,activeComboPreset=null,comboDraft=[];
 const $=id=>document.getElementById(id);
 const money=n=>'RM'+Math.max(0,Math.round(Number(n)||0)).toLocaleString('en-MY');
@@ -58,10 +208,10 @@ const stockFor=p=>{
 };
 const stopSubmission=p=>String(stockFor(p)?.submission_status||'').toLowerCase().includes('stop');
 const icon=p=>icons[p.category]||'LG';
-function stockBadge(p){const s=stockFor(p);if(!s)return stockLoaded?'<span class="stock-badge loading">Stock not listed</span>':'<span class="stock-badge loading">Stock: syncing…</span>';const n=Math.max(0,Math.round(Number(s.total_stock)||0));const opening=Math.max(0,Math.round(Number(s.opening_stock)||0));if(n>0){const c=n<=3?'low':'good';return '<span class="stock-badge '+c+'">'+(n<=3?'Low stock: '+n:'Stock: '+n)+'</span>';}if(opening>0)return '<span class="stock-badge low">Opening stock: '+opening+'</span>';return '<span class="stock-badge out">Out of stock</span>';}
+function stockBadge(p){const s=stockFor(p);if(!s)return stockLoaded?'<span class="stock-badge loading">'+esc(tr('stockNotListed'))+'</span>':'<span class="stock-badge loading">'+esc(tr('stockSyncing'))+'</span>';const n=Math.max(0,Math.round(Number(s.total_stock)||0));const opening=Math.max(0,Math.round(Number(s.opening_stock)||0));if(n>0){const c=n<=3?'low':'good';return '<span class="stock-badge '+c+'">'+esc(n<=3?tr('lowStock',{n}):tr('stock',{n}))+'</span>';}if(opening>0)return '<span class="stock-badge low">'+esc(tr('openingStock',{n:opening}))+'</span>';return '<span class="stock-badge out">'+esc(tr('outStock'))+'</span>';}
 function visual(p){
   const src=p.imageData||p.imageUrl||'';
-  return src?'<img loading="lazy" decoding="async" referrerpolicy="no-referrer" src="'+src+'" alt="'+esc(p.name)+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\'"><div class="generic-icon" style="display:none">'+icon(p)+'</div>':'<div class="generic-icon">'+icon(p)+'</div>';
+  return src?'<img loading="lazy" decoding="async" referrerpolicy="no-referrer" src="'+src+'" alt="'+esc(comboName(p))+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\'"><div class="generic-icon" style="display:none">'+icon(p)+'</div>':'<div class="generic-icon">'+icon(p)+'</div>';
 }
 function comboPresetData(preset){
   const items=preset.items.map(x=>{const product=CATALOG.find(p=>p.id===x.id);if(!product)return null;return{product,plan:product.plans[x.plan]||product.plans[0]};}).filter(Boolean);
@@ -77,11 +227,11 @@ function renderComboMenu(){
     return '<article class="combo-card '+(d.blocked?'disabled':'')+'">'+
       '<div class="combo-tag">'+esc(p.tag)+'</div>'+
       '<div class="combo-pics">'+pics+'</div>'+
-      '<h3>'+esc(p.name)+'</h3>'+
-      '<p>'+esc(p.desc)+'</p>'+
-      '<div class="combo-price"><span>RM</span><b>'+Math.round(d.monthly)+'</b><em>/bulan</em></div>'+
-      '<small>Dari pelan standard · '+d.items.length+' produk · boleh ubah tempoh/servis/promosi</small>'+
-      '<button class="combo-pick" data-combo="'+p.id+'" '+(d.blocked?'disabled':'')+'>'+(d.blocked?'Tidak tersedia':'Pilih & ubah suai')+'</button>'+
+      '<h3>'+esc(comboName(p))+'</h3>'+
+      '<p>'+esc(comboDesc(p))+'</p>'+
+      '<div class="combo-price"><span>RM</span><b>'+Math.round(d.monthly)+'</b><em>/'+esc(tr('month'))+'</em></div>'+
+      '<small>'+esc(tr('standardPlanFrom'))+' · '+d.items.length+' · '+esc(tr('canCustomize'))+'</small>'+
+      '<button class="combo-pick" data-combo="'+p.id+'" '+(d.blocked?'disabled':'')+'>'+esc(d.blocked?tr('notAvailable'):tr('chooseCustomize'))+'</button>'+
     '</article>';
   }).join('');
   el.querySelectorAll('.combo-pick:not(:disabled)').forEach(b=>b.onclick=()=>openComboRefine(b.dataset.combo));
@@ -103,12 +253,12 @@ function comboDraftMonthly(item,month=1){
 function openComboRefine(id){
   const preset=COMBO_PRESETS.find(x=>x.id===id);if(!preset)return;
   const d=comboPresetData(preset);
-  if(d.blocked)return toast('Set ini mengandungi model yang tidak menerima submission sekarang.');
+  if(d.blocked)return toast(tr('notAvailable'));
   activeComboPreset=preset;
   comboDraft=d.items.map(x=>({product:x.product,years:Number(x.plan.years),service:x.plan.service,promo:'standard'}));
   $('comboModalTag').textContent=preset.tag;
-  $('comboModalTitle').textContent=preset.name;
-  $('comboModalSub').textContent=preset.desc;
+  $('comboModalTitle').textContent=comboName(preset);
+  $('comboModalSub').textContent=comboDesc(preset);
   renderComboRefine();
   $('comboModal').showModal();
 }
@@ -122,11 +272,11 @@ function renderComboRefine(){
     if(!services.includes(d.service))d.service=services[0];
     const plan=comboPlanFor(d);
     return '<article class="combo-refine-card">'+
-      '<div class="combo-refine-product"><div class="combo-refine-img">'+visual(d.product)+'</div><div><b>'+esc(d.product.code)+'</b><span>'+esc(d.product.name)+'</span><strong>'+money(plan.monthly)+'/bulan standard</strong></div></div>'+
+      '<div class="combo-refine-product"><div class="combo-refine-img">'+visual(d.product)+'</div><div><b>'+esc(d.product.code)+'</b><span>'+esc(d.product.name)+'</span><strong>'+money(plan.monthly)+'/'+esc(tr('month'))+' '+esc(tr('standard'))+'</strong></div></div>'+
       '<div class="combo-refine-fields">'+
-        '<label>Tempoh<select class="select combo-years" data-i="'+i+'">'+years.map(y=>'<option value="'+y+'" '+(Number(d.years)===y?'selected':'')+'>'+y+' tahun</option>').join('')+'</select></label>'+
-        '<label>Servis<select class="select combo-service" data-i="'+i+'">'+services.map(v=>'<option value="'+esc(v)+'" '+(d.service===v?'selected':'')+'>'+esc(v)+'</option>').join('')+'</select></label>'+
-        '<label>Promosi<select class="select combo-promo" data-i="'+i+'">'+d.product.promos.map(p=>'<option value="'+p.id+'" '+(d.promo===p.id?'selected':'')+'>'+esc(p.label)+'</option>').join('')+'</select></label>'+
+        '<label>'+esc(tr('period'))+'<select class="select combo-years" data-i="'+i+'">'+years.map(y=>'<option value="'+y+'" '+(Number(d.years)===y?'selected':'')+'>'+y+' '+esc(tr('years'))+'</option>').join('')+'</select></label>'+
+        '<label>'+esc(tr('service'))+'<select class="select combo-service" data-i="'+i+'">'+services.map(v=>'<option value="'+esc(v)+'" '+(d.service===v?'selected':'')+'>'+esc(serviceLabel(v))+'</option>').join('')+'</select></label>'+
+        '<label>'+esc(tr('promotion'))+'<select class="select combo-promo" data-i="'+i+'">'+d.product.promos.map(p=>'<option value="'+p.id+'" '+(d.promo===p.id?'selected':'')+'>'+esc(promoLabelById(p.id,p.label))+'</option>').join('')+'</select></label>'+
       '</div>'+
     '</article>';
   }).join('');
@@ -142,7 +292,7 @@ function renderComboRefine(){
 function updateComboRefineSummary(){
   const comboCount=comboDraft.filter(x=>x.promo==='combo10').length;
   const combinedComboCount=cart.filter(x=>x.promo==='combo10').length+comboCount;
-  const err=comboCount>0&&combinedComboCount<2?'RM10 OFF combo perlukan sekurang-kurangnya 2 produk/order dalam pakej yang kedua-duanya memilih RM10 OFF combo.':'';
+  const err=comboCount>0&&combinedComboCount<2?tr('comboNeed2'):'';
   $('comboRefineError').textContent=err;
   $('comboRefineError').classList.toggle('show',!!err);
   const total=comboDraft.reduce((a,x)=>a+comboDraftMonthly(x,1),0);
@@ -155,51 +305,64 @@ function addRefinedCombo(){
   if(draftComboCount>0&&cart.filter(x=>x.promo==='combo10').length+draftComboCount<2){updateComboRefineSummary();return;}
   const seed=Date.now();
   cart.push(...comboDraft.map((d,i)=>({key:seed+i+Math.random(),product:d.product,plan:{...comboPlanFor(d)},promo:d.promo,qty:1})));
-  const name=activeComboPreset.name;
-  closeComboModal();renderCart();scrollToPackage();toast(name+' ditambah ke pakej');
+  const name=comboName(activeComboPreset);
+  closeComboModal();renderCart();scrollToPackage();toast(name+' '+tr('comboAdded'));
 }
-function renderCats(){const cats=['All',...new Set(CATALOG.map(x=>x.category))];$('catRow').innerHTML=cats.map(c=>'<button class="cat '+(c===activeCat?'active':'')+'" data-cat="'+esc(c)+'">'+esc(c)+'</button>').join('');$('catRow').querySelectorAll('.cat').forEach(b=>b.onclick=()=>{activeCat=b.dataset.cat;renderCats();renderProducts();});}
+function renderCats(){const cats=['All',...new Set(CATALOG.map(x=>x.category))];$('catRow').innerHTML=cats.map(c=>'<button class="cat '+(c===activeCat?'active':'')+'" data-cat="'+esc(c)+'">'+esc(c==='All'?tr('all'):categoryLabel(c))+'</button>').join('');$('catRow').querySelectorAll('.cat').forEach(b=>b.onclick=()=>{activeCat=b.dataset.cat;renderCats();renderProducts();});}
 function visibleProducts(){const q=($('search')?.value||'').trim().toLowerCase(),sort=$('sort')?.value||'featured';let rows=CATALOG.filter(p=>!stopSubmission(p)&&(activeCat==='All'||p.category===activeCat)&&(!q||((p.code+' '+p.name+' '+p.category).toLowerCase().includes(q))));if(sort==='price')rows.sort((a,b)=>minPrice(a)-minPrice(b));else if(sort==='model')rows.sort((a,b)=>a.code.localeCompare(b.code));else rows.sort((a,b)=>a.order-b.order);return rows;}
-function renderProducts(){const rows=visibleProducts();$('catalogCount').textContent=rows.length+' model';$('products').innerHTML=rows.map(p=>{const s=stockFor(p),n=s?Math.max(0,Math.round(Number(s.total_stock)||0)):null,out=n===0;return '<article class="product '+(out?'unavailable':'')+'"><div class="pvisual">'+stockBadge(p)+visual(p)+'</div><div class="pbody"><div class="pcat">'+esc(p.category)+'</div><h3>'+esc(p.code)+'</h3><div class="psub">'+esc(p.name)+'</div><span class="lifecycle current">Current selection</span><div class="price"><div><small>From</small><strong>'+money(minPrice(p))+'</strong><em>/month</em></div></div><button class="addbtn" data-id="'+p.id+'">View plans</button></div></article>';}).join('');$('products').querySelectorAll('.addbtn').forEach(b=>b.onclick=()=>openProduct(b.dataset.id));}
-function openProduct(id){activeProduct=CATALOG.find(x=>x.id===id);if(!activeProduct)return;chosenPlan=activeProduct.plans[0];chosenPromo='standard';$('qtyInput').value=1;$('modalModel').textContent=activeProduct.code;$('modalSub').textContent=activeProduct.name;const s=stockFor(activeProduct);$('modalStock').innerHTML=s?'Current stock: <b>'+Math.round(Number(s.total_stock)||0)+'</b> · Opening: <b>'+Math.round(Number(s.opening_stock)||0)+'</b><br><span style="font-size:11px">AL2 '+Math.round(Number(s.al2_stock)||0)+' / opening '+Math.round(Number(s.al2_opening)||0)+' · AL3 '+Math.round(Number(s.al3_stock)||0)+' / opening '+Math.round(Number(s.al3_opening)||0)+' · AL8 '+Math.round(Number(s.al8_stock)||0)+' / opening '+Math.round(Number(s.al8_opening)||0)+(s.as_of_date?' · As of '+s.as_of_date:'')+'</span>':'Stock data syncing…';renderPlans();renderPromos();$('modal').showModal();}
+function renderProducts(){const rows=visibleProducts();$('catalogCount').textContent=rows.length+' model';$('products').innerHTML=rows.map(p=>{const s=stockFor(p),n=s?Math.max(0,Math.round(Number(s.total_stock)||0)):null,out=n===0;return '<article class="product '+(out?'unavailable':'')+'"><div class="pvisual">'+stockBadge(p)+visual(p)+'</div><div class="pbody"><div class="pcat">'+esc(p.category)+'</div><h3>'+esc(p.code)+'</h3><div class="psub">'+esc(comboName(p))+'</div><span class="lifecycle current">Current selection</span><div class="price"><div><small>From</small><strong>'+money(minPrice(p))+'</strong><em>/month</em></div></div><button class="addbtn" data-id="'+p.id+'">View plans</button></div></article>';}).join('');$('products').querySelectorAll('.addbtn').forEach(b=>b.onclick=()=>openProduct(b.dataset.id));}
+function renderProductStock(){if(!activeProduct)return;const s=stockFor(activeProduct);$('modalStock').innerHTML=s?tr('currentStock')+': <b>'+Math.round(Number(s.total_stock)||0)+'</b> · '+tr('opening')+': <b>'+Math.round(Number(s.opening_stock)||0)+'</b><br><span style="font-size:11px">AL2 '+Math.round(Number(s.al2_stock)||0)+' / '+tr('opening').toLowerCase()+' '+Math.round(Number(s.al2_opening)||0)+' · AL3 '+Math.round(Number(s.al3_stock)||0)+' / '+tr('opening').toLowerCase()+' '+Math.round(Number(s.al3_opening)||0)+' · AL8 '+Math.round(Number(s.al8_stock)||0)+' / '+tr('opening').toLowerCase()+' '+Math.round(Number(s.al8_opening)||0)+(s.as_of_date?' · '+tr('asOf')+' '+s.as_of_date:'')+'</span>':tr('stockDataSync');}
+function openProduct(id){activeProduct=CATALOG.find(x=>x.id===id);if(!activeProduct)return;chosenPlan=activeProduct.plans[0];chosenPromo='standard';$('qtyInput').value=1;$('modalModel').textContent=activeProduct.code;$('modalSub').textContent=activeProduct.name;renderProductStock();renderPlans();renderPromos();$('modal').showModal();}
 window.closeModal=()=>$('modal').close();
 window.stepQty=d=>{const q=$('qtyInput');q.value=Math.max(1,Math.min(9,(Number(q.value)||1)+d));};
-function renderPlans(){$('planGrid').innerHTML=activeProduct.plans.map((p,i)=>'<button class="plan-card '+(p===chosenPlan?'active':'')+'" data-i="'+i+'"><b>'+p.years+' years</b><span>'+esc(p.service)+'</span><strong>'+money(p.monthly)+'/month</strong></button>').join('');$('planGrid').querySelectorAll('.plan-card').forEach(b=>b.onclick=()=>{chosenPlan=activeProduct.plans[Number(b.dataset.i)];renderPlans();});}
-function renderPromos(){$('promoGrid').innerHTML=activeProduct.promos.map(p=>'<button class="promo-card '+(p.id===chosenPromo?'active':'')+'" data-id="'+p.id+'"><b>'+esc(p.label)+'</b><span>'+(p.id==='half9'?'Cannot be combined with RM10 OFF combo on the same item.':p.id==='combo10'?'Requires at least 2 products/orders, and both must select RM10 OFF combo. Cannot mix one combo item with a 50% OFF item.':p.id==='octevergreen'?'Launch sheet confirms October Promotion & Evergreen Promotion, but does not state the discount amount/duration. Jason will confirm the current offer.':'No introductory discount')+'</span></button>').join('');$('promoGrid').querySelectorAll('.promo-card').forEach(b=>b.onclick=()=>{chosenPromo=b.dataset.id;renderPromos();});}
+function renderPlans(){$('planGrid').innerHTML=activeProduct.plans.map((p,i)=>'<button class="plan-card '+(p===chosenPlan?'active':'')+'" data-i="'+i+'"><b>'+p.years+' '+esc(tr('years'))+'</b><span>'+esc(serviceLabel(p.service))+'</span><strong>'+money(p.monthly)+'/'+esc(tr('month'))+'</strong></button>').join('');$('planGrid').querySelectorAll('.plan-card').forEach(b=>b.onclick=()=>{chosenPlan=activeProduct.plans[Number(b.dataset.i)];renderPlans();});}
+function renderPromos(){$('promoGrid').innerHTML=activeProduct.promos.map(p=>'<button class="promo-card '+(p.id===chosenPromo?'active':'')+'" data-id="'+p.id+'"><b>'+esc(promoLabelById(p.id,p.label))+'</b><span>'+esc(promoDescById(p.id))+'</span></button>').join('');$('promoGrid').querySelectorAll('.promo-card').forEach(b=>b.onclick=()=>{chosenPromo=b.dataset.id;renderPromos();});}
 function comboLineCount(){return cart.filter(x=>x.promo==='combo10').length;}
 function comboEligible(){return comboLineCount()>=2;}
-function promoLabelFor(item){const base=(item.product.promos.find(p=>p.id===item.promo)||{}).label||'';return item.promo==='combo10'&&!comboEligible()?base+' — not active (need 2 combo items)':base;}
+function promoLabelFor(item){const raw=(item.product.promos.find(p=>p.id===item.promo)||{}).label||'';const base=promoLabelById(item.promo,raw);return item.promo==='combo10'&&!comboEligible()?base+' — '+tr('comboInactive'):base;}
 function monthlyFor(item,month){let m=Number(item.plan.monthly)||0;if(item.promo==='half9'&&month<=9)m*=.5;if(item.promo==='combo10'&&comboEligible())m=Math.max(0,m-10);return m*item.qty;}
-function addActive(){if(!activeProduct||!chosenPlan)return;const qty=Math.max(1,Math.min(9,Number($('qtyInput').value)||1));cart.push({key:Date.now()+Math.random(),product:activeProduct,plan:{...chosenPlan},promo:chosenPromo,qty});closeModal();renderCart();toast(chosenPromo==='combo10'&&!comboEligible()?'Added. RM10 combo needs another item using the same RM10 combo package.':'Added to package');}
+function selectedCopywriting(){
+  if(!activeProduct||!chosenPlan)return'';
+  const normal=Math.round(Number(chosenPlan.monthly)||0),promo=activeProduct.promos.find(p=>p.id===chosenPromo)||{id:'standard'},end=Number(chosenPlan.years)*12;
+  const promoPrice=promo.id==='half9'?Math.round(normal*.5):promo.id==='combo10'?Math.max(0,normal-10):normal;
+  let offer=promo.id==='half9'?tr('copyHalf9',{promo:money(promoPrice),end,normal:money(normal)}):promo.id==='combo10'?tr('copyCombo',{promo:money(promoPrice)}):promo.id==='octevergreen'?tr('copyOctober'):tr('copyStandard',{normal:money(normal)});
+  return [tr('copyHeadline',{name:activeProduct.name}),tr('copyModel',{code:activeProduct.code}),'',tr('copyPlan',{years:chosenPlan.years,service:serviceLabel(chosenPlan.service)}),tr('copyNormal',{price:money(normal)}),offer,'',tr('copyCTA')].join('\n');
+}
+function copySelectedCopywriting(){
+  const txt=selectedCopywriting();if(!txt)return;
+  navigator.clipboard?.writeText(txt).then(()=>toast(tr('copyDone'))).catch(()=>prompt(tr('copyFail'),txt));
+}
+window.copySelectedCopywriting=copySelectedCopywriting;
+function addActive(){if(!activeProduct||!chosenPlan)return;const qty=Math.max(1,Math.min(9,Number($('qtyInput').value)||1));cart.push({key:Date.now()+Math.random(),product:activeProduct,plan:{...chosenPlan},promo:chosenPromo,qty});closeModal();renderCart();toast(chosenPromo==='combo10'&&!comboEligible()?tr('comboNeedAnother'):tr('addedPackage'));}
 function totalUnits(){return cart.reduce((a,x)=>a+x.qty,0);}
-function renderCart(){const units=totalUnits();$('cartUnits').textContent=units+' unit';$('selectedCount').textContent=units+' product selected';const sharePhotos=$('sharePhotoGrid');if(!cart.length){$('cartItems').innerHTML='<div class="room-empty" style="padding:16px">No products yet.</div>';$('roomGrid').innerHTML='<div class="room-empty"><b>Start with one appliance</b><br>Select a product below to build a package for your home.</div>';if(sharePhotos)sharePhotos.innerHTML='';$('currentMonthly').textContent='RM0';$('scheduleRows').innerHTML='';$('saving').textContent='RM0';$('contractTotal').textContent='RM0';budgetCheck();syncUrl(false);return;}$('cartItems').innerHTML=cart.map((x,i)=>'<div class="cart-item"><div><b>'+esc(x.product.code)+'</b><span>'+x.qty+' × '+x.plan.years+'Y · '+esc(x.plan.service)+'</span><small>'+esc((x.product.promos.find(p=>p.id===x.promo)||{}).label||'')+'</small></div><button data-i="'+i+'" class="remove">×</button></div>').join('');$('cartItems').querySelectorAll('.remove').forEach(b=>b.onclick=()=>{cart.splice(Number(b.dataset.i),1);renderCart();});const productCards=cart.map(x=>'<div class="room-item"><div class="qtydot">×'+x.qty+'</div><div class="miniimg">'+visual(x.product)+'</div><b>'+esc(x.product.code)+'</b><span>'+esc(x.product.name)+'</span></div>').join('');$('roomGrid').innerHTML=productCards;if(sharePhotos)sharePhotos.innerHTML=productCards;$('currentMonthly').textContent=money(cart.reduce((a,x)=>a+monthlyFor(x,1),0));renderSchedule();budgetCheck();syncUrl(false);}
-function renderSchedule(){const units=totalUnits(),maxMonths=Math.max(...cart.map(x=>x.plan.years*12)),cuts=new Set([1,maxMonths+1]);cart.forEach(x=>{if(x.promo==='half9')cuts.add(10);cuts.add(x.plan.years*12+1);});const pts=[...cuts].filter(n=>n>=1&&n<=maxMonths+1).sort((a,b)=>a-b);let rows=[],total=0,standard=0;for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1]-1;if(a>b)continue;const m=cart.reduce((s,x)=>a<=x.plan.years*12?s+monthlyFor(x,a):s,0),normal=cart.reduce((s,x)=>a<=x.plan.years*12?s+(Number(x.plan.monthly)||0)*x.qty:s,0),months=b-a+1;total+=m*months;standard+=normal*months;rows.push('<div class="schedule-row"><span>Month '+a+(b>a?'–'+b:'')+'</span><b>'+money(m)+'/month</b></div>');}$('scheduleRows').innerHTML=rows.join('')+(comboLineCount()===1?'<div class="schedule-row combo-warning"><span>RM10 OFF combo</span><b>Not active — add 1 more item using RM10 OFF combo</b></div>':'');$('saving').textContent=money(Math.max(0,standard-total));$('contractTotal').textContent=money(total);}
-function budgetCheck(){const budget=Number($('budget')?.value)||0,cur=Number($('currentMonthly')?.textContent.replace(/[^\d.]/g,''))||0,e=$('budgetResult');if(!cart.length){e.textContent='Build your package to compare with budget.';e.className='budget-result';return;}if(cur<=budget){e.textContent='Within budget by '+money(budget-cur)+'/month';e.className='budget-result ok';}else{e.textContent='Over budget by '+money(cur-budget)+'/month';e.className='budget-result over';}}
-async function loadStock(){try{const r=await fetch(SUPABASE_URL+'/rest/v1/rpc/get_public_stock_v4',{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'},body:'{}'});if(!r.ok)throw new Error('HTTP '+r.status);const rows=await r.json();window.__LG_PUBLIC_STOCK_ROWS__=rows;stocks=aggregateStockRows(rows);stockLoaded=true;window.dispatchEvent(new Event('lg-stock-ready'));const dates=rows.map(x=>x.as_of_date).filter(Boolean).sort(),d=dates.at(-1)||'latest';$('liveDot').className='live-dot ok';$('liveText').textContent='Live stock connected';$('stockStamp').textContent='Stock synced · '+d;$('stockInfo').textContent='Current stock counts positive balances in AL2 + AL3 + AL8. If current stock is zero, the card shows the report opening stock instead. Refresh after a Control Centre stock upload for the latest figures.';renderCats();renderProducts();renderComboMenu();}catch(e){console.warn(e);stockLoaded=true;$('liveDot').className='live-dot err';$('liveText').textContent='Stock temporarily unavailable';$('stockStamp').textContent='Stock sync unavailable';renderProducts();renderComboMenu();}}
+function renderCart(){const units=totalUnits();$('cartUnits').textContent=units+' '+tr('unit');$('selectedCount').textContent=units+' '+tr('productSelected');const sharePhotos=$('sharePhotoGrid');if(!cart.length){$('cartItems').innerHTML='<div class="room-empty" style="padding:16px">'+esc(tr('noProducts'))+'</div>';$('roomGrid').innerHTML='<div class="room-empty"><b>'+esc(tr('startAppliance'))+'</b><br>'+esc(tr('startAppliance2'))+'</div>';if(sharePhotos)sharePhotos.innerHTML='';$('currentMonthly').textContent='RM0';$('scheduleRows').innerHTML='';$('saving').textContent='RM0';$('contractTotal').textContent='RM0';budgetCheck();syncUrl(false);return;}$('cartItems').innerHTML=cart.map((x,i)=>'<div class="cart-item"><div><b>'+esc(x.product.code)+'</b><span>'+x.qty+' × '+x.plan.years+'Y · '+esc(serviceLabel(x.plan.service))+'</span><small>'+esc(promoLabelById(x.promo,(x.product.promos.find(p=>p.id===x.promo)||{}).label||''))+'</small></div><button data-i="'+i+'" class="remove">×</button></div>').join('');$('cartItems').querySelectorAll('.remove').forEach(b=>b.onclick=()=>{cart.splice(Number(b.dataset.i),1);renderCart();});const productCards=cart.map(x=>'<div class="room-item"><div class="qtydot">×'+x.qty+'</div><div class="miniimg">'+visual(x.product)+'</div><b>'+esc(x.product.code)+'</b><span>'+esc(x.product.name)+'</span></div>').join('');$('roomGrid').innerHTML=productCards;if(sharePhotos)sharePhotos.innerHTML=productCards;$('currentMonthly').textContent=money(cart.reduce((a,x)=>a+monthlyFor(x,1),0));renderSchedule();budgetCheck();syncUrl(false);}
+function renderSchedule(){const units=totalUnits(),maxMonths=Math.max(...cart.map(x=>x.plan.years*12)),cuts=new Set([1,maxMonths+1]);cart.forEach(x=>{if(x.promo==='half9')cuts.add(10);cuts.add(x.plan.years*12+1);});const pts=[...cuts].filter(n=>n>=1&&n<=maxMonths+1).sort((a,b)=>a-b);let rows=[],total=0,standard=0;for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1]-1;if(a>b)continue;const m=cart.reduce((s,x)=>a<=x.plan.years*12?s+monthlyFor(x,a):s,0),normal=cart.reduce((s,x)=>a<=x.plan.years*12?s+(Number(x.plan.monthly)||0)*x.qty:s,0),months=b-a+1;total+=m*months;standard+=normal*months;rows.push('<div class="schedule-row"><span>'+esc(tr('monthWord'))+' '+a+(b>a?'–'+b:'')+'</span><b>'+money(m)+'/'+esc(tr('month'))+'</b></div>');}$('scheduleRows').innerHTML=rows.join('')+(comboLineCount()===1?'<div class="schedule-row combo-warning"><span>RM10 OFF combo</span><b>'+esc(tr('notActiveAdd'))+'</b></div>':'');$('saving').textContent=money(Math.max(0,standard-total));$('contractTotal').textContent=money(total);}
+function budgetCheck(){const budget=Number($('budget')?.value)||0,cur=Number($('currentMonthly')?.textContent.replace(/[^\d.]/g,''))||0,e=$('budgetResult');if(!cart.length){e.textContent=tr('buildToCompare');e.className='budget-result';return;}if(cur<=budget){e.textContent=tr('withinBudget',{amount:money(budget-cur)});e.className='budget-result ok';}else{e.textContent=tr('overBudget',{amount:money(cur-budget)});e.className='budget-result over';}}
+async function loadStock(){try{const r=await fetch(SUPABASE_URL+'/rest/v1/rpc/get_public_stock_v4',{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'},body:'{}'});if(!r.ok)throw new Error('HTTP '+r.status);const rows=await r.json();window.__LG_PUBLIC_STOCK_ROWS__=rows;stocks=aggregateStockRows(rows);stockLoaded=true;window.dispatchEvent(new Event('lg-stock-ready'));const dates=rows.map(x=>x.as_of_date).filter(Boolean).sort(),d=dates.at(-1)||'latest';$('liveDot').className='live-dot ok';$('liveText').textContent=tr('liveConnected');$('stockStamp').textContent=tr('stockSynced',{date:d});$('stockInfo').textContent=tr('stockInfoFull');renderCats();renderProducts();renderComboMenu();}catch(e){console.warn(e);stockLoaded=true;$('liveDot').className='live-dot err';$('liveText').textContent=tr('liveUnavailable');$('stockStamp').textContent=tr('syncUnavailable');renderProducts();renderComboMenu();}}
 function payload(){return cart.map(x=>({id:x.product.id,plan:x.product.plans.findIndex(p=>p.years===x.plan.years&&p.service===x.plan.service&&p.monthly===x.plan.monthly),years:x.plan.years,service:x.plan.service,monthly:x.plan.monthly,promo:x.promo,qty:x.qty}));}
 function packageToken(){return btoa(unescape(encodeURIComponent(JSON.stringify(payload())))).replace(/=+$/,'');}
 function customerShareUrl(){
   const u=new URL(location.origin+location.pathname);
   if(cart.length)u.searchParams.set('pkg',packageToken());
   u.searchParams.set('share','1');
-  u.searchParams.set('v','20261008l');
+  u.searchParams.set('v','20261008n');u.searchParams.set('lang',currentLang);
   return u.toString();
 }
 function syncUrl(push=true){const u=new URL(location.href);if(cart.length)u.searchParams.set('pkg',packageToken());else u.searchParams.delete('pkg');if(push)history.pushState({},'',u);else history.replaceState({},'',u);}
 function loadFromUrl(){const u=new URL(location.href),v=u.searchParams.get('pkg');if(u.searchParams.get('share')==='1'){document.body.classList.add('shared-package-view');const b=document.querySelector('.budget');if(b)b.style.display='none';const k=document.querySelectorAll('.kpis .kpi');if(k.length>1)k[k.length-1].style.display='none';}if(!v)return;try{const pad=v+'==='.slice((v.length+3)%4),data=JSON.parse(decodeURIComponent(escape(atob(pad))));cart=data.map(x=>{const p=CATALOG.find(y=>y.id===x.id);if(!p)return null;const exact=p.plans.find(pl=>Number(pl.years)===Number(x.years)&&pl.service===x.service&&Number(pl.monthly)===Number(x.monthly));const plan=exact||p.plans[x.plan]||p.plans[0];return{key:Date.now()+Math.random(),product:p,plan:{...plan},promo:p.promos.some(z=>z.id===x.promo)?x.promo:'standard',qty:Math.max(1,Math.min(9,Number(x.qty)||1))};}).filter(Boolean);}catch(e){console.warn('bad package link',e);}}
 function sharePackage(){
-  if(!cart.length)return toast('Tambah produk dahulu sebelum jana link customer.');
+  if(!cart.length)return toast(tr('addFirst'));
   const url=customerShareUrl();
-  navigator.clipboard?.writeText(url).then(()=>toast('Link customer disalin')).catch(()=>prompt('Copy link customer ini',url));
+  navigator.clipboard?.writeText(url).then(()=>toast(tr('linkCopied'))).catch(()=>prompt(tr('copyLinkPrompt'),url));
 }
 function editSharedPackage(){
   document.body.classList.remove('shared-package-view');
   const u=new URL(location.href);u.searchParams.delete('share');history.replaceState({},'',u);
   $('catalogSection')?.scrollIntoView({behavior:'smooth',block:'start'});
 }
-function wa(){const lines=['Hi Jason, saya berminat dengan pakej LG Subscribe ini:'];cart.forEach(x=>lines.push('• '+x.qty+'x '+x.product.code+' — '+x.plan.years+'Y '+x.plan.service+' — '+((x.product.promos.find(p=>p.id===x.promo)||{}).label||'')));const link=cart.length?customerShareUrl():location.href;lines.push('Anggaran sekarang: '+$('currentMonthly').textContent+'/bulan',link);window.open('https://wa.me/601159726619?text='+encodeURIComponent(lines.join('\n')),'_blank');}
+function wa(){const lines=[tr('waIntro')];cart.forEach(x=>lines.push('• '+x.qty+'x '+x.product.code+' — '+x.plan.years+'Y '+serviceLabel(x.plan.service)+' — '+promoLabelById(x.promo,(x.product.promos.find(p=>p.id===x.promo)||{}).label||'')));const link=cart.length?customerShareUrl():location.href;lines.push(tr('estimateNow')+': '+$('currentMonthly').textContent+'/'+tr('month'),link);window.open('https://wa.me/601159726619?text='+encodeURIComponent(lines.join('\n')),'_blank');}
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1800);}
 window.scrollToCatalog=()=>$('catalogSection').scrollIntoView({behavior:'smooth',block:'start'});
 window.scrollToPackage=()=>$('packageSide').scrollIntoView({behavior:'smooth',block:'start'});
-document.addEventListener('DOMContentLoaded',()=>{renderCats();renderComboMenu();loadFromUrl();renderProducts();renderCart();loadStock();$('search').addEventListener('input',renderProducts);$('sort').addEventListener('change',renderProducts);$('budget').addEventListener('input',budgetCheck);$('modalAdd').onclick=addActive;$('comboAddBtn').onclick=addRefinedCombo;$('shareBtn').onclick=sharePackage;$('waBtn').onclick=wa;$('editSharedBtn').onclick=editSharedPackage;$('resetBtn').onclick=()=>{cart=[];renderCart();toast('Package cleared');};$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal();});$('comboModal').addEventListener('click',e=>{if(e.target===$('comboModal'))closeComboModal();});if(document.body.classList.contains('shared-package-view')&&cart.length)setTimeout(()=>scrollToPackage(),80);});
+document.addEventListener('DOMContentLoaded',()=>{applyI18n();loadFromUrl();renderCats();renderComboMenu();renderProducts();renderCart();loadStock();$('langSelect').addEventListener('change',e=>setLanguage(e.target.value));$('search').addEventListener('input',renderProducts);$('sort').addEventListener('change',renderProducts);$('budget').addEventListener('input',budgetCheck);$('modalAdd').onclick=addActive;$('copyCopyBtn').onclick=copySelectedCopywriting;$('comboAddBtn').onclick=addRefinedCombo;$('shareBtn').onclick=sharePackage;$('waBtn').onclick=wa;$('editSharedBtn').onclick=editSharedPackage;$('resetBtn').onclick=()=>{cart=[];renderCart();toast(tr('packageCleared'));};$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal();});$('comboModal').addEventListener('click',e=>{if(e.target===$('comboModal'))closeComboModal();});if(document.body.classList.contains('shared-package-view')&&cart.length)setTimeout(()=>scrollToPackage(),80);});
 })();
