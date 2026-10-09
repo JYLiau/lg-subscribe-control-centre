@@ -50,7 +50,7 @@ ms:{
   copyHalf9:'🔥 50% OFF untuk 9 bulan pertama: {promo}/bulan\nBulan 10–{end}: {normal}/bulan',
   copyCombo:'🎁 RM10 OFF Combo: {promo}/bulan\n*Aktif apabila sekurang-kurangnya 2 produk/order memilih pakej RM10 OFF combo.',
   copyStandard:'💳 Bayaran bulanan: {normal}/bulan',copyOctober:'🎉 Promosi Oktober / Evergreen tersedia. Kadar promosi semasa akan disahkan oleh Jason.',
-  copyPackageIncludes:'Pakej termasuk:',copyDelivery:'🚚 Penghantaran & pemasangan asas percuma',copyServiceLine:'🛠️ Servis: {service}',copyCTA:'Nak saya semak stok & pakej yang sesuai untuk anda? 😊\nWhatsApp Jason: 011-5972 6619',
+  copyPackageIncludes:'Pakej termasuk:',copyDelivery:'🚚 Penghantaran & pemasangan asas percuma',copyServiceLine:'🛠️ Servis: {service}',copyCmKit:'✅️ Kit servis sendiri percuma setiap 6 bulan',copyCmVisit:'✅️ Lawatan juruteknik & servis setiap 12 bulan',copyCTA:'Nak saya semak stok & pakej yang sesuai untuk anda? 😊\nWhatsApp Jason: 011-5972 6619',
   combo_setA_name:'Sejuk + Segar',combo_setA_desc:'Aircond 1.0HP + Peti Sejuk 493L',combo_setB_name:'Segar + Dobi',combo_setB_desc:'Peti Sejuk 493L + Mesin Basuh 12kg',combo_setC_name:'Sejuk + Dobi',combo_setC_desc:'Aircond 1.0HP + Mesin Basuh 12kg',combo_setD_name:'Trio Lengkap Rumah',combo_setD_desc:'Aircond + Peti Sejuk + Mesin Basuh',combo_setE_name:'Duo Dobi',combo_setE_desc:'Mesin Basuh 12kg + Pengering 10kg'
 },
 en:{
@@ -91,7 +91,7 @@ en:{
   copyHalf9:'🔥 50% OFF for the first 9 months: {promo}/month\nMonth 10–{end}: {normal}/month',
   copyCombo:'🎁 RM10 OFF Combo: {promo}/month\n*Active when at least 2 products/orders select the RM10 OFF combo package.',
   copyStandard:'💳 Monthly payment: {normal}/month',copyOctober:'🎉 October / Evergreen promotion is available. Jason will confirm the current promotional rate.',
-  copyPackageIncludes:'Package includes:',copyDelivery:'🚚 Free delivery & basic installation',copyServiceLine:'🛠️ Service: {service}',copyCTA:'Want me to check current stock and the most suitable package for you? 😊\nWhatsApp Jason: 011-5972 6619',
+  copyPackageIncludes:'Package includes:',copyDelivery:'🚚 Free delivery & basic installation',copyServiceLine:'🛠️ Service: {service}',copyCmKit:'✅️ Free self-service kit every 6 months',copyCmVisit:'✅️ Technician visit & service every 12 months',copyCTA:'Want me to check current stock and the most suitable package for you? 😊\nWhatsApp Jason: 011-5972 6619',
   combo_setA_name:'Cool + Fresh',combo_setA_desc:'1.0HP Air Conditioner + 493L Refrigerator',combo_setB_name:'Fresh + Laundry',combo_setB_desc:'493L Refrigerator + 12kg Washer',combo_setC_name:'Cool + Laundry',combo_setC_desc:'1.0HP Air Conditioner + 12kg Washer',combo_setD_name:'Whole Home Trio',combo_setD_desc:'Air Conditioner + Refrigerator + Washer',combo_setE_name:'Laundry Duo',combo_setE_desc:'12kg Washer + 10kg Dryer'
 },
 zh:{
@@ -132,7 +132,7 @@ zh:{
   copyHalf9:'🔥 首 9 个月 50% OFF：{promo}/月\n第 10–{end} 个月：{normal}/月',
   copyCombo:'🎁 RM10 OFF 组合优惠：{promo}/月\n*至少 2 件产品/订单都选择 RM10 OFF combo 后才生效。',
   copyStandard:'💳 月费：{normal}/月',copyOctober:'🎉 可享 10 月 / Evergreen 优惠。当前优惠价格由 Jason 确认。',
-  copyPackageIncludes:'配套包括：',copyDelivery:'🚚 免费送货及基本安装',copyServiceLine:'🛠️ 服务：{service}',copyCTA:'要我帮你查看最新库存和适合的配套吗？😊\nWhatsApp Jason：011-5972 6619',
+  copyPackageIncludes:'配套包括：',copyDelivery:'🚚 免费送货及基本安装',copyServiceLine:'🛠️ 服务：{service}',copyCmKit:'✅️ 每6个月免费提供自助保养套件',copyCmVisit:'✅️ 每12个月提供技师上门检查与保养',copyCTA:'要我帮你查看最新库存和适合的配套吗？😊\nWhatsApp Jason：011-5972 6619',
   combo_setA_name:'凉爽 + 保鲜',combo_setA_desc:'1.0HP 空调 + 493L 冰箱',combo_setB_name:'保鲜 + 洗衣',combo_setB_desc:'493L 冰箱 + 12kg 洗衣机',combo_setC_name:'凉爽 + 洗衣',combo_setC_desc:'1.0HP 空调 + 12kg 洗衣机',combo_setD_name:'全屋三件套',combo_setD_desc:'空调 + 冰箱 + 洗衣机',combo_setE_name:'洗衣双组合',combo_setE_desc:'12kg 洗衣机 + 10kg 烘干机'
 }};
 let currentLang=(()=>{const q=new URL(location.href).searchParams.get('lang');const s=q||localStorage.getItem('lg-bmh-lang')||'ms';return ['ms','en','zh'].includes(s)?s:'ms';})();
@@ -495,6 +495,9 @@ function selectedCopywriting(){
     warrantyLine(chosenPlan.years),
     tr('copyServiceLine',{service:serviceLabel(chosenPlan.service)})
   );
+  if(chosenPlan.service==='Combine Maintenance'){
+    lines.push(tr('copyCmKit'),tr('copyCmVisit'));
+  }
   return lines.join('\n');
 }
 function copySelectedCopywriting(){
