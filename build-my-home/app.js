@@ -28,14 +28,14 @@ ms:{
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Imej produk daripada bahan rujukan yang dibekalkan. T&C apply.',
   comboHelp:'Pilih tempoh, servis dan promosi untuk setiap produk. Harga pakej akan dikira semula sebelum ditambah.',comboEstimate:'Anggaran bayaran bulan pertama',comboAdd:'Tambah set ke pakej',
   choosePlan:'1. Pilih pelan',choosePromo:'2. Pilih promosi',qty:'Kuantiti',copy:'Salin ayat',copyTitle:'Salin copywriting untuk pelan & promosi dipilih',addPackage:'Tambah ke pakej',
-  all:'Semua',years:'tahun',month:'bulan',months:'bulan',from:'Dari',viewPlans:'Lihat pelan',pricePending:'Harga akan dikemas kini',planPending:'Pelan belum tersedia',currentSelection:'Pilihan semasa',
+  all:'Semua',years:'tahun',month:'bulan',months:'bulan',from:'Dari',viewPlans:'Lihat pelan',pricePending:'Harga akan dikemas kini',planPending:'Pelan belum tersedia',currentSelection:'Pilihan semasa',availableLateNov:'Tersedia hujung November 2026',
   noProducts:'Belum ada produk.',startAppliance:'Mulakan dengan satu perkakas',startAppliance2:'Pilih produk di bawah untuk bina pakej rumah anda.',
   productSelected:'produk dipilih',unit:'unit',model:'model',standard:'standard',period:'Tempoh',service:'Servis',promotion:'Promosi',
   notAvailable:'Tidak tersedia',chooseCustomize:'Pilih & ubah suai',standardPlanFrom:'Dari pelan standard',canCustomize:'boleh ubah tempoh/servis/promosi',
   comboNeed2:'RM10 OFF combo perlukan sekurang-kurangnya 2 produk/order dalam pakej yang kedua-duanya memilih RM10 OFF combo.',
   addedPackage:'Ditambah ke pakej',comboAdded:'ditambah ke pakej',comboNeedAnother:'Ditambah. RM10 combo perlukan satu lagi item dengan pakej RM10 OFF combo yang sama.',
   stockNotListed:'Stok tidak disenaraikan',stockSyncing:'Stok: sedang diselaraskan…',lowStock:'Stok rendah: {n}',stock:'Stok: {n}',openingStock:'Stok pembukaan: {n}',outStock:'Tiada stok',
-  currentStock:'Stok semasa',opening:'Stok pembukaan',openingAl8:'Stok pembukaan (AL8)',westMalaysia:'Semenanjung Malaysia (AL8)',sabah:'Sabah',sarawak:'Sarawak',asOf:'Setakat',stockDataSync:'Data stok sedang diselaraskan…',
+  currentStock:'Stok semasa',opening:'Stok pembukaan',openingAl8:'Stok pembukaan',westMalaysia:'Semenanjung Malaysia',sabah:'Sabah',sarawak:'Sarawak',asOf:'Setakat',stockDataSync:'Data stok sedang diselaraskan…',
   promoStandard:'Harga standard',promoHalf9:'50% OFF 9 bulan',promoCombo10:'RM10 OFF combo',promoOctober:'Promosi Oktober / Evergreen · Jason sahkan',promoDw99:'Promosi khas RM99/bulan',promoDw99Desc:'Sah untuk permohonan 1 Okt–31 Dis 2026. Harga biasa RM150/bulan.',
   promoStandardDesc:'Tiada diskaun pengenalan.',promoHalf9Desc:'Tidak boleh digabungkan dengan RM10 OFF combo pada item yang sama.',promoCombo10Desc:'Perlu sekurang-kurangnya 2 produk/order dan kedua-duanya mesti pilih RM10 OFF combo. Tidak boleh campur satu item combo dengan item 50% OFF.',promoOctoberDesc:'Helaian pelancaran mengesahkan Promosi Oktober & Evergreen tetapi kadar/tempoh diskaun tidak dinyatakan. Jason akan sahkan tawaran semasa.',
   comboInactive:'belum aktif (perlu 2 item combo)',monthWord:'Bulan',notActiveAdd:'Belum aktif — tambah 1 lagi item menggunakan RM10 OFF combo',
@@ -69,14 +69,14 @@ en:{
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Product images are from supplied reference materials. T&C apply.',
   comboHelp:'Choose the term, service and promotion for each product. The package price will be recalculated before adding.',comboEstimate:'Estimated first-month payment',comboAdd:'Add set to package',
   choosePlan:'1. Choose plan',choosePromo:'2. Choose promotion',qty:'Quantity',copy:'Copy text',copyTitle:'Copy copywriting for the selected plan & promotion',addPackage:'Add to package',
-  all:'All',years:'years',month:'month',months:'months',from:'From',viewPlans:'View plans',pricePending:'Price pending',planPending:'Plan not available yet',currentSelection:'Current selection',
+  all:'All',years:'years',month:'month',months:'months',from:'From',viewPlans:'View plans',pricePending:'Price pending',planPending:'Plan not available yet',currentSelection:'Current selection',availableLateNov:'Available end of November 2026',
   noProducts:'No products yet.',startAppliance:'Start with one appliance',startAppliance2:'Choose a product below to build your home package.',
   productSelected:'products selected',unit:'unit',model:'model',standard:'standard',period:'Term',service:'Service',promotion:'Promotion',
   notAvailable:'Unavailable',chooseCustomize:'Choose & customise',standardPlanFrom:'From standard plan',canCustomize:'term/service/promotion can be changed',
   comboNeed2:'RM10 OFF combo requires at least 2 products/orders in the package, and both must select RM10 OFF combo.',
   addedPackage:'Added to package',comboAdded:'added to package',comboNeedAnother:'Added. RM10 combo needs one more item using the same RM10 OFF combo package.',
   stockNotListed:'Stock not listed',stockSyncing:'Stock: syncing…',lowStock:'Low stock: {n}',stock:'Stock: {n}',openingStock:'Opening stock: {n}',outStock:'Out of stock',
-  currentStock:'Current stock',opening:'Opening stock',openingAl8:'Opening stock (AL8)',westMalaysia:'West Malaysia (AL8)',sabah:'Sabah',sarawak:'Sarawak',asOf:'As of',stockDataSync:'Stock data syncing…',
+  currentStock:'Current stock',opening:'Opening stock',openingAl8:'Opening stock',westMalaysia:'West Malaysia',sabah:'Sabah',sarawak:'Sarawak',asOf:'As of',stockDataSync:'Stock data syncing…',
   promoStandard:'Standard price',promoHalf9:'50% OFF 9 months',promoCombo10:'RM10 OFF combo',promoOctober:'October / Evergreen promo · Jason confirms',
   promoStandardDesc:'No introductory discount.',promoHalf9Desc:'Cannot be combined with RM10 OFF combo on the same item.',promoCombo10Desc:'Requires at least 2 products/orders and both must select RM10 OFF combo. Cannot mix one combo item with a 50% OFF item.',promoOctoberDesc:'The launch sheet confirms October & Evergreen promotions but does not state the discount amount/duration. Jason will confirm the current offer.',
   comboInactive:'not active (need 2 combo items)',monthWord:'Month',notActiveAdd:'Not active — add 1 more item using RM10 OFF combo',
@@ -110,14 +110,14 @@ zh:{
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>产品图片来自所提供的参考资料。须符合条款与条件。',
   comboHelp:'为每件产品选择年限、服务和优惠。加入前会重新计算配套价格。',comboEstimate:'首月预计月费',comboAdd:'加入整套配套',
   choosePlan:'1. 选择方案',choosePromo:'2. 选择优惠',qty:'数量',copy:'复制文案',copyTitle:'复制所选方案与优惠的文案',addPackage:'加入配套',
-  all:'全部',years:'年',month:'月',months:'个月',from:'每月低至',viewPlans:'查看方案',currentSelection:'当前可选',
+  all:'全部',years:'年',month:'月',months:'个月',from:'每月低至',viewPlans:'查看方案',currentSelection:'当前可选',availableLateNov:'2026年11月底上市',
   noProducts:'尚未选择产品。',startAppliance:'从一件家电开始',startAppliance2:'从下方选择产品，建立你的家电配套。',
   productSelected:'件产品已选择',unit:'件',model:'型号',standard:'标准价',period:'年限',service:'服务',promotion:'优惠',
   notAvailable:'暂不可用',chooseCustomize:'选择并调整',standardPlanFrom:'标准方案起',canCustomize:'可更改年限/服务/优惠',
   comboNeed2:'RM10 OFF 组合优惠需要至少 2 件产品/订单，而且两件都必须选择 RM10 OFF combo。',
   addedPackage:'已加入配套',comboAdded:'已加入配套',comboNeedAnother:'已加入。RM10 combo 还需要另一件产品选择相同 RM10 OFF combo 才会生效。',
   stockNotListed:'未列出库存',stockSyncing:'库存同步中…',lowStock:'库存偏低：{n}',stock:'库存：{n}',openingStock:'期初库存：{n}',outStock:'无库存',
-  currentStock:'当前库存',opening:'期初库存',openingAl8:'期初库存 (AL8)',westMalaysia:'西马 (AL8)',sabah:'沙巴',sarawak:'砂拉越',asOf:'截至',stockDataSync:'库存资料同步中…',
+  currentStock:'当前库存',opening:'期初库存',openingAl8:'期初库存',westMalaysia:'西马',sabah:'沙巴',sarawak:'砂拉越',asOf:'截至',stockDataSync:'库存资料同步中…',
   promoStandard:'标准价格',promoHalf9:'首 9 个月 50% OFF',promoCombo10:'RM10 OFF 组合优惠',promoOctober:'10 月 / Evergreen 优惠 · Jason 确认',
   promoStandardDesc:'没有首期折扣。',promoHalf9Desc:'同一件产品不可与 RM10 OFF combo 叠加。',promoCombo10Desc:'至少需要 2 件产品/订单，而且两件都必须选择 RM10 OFF combo。不可一件选 combo、另一件选 50% OFF。',promoOctoberDesc:'新品资料确认有 10 月及 Evergreen 优惠，但没有注明折扣金额/期限。Jason 会确认当前优惠。',
   comboInactive:'尚未生效（需 2 件 combo 产品）',monthWord:'第',notActiveAdd:'尚未生效 — 再加入 1 件使用 RM10 OFF combo 的产品',
@@ -181,7 +181,7 @@ function stockRowsFromSnapshot(snapshot){
     return {
       model_code:p.code||code,product_name:p.description||null,category:p.category||null,
       lifecycle_status:p.lifecycleStatus||null,submission_status:p.submissionStatus||null,
-      // The report's opening column is West Malaysia (AL8), not a regional total.
+      // The report's opening column is West Malaysia, not a regional total.
       opening_stock:quantity('AL8','opening'),
       available_stock:balances.reduce((total,n)=>total+Math.max(0,n),0),
       al8_balance:balances[0],al2_balance:balances[1],al3_balance:balances[2],
@@ -396,8 +396,9 @@ function addRefinedCombo(){
   closeComboModal();renderCart();scrollToPackage();toast(name+' '+tr('comboAdded'));
 }
 function renderCats(){const cats=['All',...new Set(CATALOG.map(x=>x.category))];$('catRow').innerHTML=cats.map(c=>'<button class="cat '+(c===activeCat?'active':'')+'" data-cat="'+esc(c)+'">'+esc(c==='All'?tr('all'):categoryLabel(c))+'</button>').join('');$('catRow').querySelectorAll('.cat').forEach(b=>b.onclick=()=>{activeCat=b.dataset.cat;renderCats();renderProducts();});}
-function visibleProducts(){const q=($('search')?.value||'').trim().toLowerCase(),sort=$('sort')?.value||'featured';let rows=CATALOG.filter(p=>!stopSubmission(p)&&(activeCat==='All'||p.category===activeCat)&&(!q||((p.code+' '+p.name+' '+p.category).toLowerCase().includes(q))));if(sort==='price')rows.sort((a,b)=>minPrice(a)-minPrice(b));else if(sort==='model')rows.sort((a,b)=>a.code.localeCompare(b.code));else rows.sort((a,b)=>a.order-b.order);return rows;}
-function renderProducts(){const rows=visibleProducts();$('catalogCount').textContent=rows.length+' '+tr('model');$('products').innerHTML=rows.map(p=>{const s=stockFor(p),n=s?Math.max(0,Math.round(Number(s.total_stock)||0)):null,out=n===0,pending=!Array.isArray(p.plans)||!p.plans.length;const priceHtml=pending?'<div class="price pending-price"><div><small>'+esc(tr('pricePending'))+'</small></div></div>':'<div class="price"><div><small>'+esc(tr('from'))+'</small><strong>'+money(minPrice(p))+'</strong><em>/'+esc(tr('month'))+'</em></div></div>';return '<article class="product '+(out?'unavailable':'')+' '+(pending?'pricing-pending':'')+'"><div class="pvisual">'+stockBadge(p)+visual(p)+'</div><div class="pbody"><div class="pcat">'+esc(categoryLabel(p.category))+'</div><h3>'+esc(p.code)+'</h3><div class="psub">'+esc(p.name)+'</div><span class="lifecycle current">'+esc(tr('currentSelection'))+'</span>'+priceHtml+'<button class="addbtn" data-id="'+p.id+'" '+(pending?'disabled':'')+'>'+esc(pending?tr('planPending'):tr('viewPlans'))+'</button></div></article>';}).join('');$('products').querySelectorAll('.addbtn:not(:disabled)').forEach(b=>b.onclick=()=>openProduct(b.dataset.id));}
+function isUpcoming(p){return Boolean(p.availableFrom && new Date(Date.now()+8*60*60*1000).toISOString().slice(0,10) < p.availableFrom);}
+function visibleProducts(){const q=($('search')?.value||'').trim().toLowerCase(),sort=$('sort')?.value||'featured';let rows=CATALOG.filter(p=>!stopSubmission(p)&&(activeCat==='All'||p.category===activeCat)&&(!q||((p.code+' '+p.name+' '+p.category).toLowerCase().includes(q))));if(sort==='price')rows.sort((a,b)=>minPrice(a)-minPrice(b));else if(sort==='model')rows.sort((a,b)=>a.code.localeCompare(b.code));else rows.sort((a,b)=>a.order-b.order);rows.sort((a,b)=>Number(isUpcoming(a))-Number(isUpcoming(b)));return rows;}
+function renderProducts(){const rows=visibleProducts();$('catalogCount').textContent=rows.length+' '+tr('model');$('products').innerHTML=rows.map(p=>{const s=stockFor(p),n=s?Math.max(0,Math.round(Number(s.total_stock)||0)):null,out=n===0,pending=!Array.isArray(p.plans)||!p.plans.length;const priceHtml=pending?'<div class="price pending-price"><div><small>'+esc(tr('pricePending'))+'</small></div></div>':'<div class="price"><div><small>'+esc(tr('from'))+'</small><strong>'+money(minPrice(p))+'</strong><em>/'+esc(tr('month'))+'</em></div></div>';return '<article class="product '+(out?'unavailable':'')+' '+(pending?'pricing-pending':'')+'"><div class="pvisual">'+stockBadge(p)+visual(p)+'</div><div class="pbody"><div class="pcat">'+esc(categoryLabel(p.category))+'</div><h3>'+esc(p.code)+'</h3><div class="psub">'+esc(p.name)+'</div><span class="lifecycle current">'+esc(tr(isUpcoming(p)?'availableLateNov':'currentSelection'))+'</span>'+priceHtml+'<button class="addbtn" data-id="'+p.id+'" '+(pending?'disabled':'')+'>'+esc(pending?tr('planPending'):tr('viewPlans'))+'</button></div></article>';}).join('');$('products').querySelectorAll('.addbtn:not(:disabled)').forEach(b=>b.onclick=()=>openProduct(b.dataset.id));}
 function renderProductStock(){if(!activeProduct)return;const s=stockFor(activeProduct);$('modalStock').innerHTML=s?tr('currentStock')+': <b>'+Math.round(Number(s.total_stock)||0)+'</b> · '+tr('openingAl8')+': <b>'+Math.round(Number(s.opening_stock)||0)+'</b><br><span style="font-size:11px">AL2 '+Math.round(Number(s.al2_stock)||0)+' / '+tr('opening').toLowerCase()+' '+Math.round(Number(s.al2_opening)||0)+' · AL3 '+Math.round(Number(s.al3_stock)||0)+' / '+tr('opening').toLowerCase()+' '+Math.round(Number(s.al3_opening)||0)+' · AL8 '+Math.round(Number(s.al8_stock)||0)+' / '+tr('opening').toLowerCase()+' '+Math.round(Number(s.al8_opening)||0)+(s.as_of_date?' · '+tr('asOf')+' '+s.as_of_date:'')+'</span>':tr('stockDataSync');}
 function openProduct(id){activeProduct=CATALOG.find(x=>x.id===id);if(!activeProduct||!Array.isArray(activeProduct.plans)||!activeProduct.plans.length)return;chosenPlan=activeProduct.plans[0];chosenPromo='standard';$('qtyInput').value=1;$('modalModel').textContent=activeProduct.code;$('modalSub').textContent=activeProduct.name;renderProductStock();renderPlans();renderPromos();$('modal').showModal();}
 window.closeModal=()=>$('modal').close();
