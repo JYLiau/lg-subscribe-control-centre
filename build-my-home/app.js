@@ -247,6 +247,12 @@ function sameModelFamily(a,b){
   const shorter=a.length<=b.length?a:b,longer=a.length>b.length?a:b;
   return shorter.length>=7&&longer.startsWith(shorter);
 }
+function isStackingKitStock(code,s){
+  const c=String(code||'').toUpperCase();
+  const cat=String(s?.category||'').toUpperCase();
+  const name=String(s?.product_name||'').toUpperCase();
+  return c.startsWith('STKIT')||cat.includes('STACKING KIT')||name.includes('STACKING KIT');
+}
 function ensureEligibleStockModels(){
   const existing=[...CATALOG.map(p=>baseCode(p.code))];
   let added=0;
@@ -255,7 +261,7 @@ function ensureEligibleStockModels(){
     const sub=String(s?.submission_status||'').toLowerCase();
     const isOled=String(code||'').toUpperCase().startsWith('OLED');
     const alreadyShown=existing.some(e=>sameModelFamily(e,code));
-    if(n<=0||sub.includes('stop')||sub.includes('pause')||isDehumidifierStock(s)||isOled||alreadyShown)continue;
+    if(n<=0||sub.includes('stop')||sub.includes('pause')||isDehumidifierStock(s)||isStackingKitStock(code,s)||isOled||alreadyShown)continue;
     CATALOG.push({
       id:'stock-'+code.toLowerCase().replace(/[^a-z0-9]+/g,'-'),
       code,
