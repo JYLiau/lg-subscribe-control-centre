@@ -384,9 +384,9 @@ const PRODUCT_FEATURE_GROUPS={
     zh:['493L 大容量','LinearCooling™ 线性恒温','DoorCooling+™ 门冷技术','饮水机 + 自动制冰机','LG ThinQ™ 智能控制']
   },
   gcb257:{
-    bm:['Kapasiti besar 665L','Linear Cooling™','Multi Air Flow','Pencahayaan LED','Kemasan Silver'],
-    en:['Large 665L capacity','Linear Cooling™','Multi Air Flow','LED lighting','Silver finish'],
-    zh:['665L 大容量','Linear Cooling™ 线性恒温','Multi Air Flow 多重气流','LED 照明','银色机身']
+    bm:['Kapasiti besar 664L','Linear Cooling™','Multi Air Flow','Pencahayaan LED','Kemasan Silver'],
+    en:['Large 664L capacity','Linear Cooling™','Multi Air Flow','LED lighting','Silver finish'],
+    zh:['664L 大容量','Linear Cooling™ 线性恒温','Multi Air Flow 多重气流','LED 照明','银色机身']
   },
   gcj257:{
     bm:['Kapasiti besar 635L','InstaView Door-in-Door™','UVnano® Water Dispenser','DoorCooling+™','LG ThinQ™'],
