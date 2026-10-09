@@ -3,16 +3,6 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <!-- Public visitors land in the read-only/customer-facing showroom.
-       Admin users can continue accessing this workspace via ?admin=1. -->
-  <script>
-    (function () {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('admin') !== '1') {
-        window.location.replace('./build-my-home/' + window.location.search + window.location.hash);
-      }
-    })();
-  </script>
   <meta name="theme-color" content="#b00020" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
@@ -62,13 +52,14 @@ button,input,select,textarea{font:inherit}.shell{min-height:100vh;display:grid;g
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
-  <div id="cloudGate" class="cloud-gate">
+  <div id="cloudGate" class="cloud-gate hidden">
     <div class="cloud-card">
       <div style="display:flex;gap:12px;align-items:center;margin-bottom:16px"><div class="brand-mark" style="color:#fff">LG</div><div><h1>Subscribe Control Centre</h1><div class="small muted">Cloud workspace • Supabase • PWA v0.8</div></div></div>
       <div class="field"><label>Email</label><input id="cloudEmail" class="input" type="email" style="width:100%" autocomplete="email" placeholder="you@example.com"></div>
       <div class="field" style="margin-top:10px"><label>Password</label><input id="cloudPassword" class="input" type="password" style="width:100%" autocomplete="current-password" placeholder="Password"></div>
       <div style="display:flex;gap:8px;margin-top:16px"><button id="cloudSignIn" class="btn btn-primary" style="flex:1">Sign in</button><button id="cloudSignUp" class="btn btn-secondary" style="flex:1">Create account</button></div>
-      <div id="cloudStatus" class="cloud-status">Sign in to load the same catalogue, images and poster history on any device.</div>
+      <div id="cloudStatus" class="cloud-status">Sign in as an administrator to edit the shared cloud workspace.</div>
+      <button id="cloudContinuePublic" class="btn btn-secondary" style="margin-top:10px;width:100%">Continue public access without signing in</button>
     </div>
   </div>
   <div id="appShell" class="shell">
@@ -94,7 +85,10 @@ button,input,select,textarea{font:inherit}.shell{min-height:100vh;display:grid;g
           <h1 id="pageTitle">Dashboard</h1>
           <p id="pageSubtitle">Current product, stock and poster health.</p>
         </div>
-        <div class="top-actions">
+        <div class="top-actions" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+          <span id="accessModeStatus" class="pill blue" title="Public access displays live shared records; changes are local to your browser">Public view</span>
+          <button id="cloudLoginBtn" class="btn btn-secondary btn-sm">Admin sign in</button>
+          <button id="cloudSignOutBtn" class="btn btn-secondary btn-sm" style="display:none">Sign out</button>
           <button id="installAppBtn" class="btn btn-install">Home Screen</button>
           <button id="quickUpdateBtn" class="btn btn-primary">Upload stock update</button>
         </div>
@@ -261,14 +255,105 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     await publishPwaPackage();
   }
   registerPwaServiceWorker().finally(updateInstallButton);
+  const PUBLIC_WORKSPACE_ID = 'd257117f-df44-4da3-b7cb-7d0b84e6e0e4';
   async function initCloudAuth(){
-    const gate=document.getElementById('cloudGate'), status=document.getElementById('cloudStatus');
-    const start=async(session)=>{cloudSession=session;if(!session){gate.classList.remove('hidden');cloudReady=false;return;}status.textContent='Loading cloud workspace…';try{await ensureCloudWorkspace();await cloudLoadOrSeedState();cloudReady=true;gate.classList.add('hidden');document.getElementById('cloudSignOutBtn').style.display='inline-flex';setCloudStatus('Cloud synced','ok');await hydrateAllCloudAssetsToLocal();await syncAllLocalAssetsToCloud();render();updateInstallButton();}catch(e){console.error(e);status.textContent='Could not open cloud workspace: '+(e.message||e);}};
-    const s=await cloud.auth.getSession();await start(s.data.session);
-    cloud.auth.onAuthStateChange((_event,session)=>{if(session?.user?.id!==cloudSession?.user?.id||(!session&&cloudSession))start(session)});
-    document.getElementById('cloudSignIn').onclick=async()=>{status.textContent='Signing in…';const email=document.getElementById('cloudEmail').value.trim(),password=document.getElementById('cloudPassword').value;const r=await cloud.auth.signInWithPassword({email,password});if(r.error)status.textContent=r.error.message;else await start(r.data.session)};
-    document.getElementById('cloudSignUp').onclick=async()=>{status.textContent='Creating account…';const email=document.getElementById('cloudEmail').value.trim(),password=document.getElementById('cloudPassword').value;if(password.length<6){status.textContent='Use a password of at least 6 characters.';return;}const r=await cloud.auth.signUp({email,password});if(r.error)status.textContent=r.error.message;else if(r.data.session)await start(r.data.session);else status.textContent='Account created. Check your email to confirm, then sign in.'};
-    document.getElementById('cloudSignOutBtn').onclick=async()=>{await cloudSaveState();await cloud.auth.signOut();cloudSession=null;cloudWorkspaceId=null;cloudReady=false;gate.classList.remove('hidden');document.getElementById('cloudSignOutBtn').style.display='none';setCloudStatus('Signed out','')};
+    const gate=document.getElementById('cloudGate');
+    const status=document.getElementById('cloudStatus');
+    const mode=document.getElementById('accessModeStatus');
+    const loginBtn=document.getElementById('cloudLoginBtn');
+    const logoutBtn=document.getElementById('cloudSignOutBtn');
+    let bootId=0;
+    const publicData=async()=>{
+      // Only the safe, auto-updated public snapshot is exposed through anon RLS.
+      const r=await cloud.from('control_centre_public_snapshot')
+        .select('state_json,updated_at').eq('workspace_id',PUBLIC_WORKSPACE_ID).maybeSingle();
+      if(r.error)throw r.error;
+      if(!r.data?.state_json?.products)throw new Error('Public snapshot is not available');
+      return r.data.state_json;
+    };
+    const start=async(session)=>{
+      const myBoot=++bootId;
+      cloudSession=session;
+      cloudReady=false;
+      clearTimeout(cloudSyncTimer);
+      clearTimeout(cloudNormaliseTimer);
+      loginBtn.style.display=session?'none':'inline-flex';
+      logoutBtn.style.display=session?'inline-flex':'none';
+      if(!session){
+        cloudWorkspaceId=null;
+        mode.textContent='Public view · local edits';
+        mode.title='Live inventory and plans; edits made without admin sign-in are saved only on this device.';
+        gate.classList.toggle('hidden',new URLSearchParams(location.search).get('admin')!=='1');
+        try {
+          const publicState=await publicData();
+          if(myBoot!==bootId)return;
+          state=Object.assign(clone(window.__LG_SEED__||{}),publicState);
+          normalizeStateCategories(state.products);
+          localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+          render();
+          status.textContent='Public catalogue loaded. Admin login is optional.';
+        }catch(e){
+          console.warn('Public snapshot load:',e);
+          if(myBoot!==bootId)return;
+          mode.textContent='Public data unavailable';
+          state=loadState();
+          render();
+          status.textContent='Could not load current public data: '+(e.message||e);
+        }
+        updateInstallButton();
+        return;
+      }
+      gate.classList.remove('hidden');
+      status.textContent='Loading admin cloud workspace…';
+      try{
+        await ensureCloudWorkspace();
+        await cloudLoadOrSeedState();
+        if(myBoot!==bootId)return;
+        cloudReady=true;
+        gate.classList.add('hidden');
+        mode.textContent='Admin · cloud sync';
+        mode.title='Signed in; updates synchronize to the shared cloud workspace.';
+        setCloudStatus('Cloud synced','ok');
+        await hydrateAllCloudAssetsToLocal();
+        await syncAllLocalAssetsToCloud();
+        render();
+        updateInstallButton();
+      }catch(e){
+        console.error(e);
+        status.textContent='Could not open admin workspace: '+(e.message||e);
+      }
+    };
+    loginBtn.onclick=()=>{gate.classList.remove('hidden');status.textContent='Admin access: enter your account credentials.';};
+    document.getElementById('cloudContinuePublic').onclick=()=>gate.classList.add('hidden');
+    document.getElementById('cloudSignIn').onclick=async()=>{
+      status.textContent='Signing in…';
+      const email=document.getElementById('cloudEmail').value.trim();
+      const password=document.getElementById('cloudPassword').value;
+      const r=await cloud.auth.signInWithPassword({email,password});
+      if(r.error)status.textContent=r.error.message;
+      else await start(r.data.session);
+    };
+    document.getElementById('cloudSignUp').onclick=async()=>{
+      status.textContent='Creating account…';
+      const email=document.getElementById('cloudEmail').value.trim();
+      const password=document.getElementById('cloudPassword').value;
+      if(password.length<6){status.textContent='Use a password of at least 6 characters.';return;}
+      const r=await cloud.auth.signUp({email,password});
+      if(r.error)status.textContent=r.error.message;
+      else if(r.data.session)await start(r.data.session);
+      else status.textContent='Account created. Check your email to confirm, then sign in.';
+    };
+    logoutBtn.onclick=async()=>{
+      await cloudSaveState();
+      await cloud.auth.signOut();
+      await start(null);
+    };
+    const initial=await cloud.auth.getSession();
+    await start(initial.data.session);
+    cloud.auth.onAuthStateChange((event,session)=>{
+      if(event==='SIGNED_IN' && session?.user?.id!==cloudSession?.user?.id)start(session);
+      else if(event==='SIGNED_OUT' && cloudSession)start(null);
+    });
   }
 
   const pageMeta = {
