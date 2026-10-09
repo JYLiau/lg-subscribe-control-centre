@@ -480,7 +480,8 @@ const PRODUCT_FEATURE_GROUPS={
   nanoTV:{
     bm:['NANO 4K UHD AI','Nano Detail Enhancer','HDR10 Pro','α7 AI Processor 4K','webOS dengan AI Hub'],
     en:['NANO 4K UHD AI','Nano Detail Enhancer','HDR10 Pro','α7 AI Processor 4K','webOS with AI Hub'],
-    zh:['NANO 4K UHD AI','Nano Detail Enhancer 细节增强','HDR10 Pro','α7 AI Processor 4K','webOS + AI Hub 智能中心'],
+    zh:['NANO 4K UHD AI','Nano Detail Enhancer 细节增强','HDR10 Pro','α7 AI Processor 4K','webOS + AI Hub 智能中心']
+  },
   dishwasher335:{
     bm:['TrueSteam™ untuk cucian lebih bersih & higienik','QuadWash™ membersih dari pelbagai arah','EasyRack™ Plus untuk susunan pinggan fleksibel','Auto Opening Door membantu proses pengeringan','LG ThinQ™ untuk kawalan pintar'],
     en:['TrueSteam™ for a cleaner, more hygienic wash','QuadWash™ cleans from multiple angles','EasyRack™ Plus for flexible loading','Auto Opening Door helps drying','LG ThinQ™ smart control'],
@@ -490,7 +491,6 @@ const PRODUCT_FEATURE_GROUPS={
     bm:['TrueSteam™ untuk cucian lebih bersih & higienik','QuadWash™ membersih dari pelbagai arah','EasyRack™ Plus untuk susunan pinggan fleksibel','Kapasiti 14 place settings','LG ThinQ™ untuk kawalan pintar'],
     en:['TrueSteam™ for a cleaner, more hygienic wash','QuadWash™ cleans from multiple angles','EasyRack™ Plus for flexible loading','14 place settings capacity','LG ThinQ™ smart control'],
     zh:['TrueSteam™ 蒸汽洁净，更卫生','QuadWash™ 多角度强力清洗','EasyRack™ Plus 灵活碗篮设计','14套餐具容量','LG ThinQ™ 智能控制']
-  }
   }
 };
 const PRODUCT_FEATURE_GROUP_BY_CODE={
