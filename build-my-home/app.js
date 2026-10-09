@@ -3,7 +3,7 @@
 const SUPABASE_URL='https://jmnnesumjpkraugtzdkl.supabase.co';
 const SUPABASE_KEY='sb_publishable__CO_CJqvrVqG-LClfcD_Wg_CVdZZZU8';
 const CATALOG=(window.LG_CATALOG||[]).map((p,i)=>({...p,order:i}));
-const icons={'Aircond':'❄️','Laundry':'🧺','Fridge':'🧊','Air Purifier':'🌿','Water Purifier':'💧','TV':'📺','Dishwasher':'🍽️'};
+const icons={'Aircond':'❄️','Laundry':'🧺','Fridge':'🧊','Air Purifier':'🌿','Water Purifier':'💧','TV':'📺','Dishwasher':'🍽️','Soundbar':'🔊','Vacuum':'🧹','Styler':'👔','Microwave':'♨️','Massage Recliner':'🪑','Monitor':'🖥️'};
 const COMBO_PRESETS=[
   {id:'setA',tag:'SET A',name:'Sejuk + Segar',desc:'1.0HP Aircond + 493L Fridge',items:[{id:'ac1',plan:0},{id:'ref1',plan:0}]},
   {id:'setB',tag:'SET B',name:'Segar + Laundry',desc:'493L Fridge + 12kg Washer',items:[{id:'ref1',plan:0},{id:'lau1',plan:0}]},
@@ -216,6 +216,52 @@ function aggregateStockRows(rows){
     });
   }
   return out;
+}
+
+function customerCategoryFromStock(raw){
+  const c=String(raw||'').trim().toUpperCase();
+  if(c==='RAC'||c==='AIRCOND'||c==='AIR CONDITIONER')return 'Aircond';
+  if(c==='WASHER'||c==='DRYER'||c==='LAUNDRY')return 'Laundry';
+  if(c==='REF'||c==='REFRIGERATOR'||c==='FRIDGE')return 'Fridge';
+  if(c==='AP'||c==='AIR PURIFIER')return 'Air Purifier';
+  if(c==='WP'||c==='WATER PURIFIER')return 'Water Purifier';
+  if(c==='TV')return 'TV';
+  if(c==='AV'||c==='SOUNDBAR')return 'Soundbar';
+  if(c==='DISHWASHER')return 'Dishwasher';
+  if(c==='VACUUM')return 'Vacuum';
+  if(c==='STYLER')return 'Styler';
+  if(c==='MICROWAVE')return 'Microwave';
+  if(c==='MASSAGE RECLINER')return 'Massage Recliner';
+  if(c==='MONITOR')return 'Monitor';
+  return String(raw||'Other');
+}
+function isDehumidifierStock(s){
+  const code=String(s?.model_code||'').toUpperCase();
+  const name=String(s?.product_name||'').toLowerCase();
+  const cat=String(s?.category||'').toLowerCase();
+  return code.startsWith('DD16')||name.includes('dehumidifier')||cat.includes('dehumidifier');
+}
+function ensureEligibleStockModels(){
+  const existing=new Set(CATALOG.map(p=>baseCode(p.code)));
+  let added=0;
+  for(const [code,s] of stocks){
+    const n=Math.max(0,Number(s?.total_stock)||0);
+    const sub=String(s?.submission_status||'').toLowerCase();
+    if(n<=0||sub.includes('stop')||sub.includes('pause')||isDehumidifierStock(s)||existing.has(code))continue;
+    CATALOG.push({
+      id:'stock-'+code.toLowerCase().replace(/[^a-z0-9]+/g,'-'),
+      code,
+      name:s?.product_name||code,
+      category:customerCategoryFromStock(s?.category),
+      plans:[],
+      promos:[{id:'standard',label:'Harga standard',type:'none'}],
+      autoStockOnly:true,
+      order:CATALOG.length
+    });
+    existing.add(code);
+    added++;
+  }
+  return added;
 }
 const stockFor=p=>{
   const k=baseCode(p.code);
@@ -549,7 +595,7 @@ function totalUnits(){return cart.reduce((a,x)=>a+x.qty,0);}
 function renderCart(){const units=totalUnits();$('cartUnits').textContent=units+' '+tr('unit');$('selectedCount').textContent=units+' '+tr('productSelected');const sharePhotos=$('sharePhotoGrid');if(!cart.length){$('cartItems').innerHTML='<div class="room-empty" style="padding:16px">'+esc(tr('noProducts'))+'</div>';$('roomGrid').innerHTML='<div class="room-empty"><b>'+esc(tr('startAppliance'))+'</b><br>'+esc(tr('startAppliance2'))+'</div>';if(sharePhotos)sharePhotos.innerHTML='';$('currentMonthly').textContent='RM0';$('scheduleRows').innerHTML='';$('saving').textContent='RM0';$('contractTotal').textContent='RM0';budgetCheck();syncUrl(false);return;}$('cartItems').innerHTML=cart.map((x,i)=>'<div class="cart-item"><div><b>'+esc(x.product.code)+'</b><span>'+x.qty+' × '+x.plan.years+'Y · '+esc(serviceLabel(x.plan.service))+'</span><small>'+esc(promoLabelById(x.promo,(x.product.promos.find(p=>p.id===x.promo)||{}).label||''))+'</small></div><button data-i="'+i+'" class="remove">×</button></div>').join('');$('cartItems').querySelectorAll('.remove').forEach(b=>b.onclick=()=>{cart.splice(Number(b.dataset.i),1);renderCart();});const productCards=cart.map(x=>'<div class="room-item"><div class="qtydot">×'+x.qty+'</div><div class="miniimg">'+visual(x.product)+'</div><b>'+esc(x.product.code)+'</b><span>'+esc(x.product.name)+'</span></div>').join('');$('roomGrid').innerHTML=productCards;if(sharePhotos)sharePhotos.innerHTML=productCards;$('currentMonthly').textContent=money(cart.reduce((a,x)=>a+monthlyFor(x,1),0));renderSchedule();budgetCheck();syncUrl(false);}
 function renderSchedule(){const units=totalUnits(),maxMonths=Math.max(...cart.map(x=>x.plan.years*12)),cuts=new Set([1,maxMonths+1]);cart.forEach(x=>{if(x.promo==='half9')cuts.add(10);cuts.add(x.plan.years*12+1);});const pts=[...cuts].filter(n=>n>=1&&n<=maxMonths+1).sort((a,b)=>a-b);let rows=[],total=0,standard=0;for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1]-1;if(a>b)continue;const m=cart.reduce((s,x)=>a<=x.plan.years*12?s+monthlyFor(x,a):s,0),normal=cart.reduce((s,x)=>a<=x.plan.years*12?s+(Number(x.plan.monthly)||0)*x.qty:s,0),months=b-a+1;total+=m*months;standard+=normal*months;rows.push('<div class="schedule-row"><span>'+esc(tr('monthWord'))+' '+a+(b>a?'–'+b:'')+'</span><b>'+money(m)+'/'+esc(tr('month'))+'</b></div>');}$('scheduleRows').innerHTML=rows.join('')+(comboLineCount()===1?'<div class="schedule-row combo-warning"><span>RM10 OFF combo</span><b>'+esc(tr('notActiveAdd'))+'</b></div>':'');$('saving').textContent=money(Math.max(0,standard-total));$('contractTotal').textContent=money(total);}
 function budgetCheck(){const budget=Number($('budget')?.value)||0,cur=Number($('currentMonthly')?.textContent.replace(/[^\d.]/g,''))||0,e=$('budgetResult');if(!cart.length){e.textContent=tr('buildToCompare');e.className='budget-result';return;}if(cur<=budget){e.textContent=tr('withinBudget',{amount:money(budget-cur)});e.className='budget-result ok';}else{e.textContent=tr('overBudget',{amount:money(cur-budget)});e.className='budget-result over';}}
-async function loadStock(){try{const r=await fetch(SUPABASE_URL+'/rest/v1/control_centre_public_snapshot?select=state_json,updated_at&workspace_id=eq.d257117f-df44-4da3-b7cb-7d0b84e6e0e4',{headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY},cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const snapshot=(await r.json())[0];const rows=stockRowsFromSnapshot(snapshot);window.__LG_PUBLIC_STOCK_ROWS__=rows;stocks=aggregateStockRows(rows);stockLoaded=true;window.dispatchEvent(new Event('lg-stock-ready'));const dates=rows.map(x=>x.as_of_date).filter(Boolean).sort(),d=dates.at(-1)||'latest';$('liveDot').className='live-dot ok';$('liveText').textContent=tr('liveConnected');$('stockStamp').textContent=tr('stockSynced',{date:d});$('stockInfo').textContent=tr('stockInfoFull');renderCats();renderProducts();renderComboMenu();}catch(e){console.warn(e);stockLoaded=true;$('liveDot').className='live-dot err';$('liveText').textContent=tr('liveUnavailable');$('stockStamp').textContent=tr('syncUnavailable');renderProducts();renderComboMenu();}}
+async function loadStock(){try{const r=await fetch(SUPABASE_URL+'/rest/v1/control_centre_public_snapshot?select=state_json,updated_at&workspace_id=eq.d257117f-df44-4da3-b7cb-7d0b84e6e0e4',{headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY},cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const snapshot=(await r.json())[0];const rows=stockRowsFromSnapshot(snapshot);window.__LG_PUBLIC_STOCK_ROWS__=rows;stocks=aggregateStockRows(rows);ensureEligibleStockModels();stockLoaded=true;window.dispatchEvent(new Event('lg-stock-ready'));const dates=rows.map(x=>x.as_of_date).filter(Boolean).sort(),d=dates.at(-1)||'latest';$('liveDot').className='live-dot ok';$('liveText').textContent=tr('liveConnected');$('stockStamp').textContent=tr('stockSynced',{date:d});$('stockInfo').textContent=tr('stockInfoFull');renderCats();renderProducts();renderComboMenu();}catch(e){console.warn(e);stockLoaded=true;$('liveDot').className='live-dot err';$('liveText').textContent=tr('liveUnavailable');$('stockStamp').textContent=tr('syncUnavailable');renderProducts();renderComboMenu();}}
 function payload(){return cart.map(x=>({id:x.product.id,plan:x.product.plans.findIndex(p=>p.years===x.plan.years&&p.service===x.plan.service&&p.monthly===x.plan.monthly),years:x.plan.years,service:x.plan.service,monthly:x.plan.monthly,promo:x.promo,qty:x.qty}));}
 function packageToken(){return btoa(unescape(encodeURIComponent(JSON.stringify(payload())))).replace(/=+$/,'');}
 function customerShareUrl(){
