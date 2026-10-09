@@ -36,7 +36,7 @@ ms:{
   addedPackage:'Ditambah ke pakej',comboAdded:'ditambah ke pakej',comboNeedAnother:'Ditambah. RM10 combo perlukan satu lagi item dengan pakej RM10 OFF combo yang sama.',
   stockNotListed:'Stok tidak disenaraikan',stockSyncing:'Stok: sedang diselaraskan…',lowStock:'Stok rendah: {n}',stock:'Stok: {n}',openingStock:'Stok pembukaan: {n}',outStock:'Tiada stok',
   currentStock:'Stok semasa',opening:'Stok pembukaan',openingAl8:'Stok pembukaan (AL8)',westMalaysia:'Semenanjung Malaysia (AL8)',sabah:'Sabah',sarawak:'Sarawak',asOf:'Setakat',stockDataSync:'Data stok sedang diselaraskan…',
-  promoStandard:'Harga standard',promoHalf9:'50% OFF 9 bulan',promoCombo10:'RM10 OFF combo',promoOctober:'Promosi Oktober / Evergreen · Jason sahkan',
+  promoStandard:'Harga standard',promoHalf9:'50% OFF 9 bulan',promoCombo10:'RM10 OFF combo',promoOctober:'Promosi Oktober / Evergreen · Jason sahkan',promoDw99:'Promosi khas RM99/bulan',promoDw99Desc:'Sah untuk permohonan 1 Okt–31 Dis 2026. Harga biasa RM150/bulan.',
   promoStandardDesc:'Tiada diskaun pengenalan.',promoHalf9Desc:'Tidak boleh digabungkan dengan RM10 OFF combo pada item yang sama.',promoCombo10Desc:'Perlu sekurang-kurangnya 2 produk/order dan kedua-duanya mesti pilih RM10 OFF combo. Tidak boleh campur satu item combo dengan item 50% OFF.',promoOctoberDesc:'Helaian pelancaran mengesahkan Promosi Oktober & Evergreen tetapi kadar/tempoh diskaun tidak dinyatakan. Jason akan sahkan tawaran semasa.',
   comboInactive:'belum aktif (perlu 2 item combo)',monthWord:'Bulan',notActiveAdd:'Belum aktif — tambah 1 lagi item menggunakan RM10 OFF combo',
   withinBudget:'Dalam bajet sebanyak {amount}/bulan',overBudget:'Melebihi bajet sebanyak {amount}/bulan',buildToCompare:'Bina pakej untuk banding dengan bajet.',
@@ -139,8 +139,8 @@ let currentLang=(()=>{const q=new URL(location.href).searchParams.get('lang');co
 function tr(key,vars={}){let s=(I18N[currentLang]&&I18N[currentLang][key])??I18N.en[key]??key;for(const[k,v]of Object.entries(vars))s=String(s).replaceAll('{'+k+'}',String(v));return s;}
 function categoryLabel(c){return c==='Aircond'?tr('catAircond'):c==='Laundry'?tr('catLaundry'):c==='Fridge'?tr('catFridge'):c==='Air Purifier'?tr('catAP'):c==='Water Purifier'?tr('catWP'):c==='TV'?tr('catTV'):c==='Dishwasher'?tr('catDishwasher'):c;}
 function serviceLabel(s){return s==='Regular Visit 1x/year'?tr('svcRV1'):s==='Regular Visit 2x/year'?tr('svcRV2'):s==='Regular Visit'?tr('svcRV'):s==='Self-Service'?tr('svcSS'):s==='Combine Maintenance'?tr('svcCM'):s==='Subscription'?tr('svcSub'):s;}
-function promoLabelById(id,fallback=''){return id==='standard'?tr('promoStandard'):id==='half9'?tr('promoHalf9'):id==='combo10'?tr('promoCombo10'):id==='octevergreen'?tr('promoOctober'):fallback;}
-function promoDescById(id){return id==='half9'?tr('promoHalf9Desc'):id==='combo10'?tr('promoCombo10Desc'):id==='octevergreen'?tr('promoOctoberDesc'):tr('promoStandardDesc');}
+function promoLabelById(id,fallback=''){return id==='standard'?tr('promoStandard'):id==='half9'?tr('promoHalf9'):id==='combo10'?tr('promoCombo10'):id==='octevergreen'?tr('promoOctober'):id==='dw99'?tr('promoDw99'):fallback;}
+function promoDescById(id){return id==='half9'?tr('promoHalf9Desc'):id==='combo10'?tr('promoCombo10Desc'):id==='octevergreen'?tr('promoOctoberDesc'):id==='dw99'?tr('promoDw99Desc'):tr('promoStandardDesc');}
 function comboName(p){const k='combo_'+p.id+'_name';return I18N[currentLang]?.[k]??I18N.en?.[k]??p.name;}
 function comboDesc(p){const k='combo_'+p.id+'_desc';return I18N[currentLang]?.[k]??I18N.en?.[k]??p.desc;}
 function applyI18n(){
@@ -241,13 +241,21 @@ function isDehumidifierStock(s){
   const cat=String(s?.category||'').toLowerCase();
   return code.startsWith('DD16')||name.includes('dehumidifier')||cat.includes('dehumidifier');
 }
+function sameModelFamily(a,b){
+  a=baseCode(a);b=baseCode(b);
+  if(a===b)return true;
+  const shorter=a.length<=b.length?a:b,longer=a.length>b.length?a:b;
+  return shorter.length>=7&&longer.startsWith(shorter);
+}
 function ensureEligibleStockModels(){
-  const existing=new Set(CATALOG.map(p=>baseCode(p.code)));
+  const existing=[...CATALOG.map(p=>baseCode(p.code))];
   let added=0;
   for(const [code,s] of stocks){
     const n=Math.max(0,Number(s?.total_stock)||0);
     const sub=String(s?.submission_status||'').toLowerCase();
-    if(n<=0||sub.includes('stop')||sub.includes('pause')||isDehumidifierStock(s)||existing.has(code))continue;
+    const isOled=String(code||'').toUpperCase().startsWith('OLED');
+    const alreadyShown=existing.some(e=>sameModelFamily(e,code));
+    if(n<=0||sub.includes('stop')||sub.includes('pause')||isDehumidifierStock(s)||isOled||alreadyShown)continue;
     CATALOG.push({
       id:'stock-'+code.toLowerCase().replace(/[^a-z0-9]+/g,'-'),
       code,
@@ -258,7 +266,7 @@ function ensureEligibleStockModels(){
       autoStockOnly:true,
       order:CATALOG.length
     });
-    existing.add(code);
+    existing.push(code);
     added++;
   }
   return added;
@@ -313,6 +321,7 @@ function comboDraftMonthly(item,month=1){
   const plan=comboPlanFor(item);let m=Number(plan?.monthly)||0;
   if(item.promo==='half9'&&month<=9)m*=.5;
   if(item.promo==='combo10'&&comboEligibleDraft())m=Math.max(0,m-10);
+  if(item.promo==='dw99')m=99;
   return m;
 }
 function openComboRefine(id){
@@ -385,7 +394,7 @@ function renderPromos(){$('promoGrid').innerHTML=activeProduct.promos.map(p=>'<b
 function comboLineCount(){return cart.filter(x=>x.promo==='combo10').length;}
 function comboEligible(){return comboLineCount()>=2;}
 function promoLabelFor(item){const raw=(item.product.promos.find(p=>p.id===item.promo)||{}).label||'';const base=promoLabelById(item.promo,raw);return item.promo==='combo10'&&!comboEligible()?base+' — '+tr('comboInactive'):base;}
-function monthlyFor(item,month){let m=Number(item.plan.monthly)||0;if(item.promo==='half9'&&month<=9)m*=.5;if(item.promo==='combo10'&&comboEligible())m=Math.max(0,m-10);return m*item.qty;}
+function monthlyFor(item,month){let m=Number(item.plan.monthly)||0;if(item.promo==='half9'&&month<=9)m*=.5;if(item.promo==='combo10'&&comboEligible())m=Math.max(0,m-10);if(item.promo==='dw99')m=99;return m*item.qty;}
 
 const PRODUCT_FEATURE_GROUPS={
   acPremium:{
@@ -561,7 +570,7 @@ function selectedCopywriting(){
   if(!activeProduct||!chosenPlan)return'';
   const normal=Math.round(Number(chosenPlan.monthly)||0),promo=activeProduct.promos.find(p=>p.id===chosenPromo)||{id:'standard'},end=Number(chosenPlan.years)*12;
   const promoPrice=promo.id==='half9'?Math.round(normal*.5):promo.id==='combo10'?Math.max(0,normal-10):normal;
-  let offer=promo.id==='half9'?tr('copyHalf9',{promo:money(promoPrice),end,normal:money(normal)}):promo.id==='combo10'?tr('copyCombo',{promo:money(promoPrice)}):promo.id==='octevergreen'?tr('copyOctober'):tr('copyStandard',{normal:money(normal)});
+  let offer=promo.id==='half9'?tr('copyHalf9',{promo:money(promoPrice),end,normal:money(normal)}):promo.id==='combo10'?tr('copyCombo',{promo:money(promoPrice)}):promo.id==='octevergreen'?tr('copyOctober'):promo.id==='dw99'?(currentLang==='zh'?'🔥 特价：RM99/月（原价 RM150/月） · 优惠申请期至 2026年12月31日':currentLang==='en'?'🔥 Special: RM99/month (Normal RM150/month) · Application promo until 31 Dec 2026':'🔥 Promosi khas: RM99/bulan (Harga biasa RM150/bulan) · Permohonan promosi hingga 31 Dis 2026'):tr('copyStandard',{normal:money(normal)});
   const features=productFeatureLines(activeProduct);
   const lines=[
     tr('copyHeadline',{name:activeProduct.name}),
