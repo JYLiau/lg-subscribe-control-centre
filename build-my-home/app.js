@@ -28,7 +28,7 @@ ms:{
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Imej produk daripada bahan rujukan yang dibekalkan. T&C apply.',
   comboHelp:'Pilih tempoh, servis dan promosi untuk setiap produk. Harga pakej akan dikira semula sebelum ditambah.',comboEstimate:'Anggaran bayaran bulan pertama',comboAdd:'Tambah set ke pakej',
   choosePlan:'1. Pilih pelan',choosePromo:'2. Pilih promosi',qty:'Kuantiti',copy:'Salin ayat',copyTitle:'Salin copywriting untuk pelan & promosi dipilih',addPackage:'Tambah ke pakej',
-  all:'Semua',years:'tahun',month:'bulan',months:'bulan',from:'Dari',viewPlans:'Lihat pelan',currentSelection:'Pilihan semasa',
+  all:'Semua',years:'tahun',month:'bulan',months:'bulan',from:'Dari',viewPlans:'Lihat pelan',pricePending:'Harga akan dikemas kini',planPending:'Pelan belum tersedia',currentSelection:'Pilihan semasa',
   noProducts:'Belum ada produk.',startAppliance:'Mulakan dengan satu perkakas',startAppliance2:'Pilih produk di bawah untuk bina pakej rumah anda.',
   productSelected:'produk dipilih',unit:'unit',model:'model',standard:'standard',period:'Tempoh',service:'Servis',promotion:'Promosi',
   notAvailable:'Tidak tersedia',chooseCustomize:'Pilih & ubah suai',standardPlanFrom:'Dari pelan standard',canCustomize:'boleh ubah tempoh/servis/promosi',
@@ -69,7 +69,7 @@ en:{
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Product images are from supplied reference materials. T&C apply.',
   comboHelp:'Choose the term, service and promotion for each product. The package price will be recalculated before adding.',comboEstimate:'Estimated first-month payment',comboAdd:'Add set to package',
   choosePlan:'1. Choose plan',choosePromo:'2. Choose promotion',qty:'Quantity',copy:'Copy text',copyTitle:'Copy copywriting for the selected plan & promotion',addPackage:'Add to package',
-  all:'All',years:'years',month:'month',months:'months',from:'From',viewPlans:'View plans',currentSelection:'Current selection',
+  all:'All',years:'years',month:'month',months:'months',from:'From',viewPlans:'View plans',pricePending:'Price pending',planPending:'Plan not available yet',currentSelection:'Current selection',
   noProducts:'No products yet.',startAppliance:'Start with one appliance',startAppliance2:'Choose a product below to build your home package.',
   productSelected:'products selected',unit:'unit',model:'model',standard:'standard',period:'Term',service:'Service',promotion:'Promotion',
   notAvailable:'Unavailable',chooseCustomize:'Choose & customise',standardPlanFrom:'From standard plan',canCustomize:'term/service/promotion can be changed',
@@ -170,7 +170,7 @@ const baseCode=s=>{
   return x;
 };
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-const minPrice=p=>Math.min(...p.plans.map(x=>Number(x.monthly)||999999));
+const minPrice=p=>Array.isArray(p.plans)&&p.plans.length?Math.min(...p.plans.map(x=>Number(x.monthly)||999999)):Infinity;
 function aggregateStockRows(rows){
   const grouped=new Map();
   for(const r of rows||[]){
@@ -180,7 +180,7 @@ function aggregateStockRows(rows){
   }
   const out=new Map();
   for(const [k,list] of grouped){
-    const active=list.filter(r=>!String(r.submission_status||'').toLowerCase().includes('stop'));
+    const active=list.filter(r=>{const s=String(r.submission_status||'').toLowerCase();return !s.includes('stop')&&!s.includes('pause');});
     const use=active.length?active:list;
     const sum=field=>use.reduce((a,r)=>a+(Number(r[field])||0),0);
     const dates=use.map(r=>r.as_of_date).filter(Boolean).sort();
@@ -206,7 +206,7 @@ const stockFor=p=>{
   }
   return null;
 };
-const stopSubmission=p=>String(stockFor(p)?.submission_status||'').toLowerCase().includes('stop');
+const stopSubmission=p=>{const s=String(stockFor(p)?.submission_status||'').toLowerCase();return s.includes('stop')||s.includes('pause');};
 const icon=p=>icons[p.category]||'LG';
 function stockBadge(p){const s=stockFor(p);if(!s)return stockLoaded?'<span class="stock-badge loading">'+esc(tr('stockNotListed'))+'</span>':'<span class="stock-badge loading">'+esc(tr('stockSyncing'))+'</span>';const n=Math.max(0,Math.round(Number(s.total_stock)||0));const opening=Math.max(0,Math.round(Number(s.opening_stock)||0));if(n>0){const c=n<=3?'low':'good';return '<span class="stock-badge '+c+'">'+esc(n<=3?tr('lowStock',{n}):tr('stock',{n}))+'</span>';}if(opening>0)return '<span class="stock-badge low">'+esc(tr('openingStock',{n:opening}))+'</span>';return '<span class="stock-badge out">'+esc(tr('outStock'))+'</span>';}
 function visual(p){
@@ -310,9 +310,9 @@ function addRefinedCombo(){
 }
 function renderCats(){const cats=['All',...new Set(CATALOG.map(x=>x.category))];$('catRow').innerHTML=cats.map(c=>'<button class="cat '+(c===activeCat?'active':'')+'" data-cat="'+esc(c)+'">'+esc(c==='All'?tr('all'):categoryLabel(c))+'</button>').join('');$('catRow').querySelectorAll('.cat').forEach(b=>b.onclick=()=>{activeCat=b.dataset.cat;renderCats();renderProducts();});}
 function visibleProducts(){const q=($('search')?.value||'').trim().toLowerCase(),sort=$('sort')?.value||'featured';let rows=CATALOG.filter(p=>!stopSubmission(p)&&(activeCat==='All'||p.category===activeCat)&&(!q||((p.code+' '+p.name+' '+p.category).toLowerCase().includes(q))));if(sort==='price')rows.sort((a,b)=>minPrice(a)-minPrice(b));else if(sort==='model')rows.sort((a,b)=>a.code.localeCompare(b.code));else rows.sort((a,b)=>a.order-b.order);return rows;}
-function renderProducts(){const rows=visibleProducts();$('catalogCount').textContent=rows.length+' '+tr('model');$('products').innerHTML=rows.map(p=>{const s=stockFor(p),n=s?Math.max(0,Math.round(Number(s.total_stock)||0)):null,out=n===0;return '<article class="product '+(out?'unavailable':'')+'"><div class="pvisual">'+stockBadge(p)+visual(p)+'</div><div class="pbody"><div class="pcat">'+esc(categoryLabel(p.category))+'</div><h3>'+esc(p.code)+'</h3><div class="psub">'+esc(p.name)+'</div><span class="lifecycle current">'+esc(tr('currentSelection'))+'</span><div class="price"><div><small>'+esc(tr('from'))+'</small><strong>'+money(minPrice(p))+'</strong><em>/'+esc(tr('month'))+'</em></div></div><button class="addbtn" data-id="'+p.id+'">'+esc(tr('viewPlans'))+'</button></div></article>';}).join('');$('products').querySelectorAll('.addbtn').forEach(b=>b.onclick=()=>openProduct(b.dataset.id));}
+function renderProducts(){const rows=visibleProducts();$('catalogCount').textContent=rows.length+' '+tr('model');$('products').innerHTML=rows.map(p=>{const s=stockFor(p),n=s?Math.max(0,Math.round(Number(s.total_stock)||0)):null,out=n===0,pending=!Array.isArray(p.plans)||!p.plans.length;const priceHtml=pending?'<div class="price pending-price"><div><small>'+esc(tr('pricePending'))+'</small></div></div>':'<div class="price"><div><small>'+esc(tr('from'))+'</small><strong>'+money(minPrice(p))+'</strong><em>/'+esc(tr('month'))+'</em></div></div>';return '<article class="product '+(out?'unavailable':'')+' '+(pending?'pricing-pending':'')+'"><div class="pvisual">'+stockBadge(p)+visual(p)+'</div><div class="pbody"><div class="pcat">'+esc(categoryLabel(p.category))+'</div><h3>'+esc(p.code)+'</h3><div class="psub">'+esc(p.name)+'</div><span class="lifecycle current">'+esc(tr('currentSelection'))+'</span>'+priceHtml+'<button class="addbtn" data-id="'+p.id+'" '+(pending?'disabled':'')+'>'+esc(pending?tr('planPending'):tr('viewPlans'))+'</button></div></article>';}).join('');$('products').querySelectorAll('.addbtn:not(:disabled)').forEach(b=>b.onclick=()=>openProduct(b.dataset.id));}
 function renderProductStock(){if(!activeProduct)return;const s=stockFor(activeProduct);$('modalStock').innerHTML=s?tr('currentStock')+': <b>'+Math.round(Number(s.total_stock)||0)+'</b> · '+tr('opening')+': <b>'+Math.round(Number(s.opening_stock)||0)+'</b><br><span style="font-size:11px">AL2 '+Math.round(Number(s.al2_stock)||0)+' / '+tr('opening').toLowerCase()+' '+Math.round(Number(s.al2_opening)||0)+' · AL3 '+Math.round(Number(s.al3_stock)||0)+' / '+tr('opening').toLowerCase()+' '+Math.round(Number(s.al3_opening)||0)+' · AL8 '+Math.round(Number(s.al8_stock)||0)+' / '+tr('opening').toLowerCase()+' '+Math.round(Number(s.al8_opening)||0)+(s.as_of_date?' · '+tr('asOf')+' '+s.as_of_date:'')+'</span>':tr('stockDataSync');}
-function openProduct(id){activeProduct=CATALOG.find(x=>x.id===id);if(!activeProduct)return;chosenPlan=activeProduct.plans[0];chosenPromo='standard';$('qtyInput').value=1;$('modalModel').textContent=activeProduct.code;$('modalSub').textContent=activeProduct.name;renderProductStock();renderPlans();renderPromos();$('modal').showModal();}
+function openProduct(id){activeProduct=CATALOG.find(x=>x.id===id);if(!activeProduct||!Array.isArray(activeProduct.plans)||!activeProduct.plans.length)return;chosenPlan=activeProduct.plans[0];chosenPromo='standard';$('qtyInput').value=1;$('modalModel').textContent=activeProduct.code;$('modalSub').textContent=activeProduct.name;renderProductStock();renderPlans();renderPromos();$('modal').showModal();}
 window.closeModal=()=>$('modal').close();
 window.stepQty=d=>{const q=$('qtyInput');q.value=Math.max(1,Math.min(9,(Number(q.value)||1)+d));};
 function renderPlans(){$('planGrid').innerHTML=activeProduct.plans.map((p,i)=>'<button class="plan-card '+(p===chosenPlan?'active':'')+'" data-i="'+i+'"><b>'+p.years+' '+esc(tr('years'))+'</b><span>'+esc(serviceLabel(p.service))+'</span><strong>'+money(p.monthly)+'/'+esc(tr('month'))+'</strong></button>').join('');$('planGrid').querySelectorAll('.plan-card').forEach(b=>b.onclick=()=>{chosenPlan=activeProduct.plans[Number(b.dataset.i)];renderPlans();});}
@@ -443,6 +443,16 @@ const PRODUCT_FEATURE_GROUPS={
     en:['Hot, ambient & cold water','Tankless design','Auto Sterilization + 4-Stage All-Puri Filter','Ultra-slim 17cm design','LG ThinQ™'],
     zh:['热水、常温水与冷水','无水箱设计','自动杀菌 + 四阶段 All-Puri 过滤','17cm 超纤薄设计','LG ThinQ™']
   },
+  gcg22:{
+    bm:['InstaView™ — ketuk dua kali untuk lihat dalam','UVnano™ Water Dispenser','LinearCooling™','Kawalan pintar LG ThinQ™','Kapasiti 508L'],
+    en:['InstaView™ — knock twice to see inside','UVnano™ Water Dispenser','LinearCooling™','LG ThinQ™ smart control','508L capacity'],
+    zh:['InstaView™ 敲两下即可查看内部','UVnano™ 饮水机','LinearCooling™ 线性恒温','LG ThinQ™ 智能控制','508L 大容量']
+  },
+  oledb6:{
+    bm:['Perfect Black & Perfect Color','OLED 4K sehingga 144Hz','α8 AI Processor 4K Gen3','webOS dengan pengalaman AI','Sokongan G-SYNC & FreeSync Premium'],
+    en:['Perfect Black & Perfect Color','OLED 4K up to 144Hz','α8 AI Processor 4K Gen3','webOS with advanced AI experiences','G-SYNC & FreeSync Premium support'],
+    zh:['Perfect Black & Perfect Color','OLED 4K 高达144Hz','α8 AI Processor 4K Gen3','webOS AI 智能体验','支持 G-SYNC 与 FreeSync Premium']
+  },
   qned55:{
     bm:['QNED evo AI Mini LED 4K','Dynamic QNED Color Pro','Precision Dimming untuk kontras lebih tepat','α8 AI Processor 4K','webOS dengan pengalaman AI pintar'],
     en:['QNED evo AI Mini LED 4K','Dynamic QNED Color Pro','Precision Dimming for refined contrast','α8 AI Processor 4K','webOS with advanced AI experiences'],
@@ -459,10 +469,10 @@ const PRODUCT_FEATURE_GROUP_BY_CODE={
   'S3-Q24K2RPA':'artcool','S3-Q120AGZB':'acAI','S3-Q2412GZC':'acAI',
   'WT2520NHEGR':'wt25','WT1410NHB':'wt14','FX1412S5GR':'fx1412','RX10VHP3KR':'rx10',
   'F2520SNEKR':'f2520','TX2522AT9GR':'tx2522','F2515RNTKAR':'f2515','FX1411R5WR':'fx1411',
-  'GN-F452':'gnf452','GC-B257KLJR':'gcb257','GC-J257SQNW':'gcj257','GV-K25FFGER':'gvk25',
+  'GN-F452':'gnf452','GC-B257KLJR':'gcb257','GC-J257SQNW':'gcj257','GV-K25FFGER':'gvk25','GC-G22FFQAB':'gcg22',
   'AS10GDBY0':'as10','AS65GDBY0':'as65','AS60GHBT0':'as60hit','AS55GGSY0':'as55','AS25GCBZ0':'as25','AS60GLSG0':'wallfit',
   'WU525BS':'wu525','WD518AN':'wd518','WD516AN':'wd516',
-  '55QNED87BSA':'qned55','50NU865BPSA':'nanoTV','65NU865BPSA':'nanoTV'
+  'OLED65B6SSA':'oledb6','55QNED87BSA':'qned55','75QNED87BSA':'qned55','50NU865BPSA':'nanoTV','55NU865BPSA':'nanoTV','65NU865BPSA':'nanoTV'
 };
 function productFeatureLines(product){
   const base=String(product?.code||'').split('.')[0].toUpperCase();
