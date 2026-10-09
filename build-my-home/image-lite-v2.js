@@ -1,1 +1,48 @@
-(()=>{const W='https://wsrv.nl/?url=',Q='&w=420&h=300&fit=contain&output=webp&q=72';function lite(img){if(!img||img.dataset.liteDone)return;const src=img.getAttribute('src')||'';if(!src||src.startsWith('data:')||src.includes('wsrv.nl/?url=')){img.dataset.liteDone='1';return}img.dataset.liteDone='1';img.dataset.originalSrc=src;img.loading='lazy';img.decoding='async';img.fetchPriority='low';img.width=420;img.height=300;img.onerror=()=>{if(img.dataset.originalSrc&&img.src!==img.dataset.originalSrc){img.onerror=null;img.src=img.dataset.originalSrc}};img.src=W+encodeURIComponent(src)+Q}function scan(root=document){root.querySelectorAll?.('.pvisual img,.miniimg img,.combo-thumb img,.combo-refine-img img').forEach(lite)}document.addEventListener('DOMContentLoaded',()=>{scan();const p=document.getElementById('products'),r=document.getElementById('roomGrid'),c=document.getElementById('comboRefineItems');const o=new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.nodeType===1)scan(n)});p&&o.observe(p,{childList:true,subtree:true});r&&o.observe(r,{childList:true,subtree:true});c&&o.observe(c,{childList:true,subtree:true})})})();
+(() => {
+  const selectors = '.pvisual img,.miniimg img,.combo-thumb img,.combo-refine-img img';
+  const proxy = src => 'https://wsrv.nl/?url=' + encodeURIComponent(src) + '&w=420&h=300&fit=contain&output=webp&q=72';
+
+  function lite(img) {
+    if (img.dataset.liteDone) return;
+    const src = img.getAttribute('src') || '';
+    img.dataset.liteDone = '1';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.fetchPriority = 'low';
+    img.width = 420;
+    img.height = 300;
+    // Bundled photos load directly, without depending on the image proxy.
+    if (!/^https?:\/\//i.test(src) || src.includes('wsrv.nl/?url=')) return;
+
+    const fallback = img.onerror;
+    img.dataset.originalSrc = src;
+    img.onload = () => {
+      img.style.display = '';
+      const placeholder = img.nextElementSibling;
+      if (placeholder?.classList.contains('generic-icon')) placeholder.style.display = 'none';
+    };
+    img.onerror = () => {
+      img.onerror = fallback;
+      img.src = src;
+    };
+    img.src = proxy(src);
+  }
+
+  function scan(root = document) {
+    if (root.matches?.(selectors)) lite(root);
+    root.querySelectorAll?.(selectors).forEach(lite);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    scan();
+    const observer = new MutationObserver(changes => {
+      for (const change of changes) for (const node of change.addedNodes) {
+        if (node.nodeType === 1) scan(node);
+      }
+    });
+    for (const id of ['products', 'roomGrid', 'comboMenu', 'comboRefineItems', 'sharePhotoGrid']) {
+      const container = document.getElementById(id);
+      if (container) observer.observe(container, { childList: true, subtree: true });
+    }
+  });
+})();
