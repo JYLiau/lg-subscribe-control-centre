@@ -3,7 +3,7 @@
 const SUPABASE_URL='https://jmnnesumjpkraugtzdkl.supabase.co';
 const SUPABASE_KEY='sb_publishable__CO_CJqvrVqG-LClfcD_Wg_CVdZZZU8';
 const CATALOG=(window.LG_CATALOG||[]).map((p,i)=>({...p,order:i}));
-const icons={'Aircond':'❄️','Laundry':'🧺','Fridge':'🧊','Air Purifier':'🌿','Water Purifier':'💧','TV':'📺'};
+const icons={'Aircond':'❄️','Laundry':'🧺','Fridge':'🧊','Air Purifier':'🌿','Water Purifier':'💧','TV':'📺','Dishwasher':'🍽️'};
 const COMBO_PRESETS=[
   {id:'setA',tag:'SET A',name:'Sejuk + Segar',desc:'1.0HP Aircond + 493L Fridge',items:[{id:'ac1',plan:0},{id:'ref1',plan:0}]},
   {id:'setB',tag:'SET B',name:'Segar + Laundry',desc:'493L Fridge + 12kg Washer',items:[{id:'ref1',plan:0},{id:'lau1',plan:0}]},
@@ -44,7 +44,7 @@ ms:{
   liveUnavailable:'Stok sementara tidak tersedia',syncUnavailable:'Penyelarasan stok tidak tersedia',
   addFirst:'Tambah produk dahulu sebelum jana link customer.',linkCopied:'Link customer disalin',copyLinkPrompt:'Salin link customer ini',packageCleared:'Pakej dikosongkan',
   copyDone:'Copywriting disalin',copyFail:'Salin copywriting ini',waIntro:'Hi Jason, saya berminat dengan pakej LG Subscribe ini:',estimateNow:'Anggaran sekarang',
-  catAircond:'Penyaman Udara',catLaundry:'Dobi',catFridge:'Peti Sejuk',catAP:'Penapis Udara',catWP:'Penapis Air',catTV:'TV',
+  catAircond:'Penyaman Udara',catLaundry:'Dobi',catFridge:'Peti Sejuk',catAP:'Penapis Udara',catWP:'Penapis Air',catTV:'TV',catDishwasher:'Mesin Basuh Pinggan',
   svcRV:'Regular Visit',svcRV1:'Regular Visit 1x/tahun',svcRV2:'Regular Visit 2x/tahun',svcSS:'Self-Service',svcCM:'Combine Maintenance',svcSub:'Subscription',
   copyHeadline:'✨ LG Subscribe — {name}',copyModel:'Model: {code}',copyPlan:'Pelan {years} Tahun · {service}',copyNormal:'Harga biasa: {price}/bulan',
   copyHalf9:'🔥 50% OFF untuk 9 bulan pertama: {promo}/bulan\nBulan 10–{end}: {normal}/bulan',
@@ -85,7 +85,7 @@ en:{
   liveUnavailable:'Stock temporarily unavailable',syncUnavailable:'Stock sync unavailable',
   addFirst:'Add a product before generating a customer link.',linkCopied:'Customer link copied',copyLinkPrompt:'Copy this customer link',packageCleared:'Package cleared',
   copyDone:'Copywriting copied',copyFail:'Copy this copywriting',waIntro:'Hi Jason, I am interested in this LG Subscribe package:',estimateNow:'Estimated now',
-  catAircond:'Air Conditioner',catLaundry:'Laundry',catFridge:'Refrigerator',catAP:'Air Purifier',catWP:'Water Purifier',catTV:'TV',
+  catAircond:'Air Conditioner',catLaundry:'Laundry',catFridge:'Refrigerator',catAP:'Air Purifier',catWP:'Water Purifier',catTV:'TV',catDishwasher:'Dishwasher',
   svcRV:'Regular Visit',svcRV1:'Regular Visit 1x/year',svcRV2:'Regular Visit 2x/year',svcSS:'Self-Service',svcCM:'Combined Maintenance',svcSub:'Subscription',
   copyHeadline:'✨ LG Subscribe — {name}',copyModel:'Model: {code}',copyPlan:'{years}-Year Plan · {service}',copyNormal:'Normal price: {price}/month',
   copyHalf9:'🔥 50% OFF for the first 9 months: {promo}/month\nMonth 10–{end}: {normal}/month',
@@ -126,7 +126,7 @@ zh:{
   liveUnavailable:'库存暂时无法取得',syncUnavailable:'库存同步失败',
   addFirst:'请先加入产品再生成客户链接。',linkCopied:'客户链接已复制',copyLinkPrompt:'复制此客户链接',packageCleared:'配套已清空',
   copyDone:'文案已复制',copyFail:'复制此文案',waIntro:'Hi Jason，我对以下 LG Subscribe 配套有兴趣：',estimateNow:'目前预计',
-  catAircond:'空调',catLaundry:'洗衣家电',catFridge:'冰箱',catAP:'空气净化器',catWP:'净水器',catTV:'电视',
+  catAircond:'空调',catLaundry:'洗衣家电',catFridge:'冰箱',catAP:'空气净化器',catWP:'净水器',catTV:'电视',catDishwasher:'洗碗机',
   svcRV:'定期上门服务',svcRV1:'每年 1 次上门服务',svcRV2:'每年 2 次上门服务',svcSS:'自助服务',svcCM:'综合保养',svcSub:'订阅方案',
   copyHeadline:'✨ LG Subscribe — {name}',copyModel:'型号：{code}',copyPlan:'{years} 年方案 · {service}',copyNormal:'原价：{price}/月',
   copyHalf9:'🔥 首 9 个月 50% OFF：{promo}/月\n第 10–{end} 个月：{normal}/月',
@@ -137,7 +137,7 @@ zh:{
 }};
 let currentLang=(()=>{const q=new URL(location.href).searchParams.get('lang');const s=q||localStorage.getItem('lg-bmh-lang')||'ms';return ['ms','en','zh'].includes(s)?s:'ms';})();
 function tr(key,vars={}){let s=(I18N[currentLang]&&I18N[currentLang][key])??I18N.en[key]??key;for(const[k,v]of Object.entries(vars))s=String(s).replaceAll('{'+k+'}',String(v));return s;}
-function categoryLabel(c){return c==='Aircond'?tr('catAircond'):c==='Laundry'?tr('catLaundry'):c==='Fridge'?tr('catFridge'):c==='Air Purifier'?tr('catAP'):c==='Water Purifier'?tr('catWP'):c==='TV'?tr('catTV'):c;}
+function categoryLabel(c){return c==='Aircond'?tr('catAircond'):c==='Laundry'?tr('catLaundry'):c==='Fridge'?tr('catFridge'):c==='Air Purifier'?tr('catAP'):c==='Water Purifier'?tr('catWP'):c==='TV'?tr('catTV'):c==='Dishwasher'?tr('catDishwasher'):c;}
 function serviceLabel(s){return s==='Regular Visit 1x/year'?tr('svcRV1'):s==='Regular Visit 2x/year'?tr('svcRV2'):s==='Regular Visit'?tr('svcRV'):s==='Self-Service'?tr('svcSS'):s==='Combine Maintenance'?tr('svcCM'):s==='Subscription'?tr('svcSub'):s;}
 function promoLabelById(id,fallback=''){return id==='standard'?tr('promoStandard'):id==='half9'?tr('promoHalf9'):id==='combo10'?tr('promoCombo10'):id==='octevergreen'?tr('promoOctober'):fallback;}
 function promoDescById(id){return id==='half9'?tr('promoHalf9Desc'):id==='combo10'?tr('promoCombo10Desc'):id==='octevergreen'?tr('promoOctoberDesc'):tr('promoStandardDesc');}
@@ -480,7 +480,17 @@ const PRODUCT_FEATURE_GROUPS={
   nanoTV:{
     bm:['NANO 4K UHD AI','Nano Detail Enhancer','HDR10 Pro','α7 AI Processor 4K','webOS dengan AI Hub'],
     en:['NANO 4K UHD AI','Nano Detail Enhancer','HDR10 Pro','α7 AI Processor 4K','webOS with AI Hub'],
-    zh:['NANO 4K UHD AI','Nano Detail Enhancer 细节增强','HDR10 Pro','α7 AI Processor 4K','webOS + AI Hub 智能中心']
+    zh:['NANO 4K UHD AI','Nano Detail Enhancer 细节增强','HDR10 Pro','α7 AI Processor 4K','webOS + AI Hub 智能中心'],
+  dishwasher335:{
+    bm:['TrueSteam™ untuk cucian lebih bersih & higienik','QuadWash™ membersih dari pelbagai arah','EasyRack™ Plus untuk susunan pinggan fleksibel','Auto Opening Door membantu proses pengeringan','LG ThinQ™ untuk kawalan pintar'],
+    en:['TrueSteam™ for a cleaner, more hygienic wash','QuadWash™ cleans from multiple angles','EasyRack™ Plus for flexible loading','Auto Opening Door helps drying','LG ThinQ™ smart control'],
+    zh:['TrueSteam™ 蒸汽洁净，更卫生','QuadWash™ 多角度强力清洗','EasyRack™ Plus 灵活碗篮设计','自动开门辅助烘干','LG ThinQ™ 智能控制']
+  },
+  dishwasher533:{
+    bm:['TrueSteam™ untuk cucian lebih bersih & higienik','QuadWash™ membersih dari pelbagai arah','EasyRack™ Plus untuk susunan pinggan fleksibel','Kapasiti 14 place settings','LG ThinQ™ untuk kawalan pintar'],
+    en:['TrueSteam™ for a cleaner, more hygienic wash','QuadWash™ cleans from multiple angles','EasyRack™ Plus for flexible loading','14 place settings capacity','LG ThinQ™ smart control'],
+    zh:['TrueSteam™ 蒸汽洁净，更卫生','QuadWash™ 多角度强力清洗','EasyRack™ Plus 灵活碗篮设计','14套餐具容量','LG ThinQ™ 智能控制']
+  }
   }
 };
 const PRODUCT_FEATURE_GROUP_BY_CODE={
@@ -491,7 +501,7 @@ const PRODUCT_FEATURE_GROUP_BY_CODE={
   'GN-F452':'gnf452','GC-B257KLJR':'gcb257','GC-J257SQNW':'gcj257','GV-K25FFGER':'gvk25','GC-G22FFQAB':'gcg22',
   'AS10GDBY0':'as10','AS65GDBY0':'as65','AS60GHBT0':'as60hit','AS55GGSY0':'as55','AS25GCBZ0':'as25','AS60GLSG0':'wallfit',
   'WU525BS':'wu525','WD518AN':'wd518','WD516AN':'wd516',
-  'OLED65B6SSA':'oledb6','55QNED87BSA':'qned55','75QNED87BSA':'qned55','50NU865BPSA':'nanoTV','55NU865BPSA':'nanoTV','65NU865BPSA':'nanoTV'
+  'DFC335HM':'dishwasher335','DFC533FV':'dishwasher533','OLED65B6SSA':'oledb6','55QNED87BSA':'qned55','75QNED87BSA':'qned55','50NU865BPSA':'nanoTV','55NU865BPSA':'nanoTV','65NU865BPSA':'nanoTV'
 };
 function productFeatureLines(product){
   const base=String(product?.code||'').split('.')[0].toUpperCase();
