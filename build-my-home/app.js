@@ -140,7 +140,35 @@ function tr(key,vars={}){let s=(I18N[currentLang]&&I18N[currentLang][key])??I18N
 function categoryLabel(c){return c==='Aircond'?tr('catAircond'):c==='Laundry'?tr('catLaundry'):c==='Fridge'?tr('catFridge'):c==='Air Purifier'?tr('catAP'):c==='Water Purifier'?tr('catWP'):c==='TV'?tr('catTV'):c==='Dishwasher'?tr('catDishwasher'):c;}
 function serviceLabel(s){return s==='Regular Visit 1x/year'?tr('svcRV1'):s==='Regular Visit 2x/year'?tr('svcRV2'):s==='Regular Visit every 2 years'?tr('svcRV2Y'):s==='Regular Visit'?tr('svcRV'):s==='Self-Service'?tr('svcSS'):s==='Combine Maintenance'?tr('svcCM'):s==='Subscription'?tr('svcSub'):s;}
 function promoLabelById(id,fallback=''){return id==='standard'?tr('promoStandard'):id==='half9'?tr('promoHalf9'):id==='combo10'?tr('promoCombo10'):id==='octevergreen'?tr('promoOctober'):id==='dw99'?tr('promoDw99'):fallback;}
-function promoDescById(id){return id==='half9'?tr('promoHalf9Desc'):id==='combo10'?tr('promoCombo10Desc'):id==='octevergreen'?tr('promoOctoberDesc'):id==='dw99'?tr('promoDw99Desc'):tr('promoStandardDesc');}
+function promoDescById(id,fallback=''){return id==='half9'?tr('promoHalf9Desc'):id==='combo10'?tr('promoCombo10Desc'):id==='octevergreen'?tr('promoOctoberDesc'):id==='dw99'?tr('promoDw99Desc'):(fallback||tr('promoStandardDesc'));}
+function promoLocalized(p,field){
+  if(!p)return'';
+  const k=currentLang==='zh'?field+'Zh':currentLang==='en'?field+'En':field+'Ms';
+  return p[k]??p[field]??'';
+}
+function promoLabel(p){return promoLabelById(p?.id||'',promoLocalized(p,'label'));}
+function promoDescription(p){return promoDescById(p?.id||'',promoLocalized(p,'description'));}
+function promoIsLive(p){
+  if(!p||p.id==='standard')return true;
+  const now=Date.now();
+  if(p.validFrom&&now<new Date(p.validFrom+'T00:00:00+08:00').getTime())return false;
+  if(p.validTo&&now>new Date(p.validTo+'T23:59:59+08:00').getTime())return false;
+  return true;
+}
+function livePromos(product){return (product?.promos||[]).filter(p=>promoIsLive(p));}
+function promoObj(product,id){return (product?.promos||[]).find(p=>p.id===id)||{id:'standard',type:'none'};}
+function promoPrice(product,plan,promoId,month,{comboActive=true,pairActive=true}={}){
+  let m=Number(plan?.monthly)||0;const p=promoObj(product,promoId);
+  const within=!p.months||month<=Number(p.months);
+  if(p.type==='percent'&&within)m*=1-(Number(p.value)||0)/100;
+  if(p.type==='fixed'&&within){
+    if(p.id==='combo10'&&!comboActive)return m;
+    if(p.id==='airpair15'&&!pairActive)return m;
+    m=Math.max(0,m-(Number(p.value)||0));
+  }
+  if(p.type==='fixedMonthly'&&within)m=Number(p.value)||m;
+  return m;
+}
 function comboName(p){const k='combo_'+p.id+'_name';return I18N[currentLang]?.[k]??I18N.en?.[k]??p.name;}
 function comboDesc(p){const k='combo_'+p.id+'_desc';return I18N[currentLang]?.[k]??I18N.en?.[k]??p.desc;}
 function applyI18n(){
@@ -330,12 +358,15 @@ function comboPlanFor(d){
 function comboEligibleDraft(){
   return cart.filter(x=>x.promo==='combo10').length+comboDraft.filter(x=>x.promo==='combo10').length>=2;
 }
+function comboDraftPairEligible(item){
+  const target=String(item?.product?.pairPromoWith||'').split('.')[0].toUpperCase();
+  if(!target)return true;
+  return comboDraft.some(x=>String(x.product?.code||'').split('.')[0].toUpperCase()===target)
+    || cart.some(x=>String(x.product?.code||'').split('.')[0].toUpperCase()===target);
+}
 function comboDraftMonthly(item,month=1){
-  const plan=comboPlanFor(item);let m=Number(plan?.monthly)||0;
-  if(item.promo==='half9'&&month<=9)m*=.5;
-  if(item.promo==='combo10'&&comboEligibleDraft())m=Math.max(0,m-10);
-  if(item.promo==='dw99')m=99;
-  return m;
+  const plan=comboPlanFor(item);
+  return promoPrice(item.product,plan,item.promo,month,{comboActive:comboEligibleDraft(),pairActive:comboDraftPairEligible(item)});
 }
 function openComboRefine(id){
   const preset=COMBO_PRESETS.find(x=>x.id===id);if(!preset)return;
@@ -363,7 +394,7 @@ function renderComboRefine(){
       '<div class="combo-refine-fields">'+
         '<label>'+esc(tr('period'))+'<select class="select combo-years" data-i="'+i+'">'+years.map(y=>'<option value="'+y+'" '+(Number(d.years)===y?'selected':'')+'>'+y+' '+esc(tr('years'))+'</option>').join('')+'</select></label>'+
         '<label>'+esc(tr('service'))+'<select class="select combo-service" data-i="'+i+'">'+services.map(v=>'<option value="'+esc(v)+'" '+(d.service===v?'selected':'')+'>'+esc(serviceLabel(v))+'</option>').join('')+'</select></label>'+
-        '<label>'+esc(tr('promotion'))+'<select class="select combo-promo" data-i="'+i+'">'+d.product.promos.map(p=>'<option value="'+p.id+'" '+(d.promo===p.id?'selected':'')+'>'+esc(promoLabelById(p.id,p.label))+'</option>').join('')+'</select></label>'+
+        '<label>'+esc(tr('promotion'))+'<select class="select combo-promo" data-i="'+i+'">'+livePromos(d.product).map(p=>'<option value="'+p.id+'" '+(d.promo===p.id?'selected':'')+'>'+esc(promoLabel(p))+'</option>').join('')+'</select></label>'+
       '</div>'+
     '</article>';
   }).join('');
@@ -404,11 +435,40 @@ function openProduct(id){activeProduct=CATALOG.find(x=>x.id===id);if(!activeProd
 window.closeModal=()=>$('modal').close();
 window.stepQty=d=>{const q=$('qtyInput');q.value=Math.max(1,Math.min(9,(Number(q.value)||1)+d));};
 function renderPlans(){$('planGrid').innerHTML=activeProduct.plans.map((p,i)=>'<button class="plan-card '+(p===chosenPlan?'active':'')+'" data-i="'+i+'"><b>'+p.years+' '+esc(tr('years'))+'</b><span>'+esc(serviceLabel(p.service))+'</span><strong>'+money(p.monthly)+'/'+esc(tr('month'))+'</strong></button>').join('');$('planGrid').querySelectorAll('.plan-card').forEach(b=>b.onclick=()=>{chosenPlan=activeProduct.plans[Number(b.dataset.i)];renderPlans();});}
-function renderPromos(){$('promoGrid').innerHTML=activeProduct.promos.map(p=>'<button class="promo-card '+(p.id===chosenPromo?'active':'')+'" data-id="'+p.id+'"><b>'+esc(promoLabelById(p.id,p.label))+'</b><span>'+esc(promoDescById(p.id))+'</span></button>').join('');$('promoGrid').querySelectorAll('.promo-card').forEach(b=>b.onclick=()=>{chosenPromo=b.dataset.id;renderPromos();});}
+function renderPromos(){
+  const promos=livePromos(activeProduct);
+  if(!promos.some(p=>p.id===chosenPromo))chosenPromo=promos[0]?.id||'standard';
+  let info='';
+  if(activeProduct?.doubleMatchEligible){
+    const p={validFrom:activeProduct.doubleMatchValidFrom,validTo:activeProduct.doubleMatchValidTo};
+    if(promoIsLive(p)){
+      const msg=currentLang==='zh'
+        ?'🎁 Double Match：任选 2 件符合条件的前置式洗衣机 / 顶开式洗衣机 / 烘干机，可获赠 65" LG UHD 4K AI TV（65UA7350PSB）。活动至 2026年10月15日，须于10月完成安装，送完即止。'
+        :currentLang==='en'
+        ?'🎁 Double Match: choose any 2 eligible Front Load Washer / Top Load Washer / Dryer products and get a FREE 65" LG UHD 4K AI TV (65UA7350PSB). Valid until 15 Oct 2026; installation must be within October, while stocks last.'
+        :'🎁 Double Match: pilih mana-mana 2 produk layak Front Load Washer / Top Load Washer / Dryer dan dapatkan TV LG UHD 4K AI 65" PERCUMA (65UA7350PSB). Sah hingga 15 Okt 2026; pemasangan mesti dalam Oktober, sementara stok masih ada.';
+      info='<div style="grid-column:1/-1;border:1px solid #f1b5be;background:#fff5f6;border-radius:18px;padding:14px 16px;font-weight:700;line-height:1.4">'+esc(msg)+'</div>';
+    }
+  }
+  $('promoGrid').innerHTML=info+promos.map(p=>'<button class="promo-card '+(p.id===chosenPromo?'active':'')+'" data-id="'+p.id+'"><b>'+esc(promoLabel(p))+'</b><span>'+esc(promoDescription(p))+'</span></button>').join('');
+  $('promoGrid').querySelectorAll('.promo-card').forEach(b=>b.onclick=()=>{chosenPromo=b.dataset.id;renderPromos();});
+}
 function comboLineCount(){return cart.filter(x=>x.promo==='combo10').length;}
 function comboEligible(){return comboLineCount()>=2;}
-function promoLabelFor(item){const raw=(item.product.promos.find(p=>p.id===item.promo)||{}).label||'';const base=promoLabelById(item.promo,raw);return item.promo==='combo10'&&!comboEligible()?base+' — '+tr('comboInactive'):base;}
-function monthlyFor(item,month){let m=Number(item.plan.monthly)||0;if(item.promo==='half9'&&month<=9)m*=.5;if(item.promo==='combo10'&&comboEligible())m=Math.max(0,m-10);if(item.promo==='dw99')m=99;return m*item.qty;}
+function pairPromoEligible(item){
+  const target=String(item?.product?.pairPromoWith||'').split('.')[0].toUpperCase();
+  if(!target)return true;
+  return cart.some(x=>String(x.product?.code||'').split('.')[0].toUpperCase()===target);
+}
+function promoLabelFor(item){
+  const p=promoObj(item.product,item.promo);let label=promoLabel(p);
+  if(item.promo==='combo10'&&!comboEligible())label+=' — '+tr('comboInactive');
+  if(item.promo==='airpair15'&&!pairPromoEligible(item))label+=(currentLang==='zh'?' — 需搭配 AS30':currentLang==='en'?' — pair AS30 required':' — perlu padan AS30');
+  return label;
+}
+function monthlyFor(item,month){
+  return promoPrice(item.product,item.plan,item.promo,month,{comboActive:comboEligible(),pairActive:pairPromoEligible(item)})*item.qty;
+}
 
 const PRODUCT_FEATURE_GROUPS={
   acPremium:{
@@ -445,6 +505,11 @@ const PRODUCT_FEATURE_GROUPS={
     bm:['Kapasiti pengeringan 10kg','AI Dry™','Turbo Dry untuk pengeringan pantas','DUAL Inverter Heat Pump™','Auto Cleaning Condenser'],
     en:['10kg drying capacity','AI Dry™','Turbo Dry for faster drying','DUAL Inverter Heat Pump™','Auto Cleaning Condenser'],
     zh:['10公斤烘干容量','AI Dry™ 智能烘干','Turbo Dry 快速烘干','DUAL Inverter Heat Pump™ 热泵','自动清洁冷凝器']
+  },
+  fv1209:{
+    bm:['Washer 9kg + Dryer 5kg dalam satu mesin','AI Direct Drive™','Steam™','TurboWash™','LG ThinQ™'],
+    en:['9kg washer + 5kg dryer in one machine','AI Direct Drive™','Steam™','TurboWash™','LG ThinQ™'],
+    zh:['9kg洗衣 + 5kg烘干二合一','AI Direct Drive™','Steam™ 蒸汽护理','TurboWash™','LG ThinQ™ 智能控制']
   },
   fv1450:{
     bm:['Kapasiti 10.5kg','AI Direct Drive™','TurboWash™ 360°','Steam+™','Kawalan pintar LG ThinQ™'],
@@ -526,6 +591,11 @@ const PRODUCT_FEATURE_GROUPS={
     en:['Heated dome seat','Total air purification','Cat Relax Mode','Pet Care Tracking via LG ThinQ™','Built-in scale for cat weight tracking'],
     zh:['恒温加热猫咪座舱','全面空气净化','Cat Relax 猫咪休息模式','通过 LG ThinQ™ 追踪宠物状态','内置体重秤监测猫咪体重']
   },
+  aeromini:{
+    bm:['Reka bentuk kompak & minimal','Penulenan udara 360°','Penapisan udara berkuasa','Operasi bunyi rendah','LG ThinQ™'],
+    en:['Compact refined design','360° air purification','Powerful air filtration','Low-noise operation','LG ThinQ™'],
+    zh:['精巧简约设计','360°空气净化','强效空气过滤','低噪音运行','LG ThinQ™ 智能控制']
+  },
   wallfit:{
     bm:['Dual Airflow','Reka bentuk slim & rata yang menjimatkan ruang','AI Mode','Smart Air Control melalui LG ThinQ™','Liputan sehingga 59.4m²'],
     en:['Dual Airflow','Slim & flat space-saving design','AI Mode','Smart Air Control via LG ThinQ™','Coverage up to 59.4m²'],
@@ -581,9 +651,9 @@ const PRODUCT_FEATURE_GROUP_BY_CODE={
   'S3-Q09JAYPP':'acPremium','S3-Q12JAYPP':'acPremium','S3-Q18KAYPA':'acPremium','S3-Q24KLYPA':'acPremium',
   'S3-Q24K2RPA':'artcool','S3-Q120AGZB':'acAI','S3-Q2412GZC':'acAI',
   'WT2520NHEGR':'wt25','WT1410NHB':'wt14','FX1412S5GR':'fx1412','RX10VHP3KR':'rx10',
-  'FV1450S2W':'fv1450','TV2520SV9KR':'tv2520','F2520SNEKR':'f2520','TX2522AT9GR':'tx2522','F2515RNTKAR':'f2515','FX1411R5WR':'fx1411',
+  'FV1209D4W':'fv1209','FV1450S2W':'fv1450','TV2520SV9KR':'tv2520','F2520SNEKR':'f2520','TX2522AT9GR':'tx2522','F2515RNTKAR':'f2515','FX1411R5WR':'fx1411',
   'GN-F452':'gnf452','GN-F452PQAK':'gnf452','GC-B257KLJR':'gcb257','GC-J257SQNW':'gcj257','GV-K25FFGER':'gvk25','GC-G22FFQAB':'gcg22','GXJB18JBQRC':'gxjb18',
-  'AS10GDBY0':'as10','AS65GDBY0':'as65','AS60GHBT0':'as60hit','AS55GGSY0':'as55','AS25GCBZ0':'as25','AS60GLSG0':'wallfit',
+  'AS10GDBY0':'as10','AS65GDBY0':'as65','AS30GGW10':'aeromini','AS60GHBT0':'as60hit','AS55GGSY0':'as55','AS25GCBZ0':'as25','AS60GLSG0':'wallfit',
   'WU525BS':'wu525','WD518AN':'wd518','WD516AN':'wd516',
   'DFC335HM':'dishwasher335','DFC533FV':'dishwasher533','55QNED87BSA':'qned55','65QNED87BSA':'qned55','75QNED87BSA':'qned55','50NU865BPSA':'nanoTV','55NU865BPSA':'nanoTV','65NU865BPSA':'nanoTV'
 };
@@ -597,30 +667,39 @@ function warrantyLine(years){return currentLang==='zh'?('🛡️ '+years+'年保
 
 function selectedCopywriting(){
   if(!activeProduct||!chosenPlan)return'';
-  const normal=Math.round(Number(chosenPlan.monthly)||0),promo=activeProduct.promos.find(p=>p.id===chosenPromo)||{id:'standard'},end=Number(chosenPlan.years)*12;
-  const promoPrice=promo.id==='half9'?Math.round(normal*.5):promo.id==='combo10'?Math.max(0,normal-10):normal;
-  let offer=promo.id==='half9'?tr('copyHalf9',{promo:money(promoPrice),end,normal:money(normal)}):promo.id==='combo10'?tr('copyCombo',{promo:money(promoPrice)}):promo.id==='octevergreen'?tr('copyOctober'):promo.id==='dw99'?(currentLang==='zh'?'🔥 特价：RM99/月（原价 RM150/月） · 优惠申请期至 2026年12月31日':currentLang==='en'?'🔥 Special: RM99/month (Normal RM150/month) · Application promo until 31 Dec 2026':'🔥 Promosi khas: RM99/bulan (Harga biasa RM150/bulan) · Permohonan promosi hingga 31 Dis 2026'):tr('copyStandard',{normal:money(normal)});
+  const normal=Math.round(Number(chosenPlan.monthly)||0),promo=promoObj(activeProduct,chosenPromo),end=Number(chosenPlan.years)*12;
+  const month1=Math.round(promoPrice(activeProduct,chosenPlan,chosenPromo,1,{comboActive:true,pairActive:true}));
+  let offer;
+  if(promo.type==='percent'){
+    const n=Number(promo.months)||0,v=Number(promo.value)||0;
+    offer=currentLang==='zh'
+      ?('🔥 首 '+n+' 个月 '+v+'% OFF：'+money(month1)+'/月\n第 '+(n+1)+'–'+end+' 个月：'+money(normal)+'/月')
+      :currentLang==='en'
+      ?('🔥 '+v+'% OFF for the first '+n+' months: '+money(month1)+'/month\nMonth '+(n+1)+'–'+end+': '+money(normal)+'/month')
+      :('🔥 '+v+'% OFF untuk '+n+' bulan pertama: '+money(month1)+'/bulan\nBulan '+(n+1)+'–'+end+': '+money(normal)+'/bulan');
+  }else if(promo.type==='fixed'){
+    const v=Number(promo.value)||0;
+    offer=currentLang==='zh'
+      ?('🔥 每月 RM'+v+' OFF：'+money(month1)+'/月（原价 '+money(normal)+'/月）')
+      :currentLang==='en'
+      ?('🔥 RM'+v+' OFF/month: '+money(month1)+'/month (Normal '+money(normal)+'/month)')
+      :('🔥 RM'+v+' OFF/bulan: '+money(month1)+'/bulan (Harga biasa '+money(normal)+'/bulan)');
+    if(promo.id==='combo10')offer+='\n'+(currentLang==='zh'?'*至少 2 件产品/订单都选择 RM10 OFF combo 后才生效。':currentLang==='en'?'*Active when at least 2 products/orders select the RM10 OFF combo package.':'*Aktif apabila sekurang-kurangnya 2 produk/order memilih pakej RM10 OFF combo.');
+    if(promo.id==='airpair15')offer+='\n'+(currentLang==='zh'?'*需与 AS30GGW10 配套。':currentLang==='en'?'*Requires pairing with AS30GGW10.':'*Perlu dipasangkan dengan AS30GGW10.');
+  }else if(promo.type==='fixedMonthly'){
+    offer=currentLang==='zh'
+      ?('🔥 特价：'+money(month1)+'/月（原价 '+money(normal)+'/月）')
+      :currentLang==='en'
+      ?('🔥 Special: '+money(month1)+'/month (Normal '+money(normal)+'/month)')
+      :('🔥 Promosi khas: '+money(month1)+'/bulan (Harga biasa '+money(normal)+'/bulan)');
+  }else{
+    offer=tr('copyStandard',{normal:money(normal)});
+  }
   const features=productFeatureLines(activeProduct);
-  const lines=[
-    tr('copyHeadline',{name:activeProduct.name}),
-    tr('copyModel',{code:activeProduct.code})
-  ];
-  if(features.length){
-    lines.push('',featureHeading(),...features.map(x=>'✔️ '+x));
-  }
-  lines.push(
-    '',
-    tr('copyPlan',{years:chosenPlan.years,service:serviceLabel(chosenPlan.service)}),
-    offer,
-    '',
-    tr('copyPackageIncludes'),
-    tr('copyDelivery'),
-    warrantyLine(chosenPlan.years),
-    tr('copyServiceLine',{service:serviceLabel(chosenPlan.service)})
-  );
-  if(chosenPlan.service==='Combine Maintenance'){
-    lines.push(tr('copyCmKit'),tr('copyCmVisit'));
-  }
+  const lines=[tr('copyHeadline',{name:activeProduct.name}),tr('copyModel',{code:activeProduct.code})];
+  if(features.length)lines.push('',featureHeading(),...features.map(x=>'✔️ '+x));
+  lines.push('',tr('copyPlan',{years:chosenPlan.years,service:serviceLabel(chosenPlan.service)}),offer,'',tr('copyPackageIncludes'),tr('copyDelivery'),warrantyLine(chosenPlan.years),tr('copyServiceLine',{service:serviceLabel(chosenPlan.service)}));
+  if(chosenPlan.service==='Combine Maintenance')lines.push(tr('copyCmKit'),tr('copyCmVisit'));
   return lines.join('\n');
 }
 function copySelectedCopywriting(){
@@ -631,7 +710,7 @@ window.copySelectedCopywriting=copySelectedCopywriting;
 function addActive(){if(!activeProduct||!chosenPlan)return;const qty=Math.max(1,Math.min(9,Number($('qtyInput').value)||1));cart.push({key:Date.now()+Math.random(),product:activeProduct,plan:{...chosenPlan},promo:chosenPromo,qty});closeModal();renderCart();toast(chosenPromo==='combo10'&&!comboEligible()?tr('comboNeedAnother'):tr('addedPackage'));}
 function totalUnits(){return cart.reduce((a,x)=>a+x.qty,0);}
 function renderCart(){const units=totalUnits();$('cartUnits').textContent=units+' '+tr('unit');$('selectedCount').textContent=units+' '+tr('productSelected');const sharePhotos=$('sharePhotoGrid');if(!cart.length){$('cartItems').innerHTML='<div class="room-empty" style="padding:16px">'+esc(tr('noProducts'))+'</div>';$('roomGrid').innerHTML='<div class="room-empty"><b>'+esc(tr('startAppliance'))+'</b><br>'+esc(tr('startAppliance2'))+'</div>';if(sharePhotos)sharePhotos.innerHTML='';$('currentMonthly').textContent='RM0';$('scheduleRows').innerHTML='';$('saving').textContent='RM0';$('contractTotal').textContent='RM0';budgetCheck();syncUrl(false);return;}$('cartItems').innerHTML=cart.map((x,i)=>'<div class="cart-item"><div><b>'+esc(x.product.code)+'</b><span>'+x.qty+' × '+x.plan.years+'Y · '+esc(serviceLabel(x.plan.service))+'</span><small>'+esc(promoLabelById(x.promo,(x.product.promos.find(p=>p.id===x.promo)||{}).label||''))+'</small></div><button data-i="'+i+'" class="remove">×</button></div>').join('');$('cartItems').querySelectorAll('.remove').forEach(b=>b.onclick=()=>{cart.splice(Number(b.dataset.i),1);renderCart();});const productCards=cart.map(x=>'<div class="room-item"><div class="qtydot">×'+x.qty+'</div><div class="miniimg">'+visual(x.product)+'</div><b>'+esc(x.product.code)+'</b><span>'+esc(x.product.name)+'</span></div>').join('');$('roomGrid').innerHTML=productCards;if(sharePhotos)sharePhotos.innerHTML=productCards;$('currentMonthly').textContent=money(cart.reduce((a,x)=>a+monthlyFor(x,1),0));renderSchedule();budgetCheck();syncUrl(false);}
-function renderSchedule(){const units=totalUnits(),maxMonths=Math.max(...cart.map(x=>x.plan.years*12)),cuts=new Set([1,maxMonths+1]);cart.forEach(x=>{if(x.promo==='half9')cuts.add(10);cuts.add(x.plan.years*12+1);});const pts=[...cuts].filter(n=>n>=1&&n<=maxMonths+1).sort((a,b)=>a-b);let rows=[],total=0,standard=0;for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1]-1;if(a>b)continue;const m=cart.reduce((s,x)=>a<=x.plan.years*12?s+monthlyFor(x,a):s,0),normal=cart.reduce((s,x)=>a<=x.plan.years*12?s+(Number(x.plan.monthly)||0)*x.qty:s,0),months=b-a+1;total+=m*months;standard+=normal*months;rows.push('<div class="schedule-row"><span>'+esc(tr('monthWord'))+' '+a+(b>a?'–'+b:'')+'</span><b>'+money(m)+'/'+esc(tr('month'))+'</b></div>');}$('scheduleRows').innerHTML=rows.join('')+(comboLineCount()===1?'<div class="schedule-row combo-warning"><span>RM10 OFF combo</span><b>'+esc(tr('notActiveAdd'))+'</b></div>':'');$('saving').textContent=money(Math.max(0,standard-total));$('contractTotal').textContent=money(total);}
+function renderSchedule(){const units=totalUnits(),maxMonths=Math.max(...cart.map(x=>x.plan.years*12)),cuts=new Set([1,maxMonths+1]);cart.forEach(x=>{const p=promoObj(x.product,x.promo);if(p.months)cuts.add(Number(p.months)+1);cuts.add(x.plan.years*12+1);});const pts=[...cuts].filter(n=>n>=1&&n<=maxMonths+1).sort((a,b)=>a-b);let rows=[],total=0,standard=0;for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1]-1;if(a>b)continue;const m=cart.reduce((s,x)=>a<=x.plan.years*12?s+monthlyFor(x,a):s,0),normal=cart.reduce((s,x)=>a<=x.plan.years*12?s+(Number(x.plan.monthly)||0)*x.qty:s,0),months=b-a+1;total+=m*months;standard+=normal*months;rows.push('<div class="schedule-row"><span>'+esc(tr('monthWord'))+' '+a+(b>a?'–'+b:'')+'</span><b>'+money(m)+'/'+esc(tr('month'))+'</b></div>');}$('scheduleRows').innerHTML=rows.join('')+(comboLineCount()===1?'<div class="schedule-row combo-warning"><span>RM10 OFF combo</span><b>'+esc(tr('notActiveAdd'))+'</b></div>':'');$('saving').textContent=money(Math.max(0,standard-total));$('contractTotal').textContent=money(total);}
 function budgetCheck(){const budget=Number($('budget')?.value)||0,cur=Number($('currentMonthly')?.textContent.replace(/[^\d.]/g,''))||0,e=$('budgetResult');if(!cart.length){e.textContent=tr('buildToCompare');e.className='budget-result';return;}if(cur<=budget){e.textContent=tr('withinBudget',{amount:money(budget-cur)});e.className='budget-result ok';}else{e.textContent=tr('overBudget',{amount:money(cur-budget)});e.className='budget-result over';}}
 async function loadStock(){try{const r=await fetch(SUPABASE_URL+'/rest/v1/control_centre_public_snapshot?select=state_json,updated_at&workspace_id=eq.d257117f-df44-4da3-b7cb-7d0b84e6e0e4',{headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY},cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const snapshot=(await r.json())[0];const rows=stockRowsFromSnapshot(snapshot);window.__LG_PUBLIC_STOCK_ROWS__=rows;stocks=aggregateStockRows(rows);ensureEligibleStockModels();stockLoaded=true;window.dispatchEvent(new Event('lg-stock-ready'));const dates=rows.map(x=>x.as_of_date).filter(Boolean).sort(),d=dates.at(-1)||'latest';$('liveDot').className='live-dot ok';$('liveText').textContent=tr('liveConnected');$('stockStamp').textContent=tr('stockSynced',{date:d});$('stockInfo').textContent=tr('stockInfoFull');renderCats();renderProducts();renderComboMenu();}catch(e){console.warn(e);stockLoaded=true;$('liveDot').className='live-dot err';$('liveText').textContent=tr('liveUnavailable');$('stockStamp').textContent=tr('syncUnavailable');renderProducts();renderComboMenu();}}
 function payload(){return cart.map(x=>({id:x.product.id,plan:x.product.plans.findIndex(p=>p.years===x.plan.years&&p.service===x.plan.service&&p.monthly===x.plan.monthly),years:x.plan.years,service:x.plan.service,monthly:x.plan.monthly,promo:x.promo,qty:x.qty}));}
