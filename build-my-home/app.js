@@ -2,7 +2,12 @@
 'use strict';
 const SUPABASE_URL='https://jmnnesumjpkraugtzdkl.supabase.co';
 const SUPABASE_KEY='sb_publishable__CO_CJqvrVqG-LClfcD_Wg_CVdZZZU8';
-const CATALOG=(window.LG_CATALOG||[]).map((p,i)=>({...p,order:i}));
+const DEFAULT_HALF9_PROMO={id:'half9',label:'50% OFF 9 bulan',type:'percent',value:50,months:9};
+const CATALOG=(window.LG_CATALOG||[]).map((p,i)=>{
+  const promos=Array.isArray(p.promos)?p.promos.map(x=>x.id==='half9'?{...x,...DEFAULT_HALF9_PROMO,validFrom:null,validTo:null}:x):[];
+  if(!promos.some(x=>x.id==='half9'))promos.splice(Math.min(1,promos.length),0,{...DEFAULT_HALF9_PROMO});
+  return {...p,promos,order:i};
+});
 const icons={'Aircond':'❄️','Laundry':'🧺','Fridge':'🧊','Air Purifier':'🌿','Water Purifier':'💧','TV':'📺','Dishwasher':'🍽️','Soundbar':'🔊','Vacuum':'🧹','Styler':'👔','Microwave':'♨️','Massage Recliner':'🪑','Monitor':'🖥️'};
 const COMBO_PRESETS=[
   {id:'setA',tag:'SET A',name:'Sejuk + Segar',desc:'1.0HP Aircond + 493L Fridge',items:[{id:'ac1',plan:0},{id:'ref1',plan:0}]},
@@ -37,7 +42,7 @@ ms:{
   stockNotListed:'Stok tidak disenaraikan',stockSyncing:'Stok: sedang diselaraskan…',lowStock:'Stok rendah: {n}',stock:'Stok: {n}',openingStock:'Stok pembukaan: {n}',outStock:'Tiada stok',
   currentStock:'Stok semasa',opening:'Stok pembukaan',openingAl8:'Stok pembukaan',westMalaysia:'Semenanjung Malaysia',sabah:'Sabah',sarawak:'Sarawak',asOf:'Setakat',stockDataSync:'Data stok sedang diselaraskan…',
   promoStandard:'Harga standard',promoHalf9:'50% OFF 9 bulan',promoCombo10:'RM10 OFF combo',promoOctober:'Promosi Oktober / Evergreen · Jason sahkan',promoDw99:'Promosi khas RM99/bulan',promoDw99Desc:'Sah untuk permohonan 1 Okt–31 Dis 2026. Harga biasa RM150/bulan.',
-  promoStandardDesc:'Tiada diskaun pengenalan.',promoHalf9Desc:'Tidak boleh digabungkan dengan RM10 OFF combo pada item yang sama.',promoCombo10Desc:'Perlu sekurang-kurangnya 2 produk/order dan kedua-duanya mesti pilih RM10 OFF combo. Tidak boleh campur satu item combo dengan item 50% OFF.',promoOctoberDesc:'Helaian pelancaran mengesahkan Promosi Oktober & Evergreen tetapi kadar/tempoh diskaun tidak dinyatakan. Jason akan sahkan tawaran semasa.',
+  promoStandardDesc:'Tiada diskaun pengenalan.',promoHalf9Desc:'Promosi asas LG Subscribe: 50% OFF untuk 9 bulan pertama. Tidak boleh digabungkan dengan RM10 OFF combo pada item yang sama.',promoCombo10Desc:'Perlu sekurang-kurangnya 2 produk/order dan kedua-duanya mesti pilih RM10 OFF combo. Tidak boleh campur satu item combo dengan item 50% OFF.',promoOctoberDesc:'Helaian pelancaran mengesahkan Promosi Oktober & Evergreen tetapi kadar/tempoh diskaun tidak dinyatakan. Jason akan sahkan tawaran semasa.',
   comboInactive:'belum aktif (perlu 2 item combo)',monthWord:'Bulan',notActiveAdd:'Belum aktif — tambah 1 lagi item menggunakan RM10 OFF combo',
   withinBudget:'Dalam bajet sebanyak {amount}/bulan',overBudget:'Melebihi bajet sebanyak {amount}/bulan',buildToCompare:'Bina pakej untuk banding dengan bajet.',
   liveConnected:'Stok live disambungkan',stockSynced:'Stok diselaraskan · {date}',stockInfoFull:'Stok semasa mengira baki positif AL2 + AL3 + AL8. Jika stok semasa sifar, kad memaparkan stok pembukaan laporan. Muat semula selepas kemas kini stok Control Centre untuk angka terkini.',
@@ -78,7 +83,7 @@ en:{
   stockNotListed:'Stock not listed',stockSyncing:'Stock: syncing…',lowStock:'Low stock: {n}',stock:'Stock: {n}',openingStock:'Opening stock: {n}',outStock:'Out of stock',
   currentStock:'Current stock',opening:'Opening stock',openingAl8:'Opening stock',westMalaysia:'West Malaysia',sabah:'Sabah',sarawak:'Sarawak',asOf:'As of',stockDataSync:'Stock data syncing…',
   promoStandard:'Standard price',promoHalf9:'50% OFF 9 months',promoCombo10:'RM10 OFF combo',promoOctober:'October / Evergreen promo · Jason confirms',
-  promoStandardDesc:'No introductory discount.',promoHalf9Desc:'Cannot be combined with RM10 OFF combo on the same item.',promoCombo10Desc:'Requires at least 2 products/orders and both must select RM10 OFF combo. Cannot mix one combo item with a 50% OFF item.',promoOctoberDesc:'The launch sheet confirms October & Evergreen promotions but does not state the discount amount/duration. Jason will confirm the current offer.',
+  promoStandardDesc:'No introductory discount.',promoHalf9Desc:'LG Subscribe baseline offer: 50% OFF for the first 9 months. Cannot be combined with RM10 OFF combo on the same item.',promoCombo10Desc:'Requires at least 2 products/orders and both must select RM10 OFF combo. Cannot mix one combo item with a 50% OFF item.',promoOctoberDesc:'The launch sheet confirms October & Evergreen promotions but does not state the discount amount/duration. Jason will confirm the current offer.',
   comboInactive:'not active (need 2 combo items)',monthWord:'Month',notActiveAdd:'Not active — add 1 more item using RM10 OFF combo',
   withinBudget:'Within budget by {amount}/month',overBudget:'Over budget by {amount}/month',buildToCompare:'Build your package to compare with budget.',
   liveConnected:'Live stock connected',stockSynced:'Stock synced · {date}',stockInfoFull:'Current stock counts positive AL2 + AL3 + AL8 balances. If current stock is zero, the card shows report opening stock. Refresh after a Control Centre stock upload for the latest figures.',
@@ -119,7 +124,7 @@ zh:{
   stockNotListed:'未列出库存',stockSyncing:'库存同步中…',lowStock:'库存偏低：{n}',stock:'库存：{n}',openingStock:'期初库存：{n}',outStock:'无库存',
   currentStock:'当前库存',opening:'期初库存',openingAl8:'期初库存',westMalaysia:'西马',sabah:'沙巴',sarawak:'砂拉越',asOf:'截至',stockDataSync:'库存资料同步中…',
   promoStandard:'标准价格',promoHalf9:'首 9 个月 50% OFF',promoCombo10:'RM10 OFF 组合优惠',promoOctober:'10 月 / Evergreen 优惠 · Jason 确认',
-  promoStandardDesc:'没有首期折扣。',promoHalf9Desc:'同一件产品不可与 RM10 OFF combo 叠加。',promoCombo10Desc:'至少需要 2 件产品/订单，而且两件都必须选择 RM10 OFF combo。不可一件选 combo、另一件选 50% OFF。',promoOctoberDesc:'新品资料确认有 10 月及 Evergreen 优惠，但没有注明折扣金额/期限。Jason 会确认当前优惠。',
+  promoStandardDesc:'没有首期折扣。',promoHalf9Desc:'LG Subscribe 基础优惠：首9个月 50% OFF。同一件产品不可与 RM10 OFF combo 叠加。',promoCombo10Desc:'至少需要 2 件产品/订单，而且两件都必须选择 RM10 OFF combo。不可一件选 combo、另一件选 50% OFF。',promoOctoberDesc:'新品资料确认有 10 月及 Evergreen 优惠，但没有注明折扣金额/期限。Jason 会确认当前优惠。',
   comboInactive:'尚未生效（需 2 件 combo 产品）',monthWord:'第',notActiveAdd:'尚未生效 — 再加入 1 件使用 RM10 OFF combo 的产品',
   withinBudget:'每月比预算少 {amount}',overBudget:'每月超出预算 {amount}',buildToCompare:'先建立配套以比较预算。',
   liveConnected:'实时库存已连接',stockSynced:'库存已同步 · {date}',stockInfoFull:'当前库存以 AL2 + AL3 + AL8 的正数余额计算。如当前库存为 0，产品卡会显示报告的期初库存。Control Centre 上传新库存后刷新即可查看最新数据。',
@@ -299,7 +304,7 @@ function ensureEligibleStockModels(){
       name:s?.product_name||code,
       category:customerCategoryFromStock(s?.category),
       plans:[],
-      promos:[{id:'standard',label:'Harga standard',type:'none'}],
+      promos:[{id:'standard',label:'Harga standard',type:'none'},{...DEFAULT_HALF9_PROMO}],
       autoStockOnly:true,
       order:CATALOG.length
     });
