@@ -144,8 +144,8 @@ let currentLang=(()=>{const q=new URL(location.href).searchParams.get('lang');co
 function tr(key,vars={}){let s=(I18N[currentLang]&&I18N[currentLang][key])??I18N.en[key]??key;for(const[k,v]of Object.entries(vars))s=String(s).replaceAll('{'+k+'}',String(v));return s;}
 function categoryLabel(c){return c==='Aircond'?tr('catAircond'):c==='Laundry'?tr('catLaundry'):c==='Fridge'?tr('catFridge'):c==='Air Purifier'?tr('catAP'):c==='Water Purifier'?tr('catWP'):c==='TV'?tr('catTV'):c==='Dishwasher'?tr('catDishwasher'):c;}
 function serviceLabel(s){return s==='Regular Visit 1x/year'?tr('svcRV1'):s==='Regular Visit 2x/year'?tr('svcRV2'):s==='Regular Visit every 2 years'?tr('svcRV2Y'):s==='Regular Visit'?tr('svcRV'):s==='Self-Service'?tr('svcSS'):s==='Combine Maintenance'?tr('svcCM'):s==='Subscription'?tr('svcSub'):s;}
-function promoLabelById(id,fallback=''){return id==='standard'?tr('promoStandard'):id==='half9'?tr('promoHalf9'):id==='combo10'?tr('promoCombo10'):id==='octevergreen'?tr('promoOctober'):id==='dw99'?tr('promoDw99'):fallback;}
-function promoDescById(id,fallback=''){return id==='half9'?tr('promoHalf9Desc'):id==='combo10'?tr('promoCombo10Desc'):id==='octevergreen'?tr('promoOctoberDesc'):id==='dw99'?tr('promoDw99Desc'):(fallback||tr('promoStandardDesc'));}
+function promoLabelById(id,fallback=''){return id==='standard'?tr('promoStandard'):id==='half9'?tr('promoHalf9'):id==='half12'?(currentLang==='zh'?'首12个月 50% OFF':currentLang==='en'?'50% OFF 12 months':'50% OFF 12 bulan'):id==='combo10'?tr('promoCombo10'):id==='octevergreen'?tr('promoOctober'):id==='dw99'?tr('promoDw99'):fallback;}
+function promoDescById(id,fallback=''){return id==='half9'?tr('promoHalf9Desc'):id==='half12'?(currentLang==='zh'?'首12个月享有 50% 折扣。':currentLang==='en'?'50% OFF for the first 12 months.':'50% OFF untuk 12 bulan pertama.'):id==='combo10'?tr('promoCombo10Desc'):id==='octevergreen'?tr('promoOctoberDesc'):id==='dw99'?tr('promoDw99Desc'):(fallback||tr('promoStandardDesc'));}
 function promoLocalized(p,field){
   if(!p)return'';
   const k=currentLang==='zh'?field+'Zh':currentLang==='en'?field+'En':field+'Ms';
@@ -160,8 +160,18 @@ function promoIsLive(p){
   if(p.validTo&&now>new Date(p.validTo+'T23:59:59+08:00').getTime())return false;
   return true;
 }
-function livePromos(product){return (product?.promos||[]).filter(p=>promoIsLive(p));}
-function promoObj(product,id){return (product?.promos||[]).find(p=>p.id===id)||{id:'standard',type:'none'};}
+function livePromos(product){
+  const live=(product?.promos||[]).filter(p=>promoIsLive(p));
+  const hasLiveHalf12=live.some(p=>p.type==='percent'&&Number(p.value)===50&&Number(p.months)===12);
+  let out=live.filter(p=>!(hasLiveHalf12&&p.type==='percent'&&Number(p.value)===50&&Number(p.months)===9));
+  if(!hasLiveHalf12&&!out.some(p=>p.type==='percent'&&Number(p.value)===50&&Number(p.months)===9)){
+    const stdIndex=out.findIndex(p=>p.id==='standard');
+    const half9={...DEFAULT_HALF9_PROMO};
+    if(stdIndex>=0)out.splice(stdIndex+1,0,half9);else out.unshift(half9);
+  }
+  return out;
+}
+function promoObj(product,id){return livePromos(product).find(p=>p.id===id)||{id:'standard',type:'none'};}
 function promoPrice(product,plan,promoId,month,{comboActive=true,pairActive=true}={}){
   let m=Number(plan?.monthly)||0;const p=promoObj(product,promoId);
   const within=!p.months||month<=Number(p.months);
