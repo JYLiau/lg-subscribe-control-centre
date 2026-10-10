@@ -713,7 +713,8 @@ function selectedCopywriting(){
   const features=productFeatureLines(activeProduct);
   const lines=[tr('copyHeadline',{name:activeProduct.name}),tr('copyModel',{code:activeProduct.code})];
   if(features.length)lines.push('',featureHeading(),...features.map(x=>'✔️ '+x));
-  lines.push('',tr('copyPlan',{years:chosenPlan.years,service:serviceLabel(chosenPlan.service)}),offer,'',tr('copyPackageIncludes'),tr('copyDelivery'),warrantyLine(chosenPlan.years),tr('copyServiceLine',{service:serviceLabel(chosenPlan.service)}));
+  lines.push('',tr('copyPlan',{years:chosenPlan.years,service:serviceLabel(chosenPlan.service)}),offer,'',tr('copyPackageIncludes'),tr('copyDelivery'),warrantyLine(chosenPlan.years));
+  if(activeProduct.category!=='TV')lines.push(tr('copyServiceLine',{service:serviceLabel(chosenPlan.service)}));
   if(chosenPlan.service==='Combine Maintenance')lines.push(tr('copyCmKit'),tr('copyCmVisit'));
   return lines.join('\n');
 }
