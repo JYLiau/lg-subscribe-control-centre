@@ -27,7 +27,7 @@ ms:{
   searchPH:'Cari model atau produk…',sortFeatured:'Susun: Disyorkan',sortPrice:'Harga terendah',sortModel:'Model A–Z',stockConnecting:'Stok sedang disambungkan…',
   shareTitle:'Pakej khas untuk anda',shareText:'Produk, tempoh, servis dan promosi di bawah telah dipilih berdasarkan permintaan anda.',editChoice:'Ubah pilihan',
   packageTitle:'PAKEJ PILIHAN ANDA',packageIntro:'Bayaran berubah ikut promosi & tempoh.',selectedProducts:'Produk dipilih',paymentNow:'Bayaran sekarang',budget:'Bajet bulanan',
-  schedule:'Jadual bayaran',savings:'Jumlah penjimatan',contract:'Jumlah kontrak',askWa:'Tanya Jason di WhatsApp',copyLink:'Salin link untuk customer',clearPackage:'Kosongkan pakej',
+  schedule:'Jadual bayaran',savings:'Jumlah penjimatan',contract:'Jumlah kontrak',askWa:'Tanya Jason di WhatsApp',copyLink:'Salin link untuk customer',copyPackage:'📋 Salin ayat pakej',clearPackage:'Kosongkan pakej',
   disclaimer:'Promosi 50% dan RM10 combo ialah pilihan berasingan dan tidak digabungkan. RM10 combo hanya aktif apabila sekurang-kurangnya 2 produk/order kedua-duanya memilih pakej RM10 combo. Stok boleh berubah selepas laporan terakhir.',
   liveStockTitle:'Stok live daripada Control Centre',liveStockText:'Setiap kad memaparkan jumlah baki positif AL2 + AL3 + AL8 daripada sumber stok yang sama dengan LG Subscribe Control Centre.',
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Imej produk daripada bahan rujukan yang dibekalkan. T&C apply.',
@@ -48,7 +48,7 @@ ms:{
   liveConnected:'Stok live disambungkan',stockSynced:'Stok diselaraskan · {date}',stockInfoFull:'Stok semasa mengira baki positif AL2 + AL3 + AL8. Jika stok semasa sifar, kad memaparkan stok pembukaan laporan. Muat semula selepas kemas kini stok Control Centre untuk angka terkini.',
   liveUnavailable:'Stok sementara tidak tersedia',syncUnavailable:'Penyelarasan stok tidak tersedia',
   addFirst:'Tambah produk dahulu sebelum jana link customer.',linkCopied:'Link customer disalin',copyLinkPrompt:'Salin link customer ini',packageCleared:'Pakej dikosongkan',
-  copyDone:'Copywriting disalin',copyFail:'Salin copywriting ini',waIntro:'Hi Jason, saya berminat dengan pakej LG Subscribe ini:',estimateNow:'Anggaran sekarang',
+  copyDone:'Copywriting disalin',copyFail:'Salin copywriting ini',packageMsgTitle:'✨ *PAKEJ LG SUBSCRIBE PILIHAN ANDA*',packageMsgItemPay:'Bayaran',packageMsgSchedule:'💳 *Jadual bayaran bulanan:*',packageMsgSavings:'🎉 *Jumlah penjimatan*',packageMsgLink:'🔗 *Lihat gambar & butiran pakej:*',packageMsgCTA:'Berminat? Boleh terus WhatsApp Jason di 011-5972 6619 😊',packageMsgNote:'Harga, stok dan kelayakan promosi tertakluk kepada pengesahan akhir. T&C apply.',packageMsgCopied:'Ayat pakej berjaya disalin',packageMsgCopyPrompt:'Salin ayat pakej ini',waIntro:'Hi Jason, saya berminat dengan pakej LG Subscribe ini:',estimateNow:'Anggaran sekarang',
   catAircond:'Penyaman Udara',catLaundry:'Dobi',catFridge:'Peti Sejuk',catAP:'Penapis Udara',catWP:'Penapis Air',catTV:'TV',catDishwasher:'Mesin Basuh Pinggan',
   svcRV:'Regular Visit',svcRV1:'Regular Visit 1x/tahun',svcRV2:'Regular Visit 2x/tahun',svcRV2Y:'Regular Visit setiap 2 tahun',svcSS:'Self-Service',svcCM:'Combine Maintenance',svcSub:'Subscription',
   copyHeadline:'✨ LG Subscribe — {name}',copyModel:'Model: {code}',copyPlan:'Pelan {years} Tahun · {service}',copyNormal:'Harga biasa: {price}/bulan',
@@ -68,7 +68,7 @@ en:{
   searchPH:'Search model or product…',sortFeatured:'Sort: Recommended',sortPrice:'Lowest price',sortModel:'Model A–Z',stockConnecting:'Connecting stock…',
   shareTitle:'A package selected for you',shareText:'The products, term, service and promotion below were selected based on your request.',editChoice:'Change selection',
   packageTitle:'YOUR SELECTED PACKAGE',packageIntro:'Payment changes with promotion & term.',selectedProducts:'Selected products',paymentNow:'Payment now',budget:'Monthly budget',
-  schedule:'Payment schedule',savings:'Total savings',contract:'Contract total',askWa:'Ask Jason on WhatsApp',copyLink:'Copy customer link',clearPackage:'Clear package',
+  schedule:'Payment schedule',savings:'Total savings',contract:'Contract total',askWa:'Ask Jason on WhatsApp',copyLink:'Copy customer link',copyPackage:'📋 Copy package message',clearPackage:'Clear package',
   disclaimer:'50% promotion and RM10 combo are separate choices and cannot be combined. RM10 combo is active only when at least 2 products/orders both use the RM10 combo package. Stock may change after the latest report.',
   liveStockTitle:'Live stock from Control Centre',liveStockText:'Each card shows positive AL2 + AL3 + AL8 balances from the same source as LG Subscribe Control Centre.',
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Product images are from supplied reference materials. T&C apply.',
@@ -89,7 +89,7 @@ en:{
   liveConnected:'Live stock connected',stockSynced:'Stock synced · {date}',stockInfoFull:'Current stock counts positive AL2 + AL3 + AL8 balances. If current stock is zero, the card shows report opening stock. Refresh after a Control Centre stock upload for the latest figures.',
   liveUnavailable:'Stock temporarily unavailable',syncUnavailable:'Stock sync unavailable',
   addFirst:'Add a product before generating a customer link.',linkCopied:'Customer link copied',copyLinkPrompt:'Copy this customer link',packageCleared:'Package cleared',
-  copyDone:'Copywriting copied',copyFail:'Copy this copywriting',waIntro:'Hi Jason, I am interested in this LG Subscribe package:',estimateNow:'Estimated now',
+  copyDone:'Copywriting copied',copyFail:'Copy this copywriting',packageMsgTitle:'✨ *YOUR LG SUBSCRIBE PACKAGE*',packageMsgItemPay:'Payment',packageMsgSchedule:'💳 *Monthly payment schedule:*',packageMsgSavings:'🎉 *Total savings*',packageMsgLink:'🔗 *View package photos & details:*',packageMsgCTA:'Interested? WhatsApp Jason at 011-5972 6619 😊',packageMsgNote:'Prices, stock and promotion eligibility are subject to final confirmation. T&Cs apply.',packageMsgCopied:'Package message copied',packageMsgCopyPrompt:'Copy this package message',waIntro:'Hi Jason, I am interested in this LG Subscribe package:',estimateNow:'Estimated now',
   catAircond:'Air Conditioner',catLaundry:'Laundry',catFridge:'Refrigerator',catAP:'Air Purifier',catWP:'Water Purifier',catTV:'TV',catDishwasher:'Dishwasher',
   svcRV:'Regular Visit',svcRV1:'Regular Visit 1x/year',svcRV2:'Regular Visit 2x/year',svcRV2Y:'Regular Visit every 2 years',svcSS:'Self-Service',svcCM:'Combined Maintenance',svcSub:'Subscription',
   copyHeadline:'✨ LG Subscribe — {name}',copyModel:'Model: {code}',copyPlan:'{years}-Year Plan · {service}',copyNormal:'Normal price: {price}/month',
@@ -109,7 +109,7 @@ zh:{
   searchPH:'搜索型号或产品…',sortFeatured:'排序：推荐',sortPrice:'最低价格',sortModel:'型号 A–Z',stockConnecting:'正在连接库存…',
   shareTitle:'为你挑选的配套',shareText:'以下产品、年限、服务和优惠是根据你的需求预先选择。',editChoice:'修改选择',
   packageTitle:'你选择的配套',packageIntro:'月费会根据优惠与年限变化。',selectedProducts:'已选产品',paymentNow:'目前月费',budget:'每月预算',
-  schedule:'付款时间表',savings:'总节省',contract:'合约总额',askWa:'WhatsApp 咨询 Jason',copyLink:'复制客户链接',clearPackage:'清空配套',
+  schedule:'付款时间表',savings:'总节省',contract:'合约总额',askWa:'WhatsApp 咨询 Jason',copyLink:'复制客户链接',copyPackage:'📋 复制配套文案',clearPackage:'清空配套',
   disclaimer:'50% 优惠与 RM10 组合优惠为不同方案，不可叠加。RM10 组合优惠只有在至少 2 件产品/订单都选择 RM10 combo 时才生效。库存以最新报告为准。',
   liveStockTitle:'Control Centre 实时库存',liveStockText:'每张产品卡显示与 LG Subscribe Control Centre 同一来源的 AL2 + AL3 + AL8 正数库存余额。',
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>产品图片来自所提供的参考资料。须符合条款与条件。',
@@ -130,7 +130,7 @@ zh:{
   liveConnected:'实时库存已连接',stockSynced:'库存已同步 · {date}',stockInfoFull:'当前库存以 AL2 + AL3 + AL8 的正数余额计算。如当前库存为 0，产品卡会显示报告的期初库存。Control Centre 上传新库存后刷新即可查看最新数据。',
   liveUnavailable:'库存暂时无法取得',syncUnavailable:'库存同步失败',
   addFirst:'请先加入产品再生成客户链接。',linkCopied:'客户链接已复制',copyLinkPrompt:'复制此客户链接',packageCleared:'配套已清空',
-  copyDone:'文案已复制',copyFail:'复制此文案',waIntro:'Hi Jason，我对以下 LG Subscribe 配套有兴趣：',estimateNow:'目前预计',
+  copyDone:'文案已复制',copyFail:'复制此文案',packageMsgTitle:'✨ *您的 LG Subscribe 精选配套*',packageMsgItemPay:'月费',packageMsgSchedule:'💳 *每月付款安排：*',packageMsgSavings:'🎉 *总共节省*',packageMsgLink:'🔗 *查看产品图片与配套详情：*',packageMsgCTA:'有兴趣？欢迎 WhatsApp Jason：011-5972 6619 😊',packageMsgNote:'价格、库存和促销资格以最终确认为准。须符合条款与条件。',packageMsgCopied:'配套文案已复制',packageMsgCopyPrompt:'复制此配套文案',waIntro:'Hi Jason，我对以下 LG Subscribe 配套有兴趣：',estimateNow:'目前预计',
   catAircond:'空调',catLaundry:'洗衣家电',catFridge:'冰箱',catAP:'空气净化器',catWP:'净水器',catTV:'电视',catDishwasher:'洗碗机',
   svcRV:'定期上门服务',svcRV1:'每年 1 次上门服务',svcRV2:'每年 2 次上门服务',svcRV2Y:'每 2 年 1 次上门服务',svcSS:'自助服务',svcCM:'综合保养',svcSub:'订阅方案',
   copyHeadline:'✨ LG Subscribe — {name}',copyModel:'型号：{code}',copyPlan:'{years} 年方案 · {service}',copyNormal:'原价：{price}/月',
@@ -745,6 +745,56 @@ function sharePackage(){
   const url=customerShareUrl();
   navigator.clipboard?.writeText(url).then(()=>toast(tr('linkCopied'))).catch(()=>prompt(tr('copyLinkPrompt'),url));
 }
+// Build the copyable customer message from the same live cart and pricing rules as the page.
+function packagePricePeriods(monthlyValue,maxMonths){
+  const periods=[];let start=1,previous=null;
+  for(let month=1;month<=maxMonths+1;month++){
+    const value=month<=maxMonths?money(monthlyValue(month)):null;
+    if(month===1){previous=value;continue;}
+    if(value!==previous){
+      periods.push({start,end:month-1,price:previous});
+      start=month;previous=value;
+    }
+  }
+  return periods;
+}
+function packagePeriodText(p){
+  return tr('monthWord')+' '+p.start+(p.end>p.start?'–'+p.end:'')+': '+p.price+'/'+tr('month');
+}
+function packageCopywriting(){
+  if(!cart.length)return '';
+  const lines=[tr('packageMsgTitle'),''];
+  cart.forEach((item,index)=>{
+    lines.push('*'+(index+1)+'. '+item.product.name+'*'+(item.qty>1?' ×'+item.qty:''));
+    lines.push(tr('copyModel',{code:item.product.code}));
+    lines.push(tr('period')+': '+item.plan.years+' '+tr('years')+' · '+tr('service')+': '+serviceLabel(item.plan.service));
+    lines.push(tr('promotion')+': '+promoLabelFor(item));
+    const itemPeriods=packagePricePeriods(month=>monthlyFor(item,month),item.plan.years*12);
+    lines.push(tr('packageMsgItemPay')+': '+itemPeriods.map(packagePeriodText).join(' | '));
+    lines.push('');
+  });
+  lines.push(tr('packageMsgSchedule'));
+  const maxMonths=Math.max(...cart.map(item=>item.plan.years*12));
+  const periods=packagePricePeriods(month=>cart.reduce((sum,item)=>sum+(month<=item.plan.years*12?monthlyFor(item,month):0),0),maxMonths);
+  periods.forEach(period=>lines.push('• '+packagePeriodText(period)));
+  // Savings uses the unrounded amounts, identical to renderSchedule().
+  const standard=cart.reduce((sum,item)=>sum+(Number(item.plan.monthly)||0)*item.qty*item.plan.years*12,0);
+  let charged=0;
+  for(let month=1;month<=maxMonths;month++)
+    charged+=cart.reduce((sum,item)=>sum+(month<=item.plan.years*12?monthlyFor(item,month):0),0);
+  lines.push('',tr('packageMsgSavings')+': *'+money(Math.max(0,standard-charged))+'*');
+  lines.push('',tr('packageMsgLink'),customerShareUrl(),'');
+  lines.push(tr('packageMsgCTA'),tr('packageMsgNote'));
+  return lines.join('\\n');
+}
+function copyPackageCopywriting(){
+  const txt=packageCopywriting();
+  if(!txt)return toast(tr('addFirst'));
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(()=>toast(tr('packageMsgCopied')))
+      .catch(()=>prompt(tr('packageMsgCopyPrompt'),txt));
+  }else prompt(tr('packageMsgCopyPrompt'),txt);
+}
 function editSharedPackage(){
   document.body.classList.remove('shared-package-view');
   const u=new URL(location.href);u.searchParams.delete('share');history.replaceState({},'',u);
@@ -754,5 +804,5 @@ function wa(){const lines=[tr('waIntro')];cart.forEach(x=>lines.push('• '+x.qt
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1800);}
 window.scrollToCatalog=()=>$('catalogSection').scrollIntoView({behavior:'smooth',block:'start'});
 window.scrollToPackage=()=>$('packageSide').scrollIntoView({behavior:'smooth',block:'start'});
-document.addEventListener('DOMContentLoaded',()=>{applyI18n();loadFromUrl();renderCats();renderComboMenu();renderProducts();renderCart();loadStock();$('langSelect').addEventListener('change',e=>setLanguage(e.target.value));$('search').addEventListener('input',renderProducts);$('sort').addEventListener('change',renderProducts);$('budget').addEventListener('input',budgetCheck);$('modalAdd').onclick=addActive;$('copyCopyBtn').onclick=copySelectedCopywriting;$('comboAddBtn').onclick=addRefinedCombo;$('shareBtn').onclick=sharePackage;$('waBtn').onclick=wa;$('editSharedBtn').onclick=editSharedPackage;$('resetBtn').onclick=()=>{cart=[];renderCart();toast(tr('packageCleared'));};$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal();});$('comboModal').addEventListener('click',e=>{if(e.target===$('comboModal'))closeComboModal();});if(document.body.classList.contains('shared-package-view')&&cart.length)setTimeout(()=>scrollToPackage(),80);});
+document.addEventListener('DOMContentLoaded',()=>{applyI18n();loadFromUrl();renderCats();renderComboMenu();renderProducts();renderCart();loadStock();$('langSelect').addEventListener('change',e=>setLanguage(e.target.value));$('search').addEventListener('input',renderProducts);$('sort').addEventListener('change',renderProducts);$('budget').addEventListener('input',budgetCheck);$('modalAdd').onclick=addActive;$('copyCopyBtn').onclick=copySelectedCopywriting;$('comboAddBtn').onclick=addRefinedCombo;$('shareBtn').onclick=sharePackage;$('copyPackageBtn').onclick=copyPackageCopywriting;$('waBtn').onclick=wa;$('editSharedBtn').onclick=editSharedPackage;$('resetBtn').onclick=()=>{cart=[];renderCart();toast(tr('packageCleared'));};$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal();});$('comboModal').addEventListener('click',e=>{if(e.target===$('comboModal'))closeComboModal();});if(document.body.classList.contains('shared-package-view')&&cart.length)setTimeout(()=>scrollToPackage(),80);});
 })();
