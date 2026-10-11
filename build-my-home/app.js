@@ -767,6 +767,8 @@ function packageCopywriting(){
   cart.forEach((item,index)=>{
     lines.push('*'+(index+1)+'. '+item.product.name+'*'+(item.qty>1?' ×'+item.qty:''));
     lines.push(tr('copyModel',{code:item.product.code}));
+    const features=productFeatureLines(item.product);
+    if(features.length)lines.push(featureHeading(),...features.map(feature=>'✓ '+feature));
     lines.push(tr('period')+': '+item.plan.years+' '+tr('years')+' · '+tr('service')+': '+serviceLabel(item.plan.service));
     lines.push(tr('promotion')+': '+promoLabelFor(item));
     const itemPeriods=packagePricePeriods(month=>monthlyFor(item,month),item.plan.years*12);
@@ -784,7 +786,7 @@ function packageCopywriting(){
     charged+=cart.reduce((sum,item)=>sum+(month<=item.plan.years*12?monthlyFor(item,month):0),0);
   lines.push('',tr('packageMsgSavings')+': *'+money(Math.max(0,standard-charged))+'*');
   lines.push('',tr('packageMsgLink'),customerShareUrl(),'');
-  lines.push(tr('packageMsgCTA'),tr('packageMsgNote'));
+  lines.push(tr('packageMsgNote'));
   return lines.join('\n');
 }
 function copyPackageCopywriting(){
