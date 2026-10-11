@@ -785,7 +785,7 @@ function packageCopywriting(){
   lines.push('',tr('packageMsgSavings')+': *'+money(Math.max(0,standard-charged))+'*');
   lines.push('',tr('packageMsgLink'),customerShareUrl(),'');
   lines.push(tr('packageMsgCTA'),tr('packageMsgNote'));
-  return lines.join('\\n');
+  return lines.join('\n');
 }
 function copyPackageCopywriting(){
   const txt=packageCopywriting();
