@@ -69,7 +69,7 @@ a{color:inherit}
 .plan-card span,.promo-card span{font-size:10px;color:var(--muted);line-height:1.35}
 .plan-card strong{font-size:15px}
 .plan-card.active,.promo-card.active{border-color:#111;box-shadow:0 0 0 2px #111 inset;background:#faf9f7}
-.cart-item .remove{border:0;background:#f3efea;color:#7c7166;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:18px;line-height:1}
+.cart-item .remove{display:inline-flex;align-items:center;gap:7px;border:1px solid #e2dbd2;background:#f8f5f1;color:#6d3636;min-height:40px;padding:9px 13px;margin-top:9px;border-radius:10px;cursor:pointer;font-size:12px;font-weight:800;line-height:1.2}.cart-item .remove:focus-visible{outline:2px solid #9c2938;outline-offset:2px}
 .cart-item small{display:block;color:#8b8177;font-size:9px;margin-top:3px}
 .live-dot.ok{background:#21a56b}.live-dot.err{background:#c94d4d}
 @media(max-width:560px){.plan-grid,.promo-grid{grid-template-columns:1fr}}
@@ -142,7 +142,6 @@ a{color:inherit}
 .shared-package-view .builder-grid{grid-template-columns:minmax(0,760px);justify-content:center}
 .shared-package-view .side{position:static;max-width:760px;width:100%;margin:0 auto}
 .shared-package-view .header-btn{display:none}
-.shared-package-view .cart-items .remove,
 .shared-package-view #resetBtn,
 .shared-package-view #shareBtn{display:none!important}
 .shared-package-view .share-view-banner{display:flex;flex-direction:column;gap:4px;background:#f4f8f6;border:1px solid #dcebe4;border-radius:14px;padding:12px 13px;margin-bottom:14px}
