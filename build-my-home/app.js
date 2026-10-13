@@ -296,7 +296,7 @@ function isStackingKitStock(code,s){
   const name=String(s?.product_name||'').toUpperCase();
   return c.startsWith('STKIT')||cat.includes('STACKING KIT')||name.includes('STACKING KIT');
 }
-const EXCLUDED_CUSTOMER_BASES=new Set(['GXJB18HBGVR','GNB312PQJB','OLED65B6SSA']);
+const EXCLUDED_CUSTOMER_BASES=new Set(['GXJB18HBGVR','GNB312PQJB','OLED65B6SSA','REF3FILTER1']);
 function ensureEligibleStockModels(){
   const existing=[...CATALOG.map(p=>baseCode(p.code))];
   let added=0;
