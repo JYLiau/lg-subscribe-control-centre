@@ -165,7 +165,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
       const prods=Object.values(state.products||{}).map(p=>({workspace_id:cloudWorkspaceId,model_code:p.code,model_code_full:p.code,name:p.description||null,category:normalizeProductCategory(p.code,p.category)||null,lifecycle_status:p.lifecycleStatus||null,submission_status:p.submissionStatus||null,width_mm:p.dimensions?.width||null,height_mm:p.dimensions?.height||null,depth_mm:p.dimensions?.depth||null,dimension_status:(String(p.dimensionSource||'').toLowerCase().includes('provisional')?'provisional':((p.dimensions?.width&&p.dimensions?.height)?'confirmed':'unknown')),notes:[p.dimensionSource,p.assetNote].filter(Boolean).join(' • ')||null,source_last_updated:state.reportDate||null}));
       for(let i=0;i<prods.length;i+=150){const r=await cloud.from('products').upsert(prods.slice(i,i+150),{onConflict:'workspace_id,model_code'});if(r.error)throw r.error;}
       const mapq=await cloud.from('products').select('id,model_code').eq('workspace_id',cloudWorkspaceId);if(mapq.error)throw mapq.error;const ids=Object.fromEntries((mapq.data||[]).map(x=>[x.model_code,x.id]));
-      const av=[];for(const p of Object.values(state.products||{})){for(const region of ['AL8','AL2','AL3']){const s=p.stock?.[region]||{};if(!ids[p.code])continue;av.push({workspace_id:cloudWorkspaceId,product_id:ids[p.code],region_code:region,as_of_date:String(state.reportDate||new Date().toISOString()).slice(0,10),opening_stock:s.opening==null?null:stockQty(s.opening),inbound_stock:(s.incoming??s.inTransit??s.pending)==null?null:stockQty(s.incoming??s.inTransit??s.pending),backorder:s.backorder==null?null:stockQty(s.backorder),balance_stock:s.balance==null?null:stockQty(s.balance)});}}
+      const av=[];for(const p of Object.values(state.products||{})){for(const region of ['AL8','AL2','AL3']){const s=p.stock?.[region]||{};if(!ids[p.code])continue;av.push({workspace_id:cloudWorkspaceId,product_id:ids[p.code],region_code:region,as_of_date:String(state.reportDate||new Date().toISOString()).slice(0,10),opening_stock:s.opening==null?null:stockQty(s.opening),inbound_stock:region==='AL8'?(s.incoming==null?null:stockQty(s.incoming)):((s.inTransit==null&&s.pending==null)?null:stockQty(s.inTransit)+stockQty(s.pending)),backorder:s.backorder==null?null:stockQty(s.backorder),balance_stock:s.balance==null?null:stockQty(s.balance)});}}
       for(let i=0;i<av.length;i+=200){const r=await cloud.from('product_availability_current').upsert(av.slice(i,i+200),{onConflict:'workspace_id,product_id,region_code'});if(r.error)throw r.error;}
       const plans=(state.pricePlans||[]).filter(p=>ids[p.modelCode]).map(p=>({workspace_id:cloudWorkspaceId,product_id:ids[p.modelCode],client_key:p.id||null,plan_years:Number(p.planYears),service_type:p.serviceType||'Unknown',normal_monthly:Number(p.normalPrice||0),promo_type:p.promoType||null,promo_value:p.promoValue??null,promo_months:p.promoMonths??null,source_text:p.source||null,is_current:true}));
       for(const p of plans){const r=await cloud.from('price_plans').upsert(p,{onConflict:'workspace_id,client_key'});if(r.error)throw r.error;}
@@ -933,13 +933,18 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
         continue;
       }
 
-      // Confirmed 13 Oct 2026 Available Sum layout: with Model in B,
-      // West Malaysia uses C:G, Sabah uses J:O and Sarawak uses P:U.
-      // The previous AL2 (T:Y) / AL3 (Z:AE) offsets were incorrect and
-      // silently made both regional balances zero after Google Sheets sync.
-      // Anchor to the Model column so a leading-column shift still works.
+      // Visually verified Available Sum: Model D; AL8 E:I;
+      // Sabah O:T; Sarawak U:Z. Anchor to Model, but reject a changed layout.
       const m=ah.modelIdx;
-      const sabah=m+8, sarawak=m+14;
+      const sabah=m+11, sarawak=m+17;
+      const headerAt=idx=>av.slice(Math.max(0,ah.row-3),ah.row+1)
+        .map(row=>String(row?.[idx]??'').toLowerCase().replace(/[^a-z]/g,''));
+      for(const start of [m+1,sabah,sarawak]){
+        const end=start+(start===m+1?4:5);
+        if(!headerAt(start).includes('openingstock')||!headerAt(end).includes('balancestock'))
+          throw new Error('Stock report column layout changed or is unreadable. Opening/balance headings must be verified before importing. No stock was changed.');
+        if(r.length<=end)throw new Error('Incomplete regional stock row '+(i+1)+'. No stock was changed.');
+      }
       products[code]=Object.assign({},products[code]||{},{
         code,category:cat||products[code]?.category||'',
         stock:{
@@ -956,7 +961,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
             pending:stockAt(r,sabah+2),
             backorder:stockAt(r,sabah+3),
             currentOrders:stockAt(r,sabah+4),
-            balance:stockAt(r,sabah+5) // O when Model is in B
+            balance:stockAt(r,sabah+5) // T when Model is in D
           },
           AL3:{
             opening:stockAt(r,sarawak),
@@ -964,7 +969,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
             pending:stockAt(r,sarawak+2),
             backorder:stockAt(r,sarawak+3),
             currentOrders:stockAt(r,sarawak+4),
-            balance:stockAt(r,sarawak+5) // U when Model is in B
+            balance:stockAt(r,sarawak+5) // Z when Model is in D
           }
         }
       });
@@ -1004,11 +1009,11 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
   }
   // Prevent malformed Google visualisation/XLSX imports from silently
   // replacing every Sabah or Sarawak balance with zero. This checks
-  // mapped balance columns O and U against the rest of each region's data.
+  // mapped balance columns T and Z against the rest of each region's data.
   function validateStockRegionCoverage(parsed){
     const products=Object.values(parsed.products||{}).filter(p=>p.stock?.AL8 && p.stock?.AL2 && p.stock?.AL3);
     if(products.length<20)throw new Error('Stock import contains fewer than 20 region-mapped models. No changes applied.');
-    for(const [region,col,regionName] of [['AL2','O','Sabah'],['AL3','U','Sarawak']]){
+    for(const [region,col,regionName] of [['AL2','T','Sabah'],['AL3','Z','Sarawak']]){
       const balances=products.filter(p=>safeNum(p.stock[region]?.balance)!==0).length;
       const otherActivity=products.filter(p=>['opening','inTransit','pending','backorder','currentOrders'].some(k=>safeNum(p.stock[region]?.[k])!==0)).length;
       if(balances===0 && otherActivity>=5)
@@ -1049,7 +1054,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
       <div class="card-title-row"><div><h2>Review before applying</h2><div class="small muted">${esc(pendingImport.fileName)} • report ${esc(fmtDate(pendingImport.parsed.reportDate))}</div></div><div><button class="btn btn-secondary btn-sm" id="cancelImport">Cancel</button> <button class="btn btn-primary btn-sm" id="applyImport">Apply selected</button></div></div>
       <div class="grid change-summary"><div class="mini-kpi"><b>${counts.new}</b><span>New models</span></div><div class="mini-kpi"><b>${counts.lifecycle}</b><span>Lifecycle changes</span></div><div class="mini-kpi"><b>${counts.stock}</b><span>Stock changes</span></div><div class="mini-kpi"><b>${counts.missing}</b><span>Missing from report</span></div></div>
       ${rejected.length?`<div class="notice ok" style="margin-top:12px"><b>${rejected.length} non-model row${rejected.length===1?'':'s'} ignored automatically.</b> Totals and numeric cells will not become products.</div>`:''}
-      <div class="small muted" style="margin:12px 0"><b>Regional data check:</b> ${['AL8','AL2','AL3'].map((region,i)=>{const rows=Object.values(pendingImport.parsed.products||{}); const n=rows.filter(p=>safeNum(p.stock?.[region]?.balance)!==0).length;return ['West Malaysia G','Sabah O','Sarawak U'][i]+': '+n+' models with nonzero balance'}).join(' · ')}</div>
+      <div class="small muted" style="margin:12px 0"><b>Regional data check:</b> ${['AL8','AL2','AL3'].map((region,i)=>{const rows=Object.values(pendingImport.parsed.products||{}); const n=rows.filter(p=>safeNum(p.stock?.[region]?.balance)!==0).length;return ['West Malaysia I','Sabah T','Sarawak Z'][i]+': '+n+' models with nonzero balance'}).join(' · ')}</div>
       <div class="card" style="margin:14px 0;padding:14px">
         <div class="small muted" style="margin-bottom:8px"><b>Fields to apply</b></div>
         <div style="display:flex;gap:14px;flex-wrap:wrap">
