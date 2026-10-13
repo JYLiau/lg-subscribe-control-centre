@@ -690,6 +690,15 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
 
   function renderUpdate(view){
     view.innerHTML=`
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title-row"><div><h2>Sync stock report from Google Sheets</h2><div class="small muted">Paste the Google Sheets URL to load the latest stock workbook for review. Existing XLSX upload remains available below.</div></div></div>
+        <div class="field"><label for="googleStockUrl">Google Sheets link</label><input id="googleStockUrl" class="input" type="url" style="width:100%" placeholder="https://docs.google.com/spreadsheets/d/..." autocomplete="off" spellcheck="false" value="${esc(localStorage.getItem('lgStockSheetSourceUrl.v1')||'')}"></div>
+        <div class="toolbar" style="margin-top:12px;margin-bottom:0">
+          <button id="syncGoogleStockBtn" class="btn btn-primary">Sync Stock Report</button>
+          <span id="googleStockSyncStatus" class="small muted" role="status" aria-live="polite">The stock report is reviewed before applying changes.</span>
+        </div>
+        <div class="small muted" style="margin-top:10px">Google must allow this site to read the file. If the source requires private Google sign-in, a separate authorized connection is needed; a pasted URL cannot bypass access controls.</div>
+      </div>
       <div class="card">
         <div class="dropzone" id="dropzone">
           <div style="font-size:34px">⇧</div><h3>Upload the latest stock report</h3>
@@ -711,6 +720,9 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
         ${renderImportHistory()}
         ${renderSourceHistory()}
       </div>`;
+    const linkInput=document.getElementById('googleStockUrl');
+    linkInput.addEventListener('input',()=>localStorage.setItem('lgStockSheetSourceUrl.v1',linkInput.value.trim()));
+    document.getElementById('syncGoogleStockBtn').addEventListener('click',syncGoogleStockReport);
     const input=document.getElementById('stockFileInput'); input.addEventListener('change',e=>handleStockFile(e.target.files[0]));
     const docInput=document.getElementById('docFileInput'); if(docInput) docInput.addEventListener('change',e=>handleSourcePdf(e.target.files[0],document.getElementById('docType').value));
     const dz=document.getElementById('dropzone');
@@ -770,6 +782,104 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
       ${x.signals.length?`<div class="small muted" style="margin-top:12px">Detected promo signals</div>${x.signals.map(v=>`<div class="change-row"><span>${esc(v)}</span></div>`).join('')}`:''}`;
     document.getElementById('cancelDocImport').onclick=()=>{pendingDocImport=null;renderUpdate(document.getElementById('view'))};
     document.getElementById('saveDocImport').onclick=async()=>{let storagePath=null;try{storagePath=await cloudUploadSourceFile(x._file,'pdf')}catch(e){console.warn(e)} state.sourceDocuments=state.sourceDocuments||[]; const {_file,...record}=x; state.sourceDocuments.push({...record,storagePath,id:uid('source')}); pendingDocImport=null; saveState(); renderUpdate(document.getElementById('view')); toast('Source document saved to cloud update history.'); };
+  }
+
+
+  // Import a Google stock workbook through the same validation/preview pipeline
+  // as local XLSX files. A URL is NOT an authorization grant.
+  function googleStockSheetId(link){
+    try {
+      const u=new URL(String(link||'').trim());
+      if(u.protocol!=='https:'||u.hostname!=='docs.google.com')return null;
+      const m=u.pathname.match(/^\/spreadsheets\/d\/([A-Za-z0-9_-]{15,})(?:\/|$)/);
+      return m?m[1]:null;
+    }catch(_){return null}
+  }
+  function fetchGoogleStockVizSheet(sheetId,sheetName){
+    return new Promise((resolve,reject)=>{
+      const cb='__lgStockViz_'+Math.random().toString(36).slice(2);
+      const script=document.createElement('script');
+      let settled=false;
+      const finish=(err,result)=>{
+        if(settled)return;settled=true;
+        clearTimeout(timeout);delete window[cb];script.remove();
+        if(err)reject(err);else resolve(result);
+      };
+      const timeout=setTimeout(()=>finish(new Error('Google sheet response timed out.')),12000);
+      window[cb]=response=>{
+        try{
+          if(!response || response.status!=='ok' || !response.table)throw new Error(response?.errors?.[0]?.detailed_message||'Google did not return readable worksheet rows.');
+          const cols=response.table.cols||[];
+          const data=(response.table.rows||[]).map(row=>(row.c||[]).map(cell=>cell?.v??null));
+          // Google may promote the source header row to column labels.
+          const labels=cols.map(col=>col?.label||'');
+          if(labels.some(x=>/^(category|model|model code)$/i.test(String(x).trim())))data.unshift(labels);
+          if(!data.length)throw new Error('Worksheet is empty: '+sheetName);
+          finish(null,data);
+        }catch(e){finish(e)}
+      };
+      script.onerror=()=>finish(new Error('Google did not allow this worksheet to load: '+sheetName));
+      const tqx='out:json;responseHandler:'+cb;
+      script.src='https://docs.google.com/spreadsheets/d/'+encodeURIComponent(sheetId)+'/gviz/tq?headers=0&sheet='+encodeURIComponent(sheetName)+'&tqx='+encodeURIComponent(tqx)+'&tq='+encodeURIComponent('select *');
+      document.head.appendChild(script);
+    });
+  }
+  async function syncGoogleStockReport(){
+    const input=document.getElementById('googleStockUrl');
+    const btn=document.getElementById('syncGoogleStockBtn');
+    const status=document.getElementById('googleStockSyncStatus');
+    if(!input||!btn||!status)return;
+    const link=input.value.trim(),id=googleStockSheetId(link);
+    if(!id){status.textContent='Please paste a valid Google Sheets link.';return;}
+    localStorage.setItem('lgStockSheetSourceUrl.v1',link);
+    if(!cloudReady){status.textContent='Admin sign-in is required to sync shared stock data. No data was changed.';return;}
+    if(typeof XLSX==='undefined'){status.textContent='Spreadsheet parser unavailable. Check internet connection.';return;}
+    btn.disabled=true;btn.textContent='Reading sheet…';status.textContent='Connecting to Google. No stock will change until you review and apply.';
+    let exportError=null;
+    try{
+      let wb=null,rawFile=null;
+      // Publicly fetchable XLSX sources may work directly; validate ZIP bytes
+      // before parsing because private links often return a login HTML page.
+      try{
+        const controller=new AbortController();
+        const timer=setTimeout(()=>controller.abort(),12000);
+        let response;
+        try{
+          response=await fetch('https://docs.google.com/spreadsheets/d/'+encodeURIComponent(id)+'/export?format=xlsx',{method:'GET',mode:'cors',credentials:'include',signal:controller.signal,cache:'no-store'});
+        }finally{clearTimeout(timer)}
+        if(!response.ok)throw new Error('Google returned HTTP '+response.status);
+        const buf=await response.arrayBuffer(),bytes=new Uint8Array(buf);
+        if(bytes[0]!==0x50 || bytes[1]!==0x4b)throw new Error('Google did not return an XLSX workbook.');
+        wb=XLSX.read(buf,{type:'array',cellDates:true});
+        rawFile=new File([buf],'Google_Stock_Report_'+new Date().toISOString().slice(0,10)+'.xlsx',{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+      }catch(e){exportError=e}
+      if(!wb){
+        status.textContent='Trying Google Sheets worksheet access…';
+        const [available,portfolio]=await Promise.all([
+          fetchGoogleStockVizSheet(id,'Available Sum'),
+          fetchGoogleStockVizSheet(id,'Portfolio Status')
+        ]);
+        wb=XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(available),'Available Sum');
+        XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(portfolio),'Portfolio Status');
+      }
+      const name='Google Sheets stock report';
+      const parsed=parseStockWorkbook(wb,name);
+      if(Object.keys(parsed.products||{}).length===0)throw new Error('The workbook contained no valid stock models.');
+      const diff=compareImport(parsed),selected={};
+      diff.forEach(c=>selected[c.model]=c.type!=='missing');
+      pendingImport={fileName:name,file:rawFile,parsed,diff,selected,options:{stock:true,lifecycle:true,newModels:true,missing:false}};
+      renderImportPreview();
+      status.textContent='Sheet read successfully. Review the changes below, then click Apply selected.';
+      toast('Google stock report loaded for review.');
+    }catch(e){
+      console.warn('Google stock sync:',e,'Direct download:',exportError);
+      const permission=/permission|access|forbidden|403|html|timed out|load|response|query/i.test(String(e?.message||''));
+      status.textContent=(permission?'Could not read this Google file. Check sharing/access; a private file needs an authorized Google connection. ':'Could not import Google stock report. ')+(e?.message||'');
+      toast('Sync not applied. Existing stock data is unchanged.');
+    }finally{
+      btn.disabled=false;btn.textContent='Sync Stock Report';
+    }
   }
 
   async function handleStockFile(file){
