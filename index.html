@@ -865,7 +865,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
       }
       const name='Google Sheets stock report';
       const parsed=parseStockWorkbook(wb,name);
-      if(Object.keys(parsed.products||{}).length===0)throw new Error('The workbook contained no valid stock models.');
+      validateStockRegionCoverage(parsed);
       const diff=compareImport(parsed),selected={};
       diff.forEach(c=>selected[c.model]=c.type!=='missing');
       pendingImport={fileName:name,file:rawFile,parsed,diff,selected,options:{stock:true,lifecycle:true,newModels:true,missing:false}};
@@ -889,6 +889,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
       const buf=await file.arrayBuffer();
       const wb=XLSX.read(buf,{type:'array',cellDates:true});
       const parsed=parseStockWorkbook(wb,file.name);
+      validateStockRegionCoverage(parsed);
       const diff=compareImport(parsed);
       const selected={};
       diff.forEach(c=>selected[c.model]=c.type!=='missing');
@@ -1001,6 +1002,20 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     }
     const d=new Date(v); return Number.isNaN(d.getTime())?null:d.toISOString();
   }
+  // Prevent malformed Google visualisation/XLSX imports from silently
+  // replacing every Sabah or Sarawak balance with zero. This checks
+  // mapped balance columns O and U against the rest of each region's data.
+  function validateStockRegionCoverage(parsed){
+    const products=Object.values(parsed.products||{}).filter(p=>p.stock?.AL8 && p.stock?.AL2 && p.stock?.AL3);
+    if(products.length<20)throw new Error('Stock import contains fewer than 20 region-mapped models. No changes applied.');
+    for(const [region,col,regionName] of [['AL2','O','Sabah'],['AL3','U','Sarawak']]){
+      const balances=products.filter(p=>safeNum(p.stock[region]?.balance)!==0).length;
+      const otherActivity=products.filter(p=>['opening','inTransit','pending','backorder','currentOrders'].some(k=>safeNum(p.stock[region]?.[k])!==0)).length;
+      if(balances===0 && otherActivity>=5)
+        throw new Error('Unsafe '+regionName+' ('+region+') stock import: column '+col+' reads zero for all '+products.length+' models while '+otherActivity+' models have regional stock activity. Check the source columns and access before syncing. Existing stock was not changed.');
+    }
+    return products.length;
+  }
   function compareImport(parsed){
     const changes=[]; const old=state.products||{}; const next=parsed.products||{};
     const all=new Set([...Object.keys(old),...Object.keys(next)]);
@@ -1016,6 +1031,10 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
       const oldBal=[a.stock?.AL8?.balance,a.stock?.AL2?.balance,a.stock?.AL3?.balance].map(safeNum).join('/');
       const newBal=[b.stock?.AL8?.balance,b.stock?.AL2?.balance,b.stock?.AL3?.balance].map(safeNum).join('/');
       if(oldBal!==newBal) parts.push(`Balance AL8/AL2/AL3: ${oldBal} → ${newBal}`);
+      // Refresh opening/incoming/transit/orders even when balance is unchanged.
+      const fields=['opening','incoming','inTransit','pending','backorder','currentOrders','balance'];
+      const detailRegions=['AL8','AL2','AL3'].filter(region=>fields.some(field=>safeNum(a.stock?.[region]?.[field])!==safeNum(b.stock?.[region]?.[field])));
+      if(detailRegions.length && oldBal===newBal) parts.push(`Stock details: ${detailRegions.join(', ')}`);
       if(parts.length) changes.push({model:code,type:'changed',summary:parts.join(' • ')});
     });
     return changes;
@@ -1023,13 +1042,14 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
   function renderImportPreview(){
     const el=document.getElementById('importPreview'); if(!el||!pendingImport) return;
     const d=pendingImport.diff||[], counts={new:0,lifecycle:0,stock:0,missing:0};
-    d.forEach(x=>{if(x.type==='new-model')counts.new++;if(x.type==='missing')counts.missing++;if((x.summary||'').includes('Lifecycle')||(x.summary||'').includes('Submission'))counts.lifecycle++;if((x.summary||'').includes('Stock:')||(x.summary||'').includes('Balance'))counts.stock++;});
+    d.forEach(x=>{if(x.type==='new-model')counts.new++;if(x.type==='missing')counts.missing++;if((x.summary||'').includes('Lifecycle')||(x.summary||'').includes('Submission'))counts.lifecycle++;if((x.summary||'').includes('Stock:')||(x.summary||'').includes('Balance')||(x.summary||'').includes('Stock details:'))counts.stock++;});
     const rejected=pendingImport.parsed.rejectedRows||[];
     el.innerHTML=`
       <div class="hr"></div>
       <div class="card-title-row"><div><h2>Review before applying</h2><div class="small muted">${esc(pendingImport.fileName)} • report ${esc(fmtDate(pendingImport.parsed.reportDate))}</div></div><div><button class="btn btn-secondary btn-sm" id="cancelImport">Cancel</button> <button class="btn btn-primary btn-sm" id="applyImport">Apply selected</button></div></div>
       <div class="grid change-summary"><div class="mini-kpi"><b>${counts.new}</b><span>New models</span></div><div class="mini-kpi"><b>${counts.lifecycle}</b><span>Lifecycle changes</span></div><div class="mini-kpi"><b>${counts.stock}</b><span>Stock changes</span></div><div class="mini-kpi"><b>${counts.missing}</b><span>Missing from report</span></div></div>
       ${rejected.length?`<div class="notice ok" style="margin-top:12px"><b>${rejected.length} non-model row${rejected.length===1?'':'s'} ignored automatically.</b> Totals and numeric cells will not become products.</div>`:''}
+      <div class="small muted" style="margin:12px 0"><b>Regional data check:</b> ${['AL8','AL2','AL3'].map((region,i)=>{const rows=Object.values(pendingImport.parsed.products||{}); const n=rows.filter(p=>safeNum(p.stock?.[region]?.balance)!==0).length;return ['West Malaysia G','Sabah O','Sarawak U'][i]+': '+n+' models with nonzero balance'}).join(' · ')}</div>
       <div class="card" style="margin:14px 0;padding:14px">
         <div class="small muted" style="margin-bottom:8px"><b>Fields to apply</b></div>
         <div style="display:flex;gap:14px;flex-wrap:wrap">
@@ -1052,11 +1072,12 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
   }
   async function applyPendingImport(){
     if(!pendingImport) return;
+    try{validateStockRegionCoverage(pendingImport.parsed)}catch(e){toast(e.message||String(e));return;}
     const opt=pendingImport.options||{stock:true,lifecycle:true,newModels:true,missing:false};
     const relevant=c=>{
       if(c.type==='new-model') return opt.newModels;
       if(c.type==='missing') return opt.missing;
-      const s=c.summary||'', life=s.includes('Lifecycle')||s.includes('Submission'), stock=s.includes('Stock:')||s.includes('Balance');
+      const s=c.summary||'', life=s.includes('Lifecycle')||s.includes('Submission'), stock=s.includes('Stock:')||s.includes('Balance')||s.includes('Stock details:');
       return (life&&opt.lifecycle)||(stock&&opt.stock);
     };
     const chosen=(pendingImport.diff||[]).filter(c=>pendingImport.selected[c.model]&&relevant(c));
