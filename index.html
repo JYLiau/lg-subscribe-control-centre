@@ -697,12 +697,12 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
           <button id="syncGoogleStockBtn" class="btn btn-primary">Sync Stock Report</button>
           <span id="googleStockSyncStatus" class="small muted" role="status" aria-live="polite">The stock report is reviewed before applying changes.</span>
         </div>
-        <div class="small muted" style="margin-top:10px">Google must allow this site to read the file. If the source requires private Google sign-in, a separate authorized connection is needed; a pasted URL cannot bypass access controls.</div>
+        <div class="small muted" style="margin-top:10px">Manual Google-link import requires machine-readable worksheet access, which may be unavailable even when the report opens in your Google account. Your scheduled LG Daily Stock Sync uses its own authorized browser workflow. A pasted URL cannot bypass Google access restrictions.</div>
       </div>
       <div class="card">
         <div class="dropzone" id="dropzone">
           <div style="font-size:34px">⇧</div><h3>Upload the latest stock report</h3>
-          <p>Expected workbook sheets: <span class="mono">Available Sum</span> and <span class="mono">Portfolio Status</span>. Region balances: West Malaysia G, Sabah O, Sarawak U.</p>
+          <p>Expected workbook sheets: <span class="mono">Available Sum</span> and <span class="mono">Portfolio Status</span>. Opening stock: West Malaysia E, Sabah O, Sarawak U. Balance stock: West Malaysia I, Sabah T, Sarawak Z.</p>
           <div style="margin-top:14px"><label class="btn btn-primary file-btn">Choose XLSX<input id="stockFileInput" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden></label></div>
         </div>
         <div id="importPreview"></div>
@@ -942,7 +942,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
       for(const start of [m+1,sabah,sarawak]){
         const end=start+(start===m+1?4:5);
         if(!headerAt(start).includes('openingstock')||!headerAt(end).includes('balancestock'))
-          throw new Error('Stock report column layout changed or is unreadable. Opening/balance headings must be verified before importing. No stock was changed.');
+          throw new Error('Could not verify the source opening/balance column headings in the data returned by Google. The worksheet layout may differ, or restricted access may return incomplete data. No stock was changed.');
         if(r.length<=end)throw new Error('Incomplete regional stock row '+(i+1)+'. No stock was changed.');
       }
       products[code]=Object.assign({},products[code]||{},{
