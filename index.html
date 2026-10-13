@@ -702,7 +702,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
       <div class="card">
         <div class="dropzone" id="dropzone">
           <div style="font-size:34px">⇧</div><h3>Upload the latest stock report</h3>
-          <p>Expected workbook sheets: <span class="mono">Available Sum</span> and <span class="mono">Portfolio Status</span>.</p>
+          <p>Expected workbook sheets: <span class="mono">Available Sum</span> and <span class="mono">Portfolio Status</span>. Region balances: West Malaysia G, Sabah O, Sarawak U.</p>
           <div style="margin-top:14px"><label class="btn btn-primary file-btn">Choose XLSX<input id="stockFileInput" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden></label></div>
         </div>
         <div id="importPreview"></div>
@@ -932,9 +932,13 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
         continue;
       }
 
-      // The recurring LG stock report keeps the regional stock blocks at fixed
-      // offsets from the Model column even when leading columns shift.
+      // Confirmed 13 Oct 2026 Available Sum layout: with Model in B,
+      // West Malaysia uses C:G, Sabah uses J:O and Sarawak uses P:U.
+      // The previous AL2 (T:Y) / AL3 (Z:AE) offsets were incorrect and
+      // silently made both regional balances zero after Google Sheets sync.
+      // Anchor to the Model column so a leading-column shift still works.
       const m=ah.modelIdx;
+      const sabah=m+8, sarawak=m+14;
       products[code]=Object.assign({},products[code]||{},{
         code,category:cat||products[code]?.category||'',
         stock:{
@@ -946,20 +950,20 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
             balance:stockAt(r,m+5)
           },
           AL2:{
-            opening:stockAt(r,m+18),
-            inTransit:stockAt(r,m+19),
-            pending:stockAt(r,m+20),
-            backorder:stockAt(r,m+21),
-            currentOrders:stockAt(r,m+22),
-            balance:stockAt(r,m+23)
+            opening:stockAt(r,sabah),
+            inTransit:stockAt(r,sabah+1),
+            pending:stockAt(r,sabah+2),
+            backorder:stockAt(r,sabah+3),
+            currentOrders:stockAt(r,sabah+4),
+            balance:stockAt(r,sabah+5) // O when Model is in B
           },
           AL3:{
-            opening:stockAt(r,m+24),
-            inTransit:stockAt(r,m+25),
-            pending:stockAt(r,m+26),
-            backorder:stockAt(r,m+27),
-            currentOrders:stockAt(r,m+28),
-            balance:stockAt(r,m+29)
+            opening:stockAt(r,sarawak),
+            inTransit:stockAt(r,sarawak+1),
+            pending:stockAt(r,sarawak+2),
+            backorder:stockAt(r,sarawak+3),
+            currentOrders:stockAt(r,sarawak+4),
+            balance:stockAt(r,sarawak+5) // U when Model is in B
           }
         }
       });
