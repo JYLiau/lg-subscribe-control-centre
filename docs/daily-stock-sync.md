@@ -28,7 +28,7 @@ Model is D. J:N contains AL8 arrival/ETA information. Revalidate headings instea
 
 ## Validation gate
 
-Read all model rows, including stopped models. Require readable numeric values, exact model codes, no duplicates, full coverage and a valid source timestamp. Do not assume a missing or unreadable figure is zero. Check row balance arithmetic and visible subtotals/grand totals. Unexplained inconsistencies, unmatched new models, incomplete reads or access failures stop the entire batch and preserve the last stored stock. Absence from the report never authorizes zeroing, deleting, or changing a model's lifecycle or submission status.
+Read all model rows, including stopped models. Require readable numeric values, exact model codes, no duplicates, full coverage and a valid source timestamp. Do not assume a missing or unreadable figure is zero. Check individual model row balance arithmetic. By the 14 October 2026 user instruction, temporarily exclude subtotal and grand-total rows from blocking validation; record that exclusion in the audit. Unexplained individual model inconsistencies, unmatched new models, incomplete reads or access failures stop the entire batch and preserve the last stored stock. Absence from the report never authorizes zeroing, deleting, or changing a model's lifecycle or submission status.
 
 The 13 October source currently fails total reconciliation. Its 67 visible model rows summed to AL8 opening 6792 / balance 5155, Sabah opening 486 / balance 524, Sarawak opening 270 / balance 244; the displayed grand totals were 6643 / 4668, 509 / 504, 308 / 297 respectively. This discrepancy is unresolved. No stock data was applied during setup. Re-read the current source and report if the discrepancy persists; do not reuse these quantities as live inputs.
 
@@ -45,3 +45,20 @@ Re-read all changed rows after commit and verify the public Control Center and c
 ## Importer regression check
 
 Run `node tests/stock-mapping.test.cjs`. The manual importer now maps Sabah at Model+11 and Sarawak at Model+17, verifies opening/balance headings, and rejects incomplete regional rows. This fixes parsing code only; it does not bypass Google access restrictions or validate the current source totals.
+
+
+## Daily sync status history (added 14 October 2026)
+
+A read-only Daily Stock Sync card is displayed on the Control Center Dashboard. It reads public.stock_sync_runs through Supabase's publishable key and read-only RLS for this LG workspace; no login is required to see stock-sync metadata. Client-side status refresh only reads history and does not trigger a stock import. The dashboard displays last scheduled run, last verified applied stock, and 30 days of history.
+
+A privileged scheduled runner (the existing ChatGPT LG Daily Stock Sync automation) must write exactly one result per MYT day with the unique key daily-YYYY-MM-DD, workspace d257117f-df44-4da3-b7cb-7d0b84e6e0e4, and origin=scheduled. This logger should run even after failed source reads, validation failures, and unchanged reports:
+- success: complete fresh source read, all individual-model validation, atomic database apply, post-commit comparison, and verified public feed. Include applied_at and actual model/region counts.
+- no_change: complete fresh source read and validation; source and stored stock match with no write required. Include verified model/region counts; applied_at is NULL.
+- failed: access, parsing, validation, publish/verification or other failure. Do not write stock; write a short non-sensitive reason. If a stock transaction partially fails, resolve consistency and do not declare success.
+- unverified: historical seed for the 14 October 10:06 run, since a completed stock sync could not be confirmed at setup. This must not be interpreted as a successful import.
+
+Use run_at for the actual runner start time, completed_at for the completed audit, and source_report_at for the time shown by the Google Sheet (not the execution date). Preserve a successful daily outcome if an accidental rerun fails later. Store no private workbook values, passwords, email addresses or customer information in these public metadata rows. Do not use a GitHub Pages deployment success, a cloud-state save, or a previous manual import to claim a scheduled sync succeeded.
+
+One historical manual row records the independently validated 14 October 08:22 MYT import (source report dated 13 October 17:18 MYT, 67 models / 201 region checks). It is explicitly separate from the 10:06 MYT scheduled run, whose verified result is missing.
+
+The existing automation is a flexible 10 AM MYT schedule (may run in the following hour). The dashboard flags missing outcomes after 11 AM; an automation run with no logged verified outcome remains an amber warning. View history is restricted to the trailing 30 days. No database job or GitHub Action is assumed to be the scheduler; the external ChatGPT automation remains the source of execution.
