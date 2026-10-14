@@ -218,7 +218,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
   }
   function publicSafeHtmlSnapshot(){
     const root=document.documentElement.cloneNode(true);
-    const gate=root.querySelector('#cloudGate');if(gate)gate.classList.remove('hidden');
+    const gate=root.querySelector('#cloudGate');if(gate)gate.classList.add('hidden');
     const nav=root.querySelector('#nav');if(nav)nav.innerHTML='';
     const view=root.querySelector('#view');if(view)view.innerHTML='';
     const email=root.querySelector('#cloudEmail');if(email){email.removeAttribute('value');}
@@ -250,7 +250,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
       const pu=cloud.storage.from(PWA_BUCKET).getPublicUrl(`${base}/index.html`);lastPublishedPwaUrl=pu.data.publicUrl;
       if(btn){btn.disabled=false;btn.textContent='Open App';btn.classList.add('published');}
       const m=document.getElementById('modal'), body=document.getElementById('modalBody');
-      body.innerHTML=`<h2 style="margin-top:0">Home-screen app is ready</h2><p class="small muted">Your cloud data stays behind your Supabase login. The public app shell does not contain the internal stock report.</p><div class="pwa-link">${esc(lastPublishedPwaUrl)}</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><a class="btn btn-primary" href="${esc(lastPublishedPwaUrl)}" target="_blank" rel="noopener">Open app in Chrome</a><button id="copyPwaUrl" class="btn btn-secondary">Copy link</button><button id="closePwaModal" class="btn btn-secondary">Close</button></div><div class="notice info" style="margin-top:14px"><b>On your Samsung/Android phone:</b><br>1. Open the app link in Chrome.<br>2. Tap <b>Install App</b> at the top if it appears. If not, use Chrome menu <b>⋮ → Add to Home screen / Install app</b>.<br>3. The LG Control icon will then open like an app from your home screen.</div>`;
+      body.innerHTML=`<h2 style="margin-top:0">Home-screen app is ready</h2><p class="small muted">Open the live catalogue without signing in. Shared workspace changes require authorized access.</p><div class="pwa-link">${esc(lastPublishedPwaUrl)}</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><a class="btn btn-primary" href="${esc(lastPublishedPwaUrl)}" target="_blank" rel="noopener">Open app in Chrome</a><button id="copyPwaUrl" class="btn btn-secondary">Copy link</button><button id="closePwaModal" class="btn btn-secondary">Close</button></div><div class="notice info" style="margin-top:14px"><b>On your Samsung/Android phone:</b><br>1. Open the app link in Chrome.<br>2. Tap <b>Install App</b> at the top if it appears. If not, use Chrome menu <b>⋮ → Add to Home screen / Install app</b>.<br>3. The LG Control icon will then open like an app from your home screen.</div>`;
       body.querySelector('#copyPwaUrl').onclick=async()=>{await navigator.clipboard.writeText(lastPublishedPwaUrl);toast('App link copied.')};
       body.querySelector('#closePwaModal').onclick=()=>m.close();m.showModal();toast('Home-screen app published.');return lastPublishedPwaUrl;
     }catch(e){console.error(e);toast('Could not publish app: '+(e.message||e));if(btn){btn.disabled=false;btn.textContent=old||'Publish App';}return null;}
@@ -308,7 +308,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
         cloudWorkspaceId=null;
         mode.textContent='Public view · local edits';
         mode.title='Live inventory and plans; edits made without admin sign-in are saved only on this device.';
-        gate.classList.toggle('hidden',new URLSearchParams(location.search).get('admin')!=='1');
+        gate.classList.add('hidden'); // Open public access even from older admin links.
         try {
           const publicState=await publicData();
           if(myBoot!==bootId)return;
