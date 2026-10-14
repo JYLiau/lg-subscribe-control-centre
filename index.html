@@ -58,6 +58,16 @@ button,input,select,textarea{font:inherit}.shell{min-height:100vh;display:grid;g
       <div class="field"><label>Email</label><input id="cloudEmail" class="input" type="email" style="width:100%" autocomplete="email" placeholder="you@example.com"></div>
       <div class="field" style="margin-top:10px"><label>Password</label><input id="cloudPassword" class="input" type="password" style="width:100%" autocomplete="current-password" placeholder="Password"></div>
       <div style="display:flex;gap:8px;margin-top:16px"><button id="cloudSignIn" class="btn btn-primary" style="flex:1">Sign in</button><button id="cloudSignUp" class="btn btn-secondary" style="flex:1">Create account</button></div>
+      <button id="cloudForgotPassword" class="btn btn-secondary" style="margin-top:12px;width:100%">Forgot password?</button>
+      <form id="cloudRecoveryForm" hidden style="margin-top:16px">
+        <h2>Set a new password</h2>
+        <p>Choose a new password for your Control Centre account.</p>
+        <label for="cloudNewPassword">New password</label>
+        <input id="cloudNewPassword" class="input" type="password" autocomplete="new-password" minlength="8" required style="width:100%">
+        <label for="cloudConfirmPassword">Confirm new password</label>
+        <input id="cloudConfirmPassword" class="input" type="password" autocomplete="new-password" minlength="8" required style="width:100%">
+        <button class="btn btn-primary" type="submit" style="margin-top:12px">Save new password</button>
+      </form>
       <div id="cloudStatus" class="cloud-status">Sign in as an administrator to edit the shared cloud workspace.</div>
       <button id="cloudContinuePublic" class="btn btn-secondary" style="margin-top:10px;width:100%">Continue public access without signing in</button>
     </div>
@@ -119,6 +129,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
   const ASSET_STORE = 'productAssets';
   const SUPABASE_URL = 'https://jmnnesumjpkraugtzdkl.supabase.co';
   const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable__CO_CJqvrVqG-LClfcD_Wg_CVdZZZU8';
+  let passwordRecoveryActive = new URLSearchParams(location.hash.slice(1)).get('type')==='recovery';
   const cloud = window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
   let cloudSession=null, cloudWorkspaceId=null, cloudWorkspacePromise=null, cloudReady=false, cloudSyncTimer=null, cloudNormaliseTimer=null, cloudSyncing=false;
   function setCloudStatus(text,kind=''){const e=document.getElementById('cloudStatus');if(e)e.textContent=text;const u=document.getElementById('cloudUserText');if(u&&cloudSession)u.textContent=cloudSession.user.email||'Signed in';const d=document.getElementById('syncDot');if(d)d.className='sync-dot '+kind;}
@@ -263,6 +274,14 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     const loginBtn=document.getElementById('cloudLoginBtn');
     const logoutBtn=document.getElementById('cloudSignOutBtn');
     let bootId=0;
+    const recoveryForm=document.getElementById('cloudRecoveryForm');
+    const recoveryUI=(active)=>{
+      recoveryForm.hidden=!active;
+      for(const id of ['cloudSignIn','cloudSignUp','cloudForgotPassword','cloudContinuePublic']){
+        document.getElementById(id).style.display=active?'none':'';
+      }
+      document.getElementById('cloudPassword').closest('.field').hidden=active;
+    };
     const publicData=async()=>{
       // Only the safe, auto-updated public snapshot is exposed through anon RLS.
       const r=await cloud.from('control_centre_public_snapshot')
@@ -277,6 +296,12 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
       cloudReady=false;
       clearTimeout(cloudSyncTimer);
       clearTimeout(cloudNormaliseTimer);
+      if(passwordRecoveryActive && session){
+        gate.classList.remove('hidden');
+        recoveryUI(true);
+        status.textContent='Recovery link verified. Enter your new password below.';
+        return;
+      }
       loginBtn.style.display=session?'none':'inline-flex';
       logoutBtn.style.display=session?'inline-flex':'none';
       if(!session){
@@ -325,6 +350,37 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     };
     loginBtn.onclick=()=>{gate.classList.remove('hidden');status.textContent='Admin access: enter your account credentials.';};
     document.getElementById('cloudContinuePublic').onclick=()=>gate.classList.add('hidden');
+    document.getElementById('cloudForgotPassword').onclick=async()=>{
+      const email=document.getElementById('cloudEmail').value.trim();
+      if(!email || !document.getElementById('cloudEmail').checkValidity()){status.textContent='Enter your account email first.';return;}
+      const btn=document.getElementById('cloudForgotPassword');btn.disabled=true;
+      status.textContent='Requesting a password reset email…';
+      try{
+        const {error}=await cloud.auth.resetPasswordForEmail(email,{redirectTo:'https://jyliau.github.io/lg-subscribe-control-centre/'});
+        status.textContent=error ? error.message : 'Reset requested. Check your inbox and spam folder, then open the newest reset link to choose your password.';
+      }catch(e){status.textContent='Could not request a reset: '+e.message;}
+      finally{btn.disabled=false;}
+    };
+    recoveryForm.onsubmit=async(e)=>{
+      e.preventDefault();
+      const field=document.getElementById('cloudNewPassword'), confirm=document.getElementById('cloudConfirmPassword');
+      if(!passwordRecoveryActive || !cloudSession){status.textContent='Open a valid recovery link from your email first.';return;}
+      if(field.value.length<8){status.textContent='Use at least 8 characters.';return;}
+      if(field.value!==confirm.value){status.textContent='Passwords do not match.';return;}
+      const btn=recoveryForm.querySelector('button');btn.disabled=true;
+      try{
+        const {error}=await cloud.auth.updateUser({password:field.value});
+        if(error)throw error;
+        field.value='';confirm.value='';document.getElementById('cloudPassword').value='';
+        passwordRecoveryActive=false;recoveryUI(false);
+        await cloud.auth.signOut({scope:'local'});
+        await start(null);
+        gate.classList.remove('hidden');
+        history.replaceState(null,'',location.pathname+'?admin=1');
+        status.textContent='Password updated. Sign in with your new password.';
+      }catch(err){status.textContent=err.message||'Password update failed. Request a new recovery link.';}
+      finally{btn.disabled=false;}
+    };
     document.getElementById('cloudSignIn').onclick=async()=>{
       status.textContent='Signing in…';
       const email=document.getElementById('cloudEmail').value.trim();
@@ -348,12 +404,21 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
       await cloud.auth.signOut();
       await start(null);
     };
+    cloud.auth.onAuthStateChange((event,session)=>{
+      if(event==='PASSWORD_RECOVERY'){
+        passwordRecoveryActive=true;
+        setTimeout(()=>start(session),0);
+      }else if(event==='SIGNED_IN' && session?.user?.id!==cloudSession?.user?.id)setTimeout(()=>start(session),0);
+      else if(event==='SIGNED_OUT' && cloudSession)setTimeout(()=>start(null),0);
+    });
     const initial=await cloud.auth.getSession();
     await start(initial.data.session);
-    cloud.auth.onAuthStateChange((event,session)=>{
-      if(event==='SIGNED_IN' && session?.user?.id!==cloudSession?.user?.id)start(session);
-      else if(event==='SIGNED_OUT' && cloudSession)start(null);
-    });
+    const recoveryError=new URLSearchParams(location.hash.slice(1)).get('error_description');
+    if(recoveryError){
+      gate.classList.remove('hidden');
+      status.textContent='Recovery link could not be used. Request a new reset email using Forgot password.';
+      history.replaceState(null,'',location.pathname+'?admin=1');
+    }
   }
 
   const pageMeta = {
