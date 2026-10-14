@@ -717,6 +717,96 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     });
   }
 
+
+  // Verified daily stock sync log: operational metadata only. Public users have read-only access.
+  const stockSyncMonitor={rows:[],loaded:false,loading:false,error:null};
+  const stockSyncFields='run_key,origin,status,run_at,completed_at,source_report_at,applied_at,source_name,models_checked,regions_checked,models_changed,note,validation_details';
+
+  function stockSyncDayMyt(value){
+    if(!value)return '';
+    const d=new Date(value);
+    if(Number.isNaN(d.getTime()))return '';
+    const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Kuala_Lumpur',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(d);
+    const p=Object.fromEntries(parts.map(x=>[x.type,x.value]));
+    return p.year+'-'+p.month+'-'+p.day;
+  }
+  function stockSyncTimeMyt(value){
+    if(!value)return '—';
+    const d=new Date(value);
+    return Number.isNaN(d.getTime())?'—':new Intl.DateTimeFormat('en-MY',{timeZone:'Asia/Kuala_Lumpur',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true}).format(d)+' MYT';
+  }
+  function stockSyncBadge(status){
+    const style={success:'green',no_change:'blue',failed:'red',unverified:'amber'}[status]||'gray';
+    const label={success:'Success',no_change:'No change',failed:'Failed',unverified:'Unverified'}[status]||'Unknown';
+    return '<span class="pill '+style+'">'+label+'</span>';
+  }
+  async function refreshStockSyncMonitor(){
+    if(stockSyncMonitor.loading)return;
+    stockSyncMonitor.loading=true;stockSyncMonitor.error=null;
+    renderStockSyncPanel();
+    try{
+      const since=new Date(Date.now()-30*86400000).toISOString();
+      const result=await cloud.from('stock_sync_runs').select(stockSyncFields)
+        .eq('workspace_id',PUBLIC_WORKSPACE_ID).gte('run_at',since)
+        .order('run_at',{ascending:false}).limit(150);
+      if(result.error)throw result.error;
+      stockSyncMonitor.rows=result.data||[];
+      stockSyncMonitor.loaded=true;
+    }catch(e){
+      stockSyncMonitor.error=(e&&e.message)||'Could not read sync history';
+    }finally{
+      stockSyncMonitor.loading=false;
+      renderStockSyncPanel();
+    }
+  }
+  function renderStockSyncPanel(){
+    const panel=document.getElementById('dailyStockSyncPanel');
+    if(!panel)return;
+    const m=stockSyncMonitor,rows=m.rows;
+    const today=stockSyncDayMyt(new Date());
+    const todayScheduled=rows.find(x=>x.origin==='scheduled'&&stockSyncDayMyt(x.run_at)===today);
+    const latestScheduled=rows.find(x=>x.origin==='scheduled');
+    const latestApplied=rows.find(x=>x.status==='success'&&x.applied_at);
+    const hour=Number(new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Kuala_Lumpur',hour:'2-digit',hourCycle:'h23'}).format(new Date()));
+    let cls='info',headline='Scheduled for around 10:00 AM MYT',detail='No verified daily run has been recorded today.';
+    if(todayScheduled){
+      if(todayScheduled.status==='success'){
+        cls='ok';headline="Today's daily stock sync succeeded";detail=todayScheduled.note||'Validated new stock data was applied and verified.';
+      }else if(todayScheduled.status==='no_change'){
+        cls='ok';headline="Today's stock check passed — no change";detail=todayScheduled.note||'The source was verified and matched the previously validated stock.';
+      }else if(todayScheduled.status==='failed'){
+        cls='warn';headline="Today's stock sync failed";detail=todayScheduled.note||'Stock was not changed.';
+      }else{
+        cls='warn';headline="Today's scheduled run is unverified";detail=todayScheduled.note||'The run was detected, but successful stock synchronization was not verified.';
+      }
+    }else if(hour>=11){
+      cls='warn';headline="Today's daily sync has no verified result";detail='No completed scheduled-stock validation is recorded. Previous stock must not be assumed current.';
+    }
+    if(m.error){cls='warn';headline='Cannot load stock-sync history';detail=m.error;}
+    else if(!m.loaded){headline='Loading stock sync records';detail='Reading the shared status log...';}
+    const history=rows.map(x=>{
+      let count=x.models_checked==null?'—':String(x.models_checked);
+      let changes=x.models_changed==null?'—':String(x.models_changed);
+      return '<tr><td>'+esc(stockSyncTimeMyt(x.run_at))+'</td><td>'+esc(x.origin==='scheduled'?'Daily 10 AM':'Manual import')+'</td><td>'+stockSyncBadge(x.status)+'</td><td>'+esc(count)+'</td><td>'+esc(changes)+'</td><td><span class="small">'+esc(x.note||'—')+'</span></td></tr>';
+    }).join('');
+    panel.innerHTML=
+      '<div class="card-title-row"><div><h2>Daily Stock Sync</h2><div class="small muted">Scheduled around 10:00 AM MYT each day. Stock is only marked successful after validation.</div></div>'+
+      '<button type="button" class="btn btn-secondary btn-sm" id="stockSyncRefresh"'+(m.loading?' disabled':'')+'>Refresh status</button></div>'+
+      '<div class="notice '+cls+'" style="margin-top:12px" role="status"><b>'+esc(headline)+'</b><div style="margin-top:4px">'+esc(detail)+'</div></div>'+
+      '<div class="grid two-col" style="margin-top:12px">'+
+      '<div class="mini-kpi"><span>Last daily run</span><b style="font-size:14px">'+esc(latestScheduled?stockSyncTimeMyt(latestScheduled.run_at):'Not recorded')+'</b>'+
+      '<div class="small muted" style="margin-top:6px">'+(latestScheduled?stockSyncBadge(latestScheduled.status):'No scheduled record')+'</div></div>'+
+      '<div class="mini-kpi"><span>Last successfully applied stock</span><b style="font-size:14px">'+esc(latestApplied?stockSyncTimeMyt(latestApplied.applied_at):'Not recorded')+'</b>'+
+      '<div class="small muted" style="margin-top:6px">Report: '+esc(latestApplied?stockSyncTimeMyt(latestApplied.source_report_at):'—')+'</div></div>'+
+      '</div>'+
+      '<details style="margin-top:14px"><summary style="cursor:pointer;font-weight:700;font-size:13px">View 30-day sync history ('+rows.length+' run'+(rows.length===1?'':'s')+')</summary>'+
+      '<div class="table-wrap" style="margin-top:10px"><table class="table"><thead><tr><th>Run time (MYT)</th><th>Type</th><th>Result</th><th>Models checked</th><th>Changed</th><th>Details</th></tr></thead><tbody>'+
+      (history||'<tr><td colspan="6" class="muted">No recorded runs in the last 30 days.</td></tr>')+
+      '</tbody></table></div><div class="small muted" style="margin-top:8px">Success confirms a verified stock update. No change confirms a validated source match. A website deployment or cloud-save indicator is not evidence of stock sync.</div></details>';
+    const btn=panel.querySelector('#stockSyncRefresh');
+    if(btn)btn.onclick=()=>refreshStockSyncMonitor();
+  }
+
   function renderDashboard(view){
     const products=Object.values(state.products||{});
     const active=products.filter(p=>!String(p.submissionStatus||'').toLowerCase().includes('stop') && !String(p.lifecycleStatus||'').toLowerCase().includes('discontinued')).length;
@@ -726,6 +816,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     const revisions=revisionCount();
     const recent=(state.changeLog||[]).slice(-8).reverse();
     view.innerHTML=`
+      <div class="card" id="dailyStockSyncPanel" style="margin-bottom:16px"></div>
       <div class="grid kpi-grid">
         ${kpi('Active models',active,'Not stopped/discontinued')}
         ${kpi('NPI / new',newModels,'Lifecycle from Portfolio Status')}
@@ -750,6 +841,8 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
         </div>
       </div>`;
     document.getElementById('dashUpload').onclick=()=>navigate('update');
+    renderStockSyncPanel();
+    if(!stockSyncMonitor.loaded&&!stockSyncMonitor.loading)void refreshStockSyncMonitor();
   }
   function kpi(label,value,note){ return `<div class="kpi"><div class="kpi-label">${esc(label)}</div><div class="kpi-value">${esc(value)}</div><div class="kpi-note">${esc(note)}</div></div>`; }
 
