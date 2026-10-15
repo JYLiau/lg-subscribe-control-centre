@@ -715,7 +715,7 @@ function selectedCopywriting(){
   if(features.length)lines.push('',featureHeading(),...features.map(x=>'✔️ '+x));
   lines.push('',tr('copyPlan',{years:chosenPlan.years,service:serviceLabel(chosenPlan.service)}),offer,'',tr('copyPackageIncludes'),tr('copyDelivery'),warrantyLine(chosenPlan.years));
   if(activeProduct.category!=='TV')lines.push(tr('copyServiceLine',{service:serviceLabel(chosenPlan.service)}));
-  if(chosenPlan.service==='Combine Maintenance')lines.push(tr('copyCmKit'),tr('copyCmVisit'));
+  if(activeProduct.category!=='TV'&&chosenPlan.service==='Combine Maintenance')lines.push(tr('copyCmKit'),tr('copyCmVisit'));
   return lines.join('\n');
 }
 function copySelectedCopywriting(){
