@@ -869,6 +869,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
         <div class="toolbar" style="margin-top:10px"><button type="button" id="manualStockLoadBtn" class="btn btn-secondary">Load existing stock for comparison</button></div>
         <div id="manualStockMessage" class="small muted" role="status" aria-live="polite"></div>
         <div id="manualStockForm"></div>
+        <div id="manualStockHistory" class="small muted" style="margin-top:16px"></div>
       </details>
       <div class="card">
         <div class="dropzone" id="dropzone">
@@ -895,6 +896,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     linkInput.addEventListener('input',()=>localStorage.setItem('lgStockSheetSourceUrl.v1',linkInput.value.trim()));
     document.getElementById('syncGoogleStockBtn').addEventListener('click',syncGoogleStockReport);
     document.getElementById('manualStockLoadBtn').addEventListener('click',loadManualStockModel);
+    if(cloudReady)void refreshManualStockHistory();
     const input=document.getElementById('stockFileInput'); input.addEventListener('change',e=>handleStockFile(e.target.files[0]));
     const docInput=document.getElementById('docFileInput'); if(docInput) docInput.addEventListener('change',e=>handleSourcePdf(e.target.files[0],document.getElementById('docType').value));
     const dz=document.getElementById('dropzone');
@@ -906,6 +908,20 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     renderStockSyncPanel();
     if(!stockSyncMonitor.loading&&Date.now()-stockSyncMonitor.refreshedAt>120000)void refreshStockSyncMonitor();
   }
+  async function refreshManualStockHistory(){
+    const el=document.getElementById('manualStockHistory');if(!el||!cloudReady)return;
+    el.textContent='Loading recent individual model checks…';
+    try{
+      const result=await cloud.from('manual_stock_checks').select('model_code,report_date,checked_at,changed')
+        .eq('workspace_id',PUBLIC_WORKSPACE_ID).order('checked_at',{ascending:false}).limit(12);
+      if(result.error)throw result.error;
+      const rows=result.data||[];
+      if(!rows.length){el.textContent='No manual model checks recorded yet.';return;}
+      el.innerHTML='<h3>Recent individual checks (not full sync)</h3><div class="table-wrap"><table class="table"><thead><tr><th>Verified at</th><th>Model</th><th>Source date</th><th>Result</th></tr></thead><tbody>'+
+        rows.map(x=>'<tr><td>'+esc(stockSyncTimeMyt(x.checked_at))+'</td><td>'+esc(x.model_code)+'</td><td>'+esc(x.report_date)+'</td><td>'+esc(x.changed?'Updated':'No change')+'</td></tr>').join('')+'</tbody></table></div>';
+    }catch(e){el.textContent='Manual-check history unavailable: '+String(e?.message||e);}
+  }
+
   // Explicit one-model fallback. Never turns a partial check into a daily-sync success.
   async function loadManualStockModel(){
     const msg=document.getElementById('manualStockMessage'),el=document.getElementById('manualStockForm');
@@ -971,6 +987,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
           const details=document.getElementById('manualStockDetails');if(details)details.open=true;
           const status=document.getElementById('manualStockMessage');if(status)status.textContent='Verified '+code+' ('+date+'). '+(result.data?.status==='verified_no_change'?'Stock was already identical.':'One model updated and verified.')+' Not a full daily sync.';
           toast('One-model verification recorded. Daily sync status remains separate.');
+          void refreshManualStockHistory();
         }catch(err){msg.textContent='Could not complete or confirm this update: '+String(err?.message||err)+'. Check saved stock before retrying.';btn.disabled=false;btn.textContent='Validate and confirm one-model update';}
       };
     }catch(e){msg.textContent='Could not load: '+String(e?.message||e);}
