@@ -791,11 +791,11 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
       return '<tr><td>'+esc(stockSyncTimeMyt(x.run_at))+'</td><td>'+esc(x.origin==='scheduled'?'Daily 10 AM':'Manual import')+'</td><td>'+stockSyncBadge(x.status)+'</td><td>'+esc(count)+'</td><td>'+esc(changes)+'</td><td><span class="small">'+esc(x.note||'—')+'</span></td></tr>';
     }).join('');
     panel.innerHTML=
-      '<div class="card-title-row"><div><h2>Daily Stock Sync</h2><div class="small muted">Scheduled around 10:00 AM MYT each day. Stock is only marked successful after validation.</div></div>'+
+      '<div class="card-title-row"><div><h2>Daily Stock Source Check</h2><div class="small muted">Around 10:00 AM MYT. Restricted source metadata can be checked, but a full automatic stock update is not currently authorized or verified.</div></div>'+
       '<button type="button" class="btn btn-secondary btn-sm" id="stockSyncRefresh"'+(m.loading?' disabled':'')+'>Refresh status</button></div>'+
       '<div class="notice '+cls+'" style="margin-top:12px" role="status"><b>'+esc(headline)+'</b><div style="margin-top:4px">'+esc(detail)+'</div></div>'+
       '<div class="grid two-col" style="margin-top:12px">'+
-      '<div class="mini-kpi"><span>Last daily run</span><b style="font-size:14px">'+esc(latestScheduled?stockSyncTimeMyt(latestScheduled.run_at):'Not recorded')+'</b>'+
+      '<div class="mini-kpi"><span>Last 10 AM check</span><b style="font-size:14px">'+esc(latestScheduled?stockSyncTimeMyt(latestScheduled.run_at):'Not recorded')+'</b>'+
       '<div class="small muted" style="margin-top:6px">'+(latestScheduled?stockSyncBadge(latestScheduled.status):'No scheduled record')+'</div></div>'+
       '<div class="mini-kpi"><span>Last successfully applied stock</span><b style="font-size:14px">'+esc(latestApplied?stockSyncTimeMyt(latestApplied.applied_at):'Not recorded')+'</b>'+
       '<div class="small muted" style="margin-top:6px">Report: '+esc(latestApplied?stockSyncTimeMyt(latestApplied.source_report_at):'—')+'</div></div>'+
@@ -861,7 +861,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
       </div>
       <details class="card" id="manualStockDetails" style="margin-bottom:16px">
         <summary style="cursor:pointer;font-weight:700">Verify one model manually (view-only fallback)</summary>
-        <p class="small muted" style="margin-top:12px">For individually observed figures you are permitted to enter. Do not download, export, screenshot, or bypass restrictions on the source workbook. This is a <b>partial manual correction</b>, not a completed daily stock sync. All 17 stock fields across AL8, Sabah and Sarawak are required; negative balances are supported.</p>
+        <p class="small muted" style="margin-top:12px">For individually observed figures you are permitted to enter. Do not download, export, screenshot, or bypass restrictions on the source workbook. This is a <b>partial manual correction</b>, not a completed daily stock sync. All 17 stock fields across AL8, Sabah and Sarawak are required; negative balances are supported. <a href="https://docs.google.com/spreadsheets/d/1GMPzP8jWTl_hzhY0CLyw-2S1ximTyePj/edit?gid=962201189" target="_blank" rel="noopener noreferrer">Open the source in Google Drive</a>.</p>
         <div class="grid two-col" style="margin-top:12px">
           <div class="field"><label for="manualStockModel">Exact existing model code</label><input id="manualStockModel" list="manualStockModels" class="input" style="width:100%" autocomplete="off" placeholder="e.g. GC-J257SQNW.AMCRLML"><datalist id="manualStockModels">${Object.keys(state.products||{}).filter(validStockModelCode).sort().map(code=>`<option value="${esc(code)}"></option>`).join('')}</datalist></div>
           <div class="field"><label for="manualStockDate">Source report date (Malaysia)</label><input id="manualStockDate" class="input" type="date" style="width:100%"></div>
