@@ -719,7 +719,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
 
 
   // Verified daily stock sync log: operational metadata only. Public users have read-only access.
-  const stockSyncMonitor={rows:[],loaded:false,loading:false,error:null};
+  const stockSyncMonitor={rows:[],loaded:false,loading:false,error:null,refreshedAt:0};
   const stockSyncFields='run_key,origin,status,run_at,completed_at,source_report_at,applied_at,source_name,models_checked,regions_checked,models_changed,note,validation_details';
 
   function stockSyncDayMyt(value){
@@ -756,6 +756,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
       stockSyncMonitor.error=(e&&e.message)||'Could not read sync history';
     }finally{
       stockSyncMonitor.loading=false;
+      stockSyncMonitor.refreshedAt=Date.now();
       renderStockSyncPanel();
     }
   }
@@ -842,20 +843,21 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
       </div>`;
     document.getElementById('dashUpload').onclick=()=>navigate('update');
     renderStockSyncPanel();
-    if(!stockSyncMonitor.loaded&&!stockSyncMonitor.loading)void refreshStockSyncMonitor();
+    if(!stockSyncMonitor.loading&&Date.now()-stockSyncMonitor.refreshedAt>120000)void refreshStockSyncMonitor();
   }
   function kpi(label,value,note){ return `<div class="kpi"><div class="kpi-label">${esc(label)}</div><div class="kpi-value">${esc(value)}</div><div class="kpi-note">${esc(note)}</div></div>`; }
 
   function renderUpdate(view){
     view.innerHTML=`
+      <div id="dailyStockSyncPanel" class="card" style="margin-bottom:16px"></div>
       <div class="card" style="margin-bottom:16px">
-        <div class="card-title-row"><div><h2>Sync stock report from Google Sheets</h2><div class="small muted">Paste the Google Sheets URL to load the latest stock workbook for review. Existing XLSX upload remains available below.</div></div></div>
+        <div class="card-title-row"><div><h2>Review stock from Google Drive</h2><div class="small muted">This reads a Google Drive spreadsheet only when Google grants machine-readable access. Restricted Excel files can be viewed in a browser but still block direct import.</div></div></div>
         <div class="field"><label for="googleStockUrl">Google Sheets link</label><input id="googleStockUrl" class="input" type="url" style="width:100%" placeholder="https://docs.google.com/spreadsheets/d/..." autocomplete="off" spellcheck="false" value="${esc(localStorage.getItem('lgStockSheetSourceUrl.v1')||'')}"></div>
         <div class="toolbar" style="margin-top:12px;margin-bottom:0">
-          <button id="syncGoogleStockBtn" class="btn btn-primary">Sync Stock Report</button>
+          <button id="syncGoogleStockBtn" class="btn btn-primary">Load for review</button>
           <span id="googleStockSyncStatus" class="small muted" role="status" aria-live="polite">The stock report is reviewed before applying changes.</span>
         </div>
-        <div class="small muted" style="margin-top:10px">Manual Google-link import requires machine-readable worksheet access, which may be unavailable even when the report opens in your Google account. Your scheduled LG Daily Stock Sync uses its own authorized browser workflow. A pasted URL cannot bypass Google access restrictions.</div>
+        <div class="small muted" style="margin-top:10px">A Google link does not grant download or worksheet permissions. The daily 10 AM stock task uses a separate, authorized browser workflow. If this file is restricted, only use XLSX upload when the owner permits downloading; otherwise check the daily-run status above.</div>
       </div>
       <div class="card">
         <div class="dropzone" id="dropzone">
@@ -889,6 +891,8 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     dz.addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f)handleStockFile(f)});
     if(pendingImport) renderImportPreview();
     if(pendingDocImport) renderDocImportPreview();
+    renderStockSyncPanel();
+    if(!stockSyncMonitor.loading&&Date.now()-stockSyncMonitor.refreshedAt>120000)void refreshStockSyncMonitor();
   }
   function renderImportHistory(){
     const rows=(state.importHistory||[]).slice().reverse();
@@ -1032,11 +1036,15 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
       toast('Google stock report loaded for review.');
     }catch(e){
       console.warn('Google stock sync:',e,'Direct download:',exportError);
-      const permission=/permission|access|forbidden|403|html|timed out|load|response|query/i.test(String(e?.message||''));
-      status.textContent=(permission?'Could not read this Google file. Check sharing/access; a private file needs an authorized Google connection. ':'Could not import Google stock report. ')+(e?.message||'');
+      const reason=String(e?.message||'');
+      const isValidationError=/Could not verify the source|layout may differ|Incomplete regional|duplicate model|balance arithmetic/i.test(reason);
+      const blocked=!isValidationError&&(/403|401|forbidden|permission|access|timed out|did not allow|failed to fetch|did not return readable|response/i.test(reason)||/403|401|forbidden|permission/i.test(String(exportError?.message||'')));
+      status.textContent=blocked
+        ?'Google blocked machine-readable access to this Drive-hosted report. Browser view permission does not grant direct import permission. The scheduled 10 AM browser task is separate. No stock was changed.'
+        :'The report could not pass import validation: '+reason+' No stock was changed.';
       toast('Sync not applied. Existing stock data is unchanged.');
     }finally{
-      btn.disabled=false;btn.textContent='Sync Stock Report';
+      btn.disabled=false;btn.textContent='Load for review';
     }
   }
 
