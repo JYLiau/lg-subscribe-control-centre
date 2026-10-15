@@ -1075,7 +1075,14 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     const link=input.value.trim(),id=googleStockSheetId(link);
     if(!id){status.textContent='Please paste a valid Google Sheets link.';return;}
     localStorage.setItem('lgStockSheetSourceUrl.v1',link);
-    if(!cloudReady){status.textContent='Admin sign-in is required to sync shared stock data. No data was changed.';return;}
+    // Known restricted view-only Excel file. Do not repeatedly attempt an
+    // export or visualization extraction that the source owner has disabled.
+    if(id==='1GMPzP8jWTl_hzhY0CLyw-2S1ximTyePj'){
+      status.textContent='This Excel report is view-only and its machine-readable download is restricted. No export or extraction was attempted. Use Verify one model manually below for individually observed values you are allowed to record. No stock changed.';
+      const section=document.getElementById('manualStockDetails');if(section)section.open=true;
+      return;
+    }
+    if(!cloudReady){status.textContent='Authorized editor sign-in is required to update shared stock data. No data was changed.';return;}
     if(typeof XLSX==='undefined'){status.textContent='Spreadsheet parser unavailable. Check internet connection.';return;}
     btn.disabled=true;btn.textContent='Reading sheet…';status.textContent='Connecting to Google. No stock will change until you review and apply.';
     let exportError=null;
