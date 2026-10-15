@@ -859,6 +859,17 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
         </div>
         <div class="small muted" style="margin-top:10px">A Google link does not grant download or worksheet permissions. The daily 10 AM stock task uses a separate, authorized browser workflow. If this file is restricted, only use XLSX upload when the owner permits downloading; otherwise check the daily-run status above.</div>
       </div>
+      <details class="card" id="manualStockDetails" style="margin-bottom:16px">
+        <summary style="cursor:pointer;font-weight:700">Verify one model manually (view-only fallback)</summary>
+        <p class="small muted" style="margin-top:12px">For individually observed figures you are permitted to enter. Do not download, export, screenshot, or bypass restrictions on the source workbook. This is a <b>partial manual correction</b>, not a completed daily stock sync. All 17 stock fields across AL8, Sabah and Sarawak are required; negative balances are supported.</p>
+        <div class="grid two-col" style="margin-top:12px">
+          <div class="field"><label for="manualStockModel">Exact existing model code</label><input id="manualStockModel" list="manualStockModels" class="input" style="width:100%" autocomplete="off" placeholder="e.g. GC-J257SQNW.AMCRLML"><datalist id="manualStockModels">${Object.keys(state.products||{}).filter(validStockModelCode).sort().map(code=>`<option value="${esc(code)}"></option>`).join('')}</datalist></div>
+          <div class="field"><label for="manualStockDate">Source report date (Malaysia)</label><input id="manualStockDate" class="input" type="date" style="width:100%"></div>
+        </div>
+        <div class="toolbar" style="margin-top:10px"><button type="button" id="manualStockLoadBtn" class="btn btn-secondary">Load existing stock for comparison</button></div>
+        <div id="manualStockMessage" class="small muted" role="status" aria-live="polite"></div>
+        <div id="manualStockForm"></div>
+      </details>
       <div class="card">
         <div class="dropzone" id="dropzone">
           <div style="font-size:34px">⇧</div><h3>Upload the latest stock report</h3>
@@ -883,6 +894,7 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     const linkInput=document.getElementById('googleStockUrl');
     linkInput.addEventListener('input',()=>localStorage.setItem('lgStockSheetSourceUrl.v1',linkInput.value.trim()));
     document.getElementById('syncGoogleStockBtn').addEventListener('click',syncGoogleStockReport);
+    document.getElementById('manualStockLoadBtn').addEventListener('click',loadManualStockModel);
     const input=document.getElementById('stockFileInput'); input.addEventListener('change',e=>handleStockFile(e.target.files[0]));
     const docInput=document.getElementById('docFileInput'); if(docInput) docInput.addEventListener('change',e=>handleSourcePdf(e.target.files[0],document.getElementById('docType').value));
     const dz=document.getElementById('dropzone');
@@ -893,6 +905,60 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
     if(pendingDocImport) renderDocImportPreview();
     renderStockSyncPanel();
     if(!stockSyncMonitor.loading&&Date.now()-stockSyncMonitor.refreshedAt>120000)void refreshStockSyncMonitor();
+  }
+  // Explicit one-model fallback. Never turns a partial check into a daily-sync success.
+  async function loadManualStockModel(){
+    const msg=document.getElementById('manualStockMessage'),el=document.getElementById('manualStockForm');
+    const code=normModel(document.getElementById('manualStockModel').value);
+    el.innerHTML='';
+    if(!cloudReady || !cloudSession || !cloudWorkspaceId){msg.textContent='Sign in as an authorized Control Center editor first.';return;}
+    if(!validStockModelCode(code)){msg.textContent='Choose an existing full model code.';return;}
+    msg.textContent='Loading the latest saved stock for comparison…';
+    try{
+      const res=await cloud.from('workspace_state').select('state_json,updated_at').eq('workspace_id',PUBLIC_WORKSPACE_ID).single();
+      if(res.error)throw res.error;
+      const existing=res.data.state_json?.products?.[code];
+      if(!existing?.stock?.AL8||!existing?.stock?.AL2||!existing?.stock?.AL3)throw new Error('This exact model is not in the saved stock report. No changes made.');
+      const fields={AL8:[['opening','E · Opening'],['incoming','F · Incoming'],['backorder','G · Backorders'],['currentOrders','H · Current orders'],['balance','I · Balance']],AL2:[['opening','O · Opening'],['inTransit','P · In transit'],['pending','Q · Pending'],['backorder','R · Backorders'],['currentOrders','S · Current orders'],['balance','T · Balance']],AL3:[['opening','U · Opening'],['inTransit','V · In transit'],['pending','W · Pending'],['backorder','X · Backorders'],['currentOrders','Y · Current orders'],['balance','Z · Balance']]};
+      const captions={AL8:'West Malaysia (AL8)',AL2:'Sabah (AL2)',AL3:'Sarawak (AL3)'};
+      el.innerHTML=Object.entries(fields).map(([region,items])=>
+        '<div class="hr"></div><h3>'+esc(captions[region])+'</h3><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:9px;margin-top:10px">'+
+        items.map(([field,label])=>'<div class="field"><label>'+esc(label)+'<span class="small muted" style="display:block">Saved: '+esc(existing.stock?.[region]?.[field]??'—')+'</span></label><input class="input" type="number" step="1" data-manual-region="'+region+'" data-manual-field="'+field+'" placeholder="Enter source value" style="width:100%" required></div>').join('')+'</div>').join('')+
+        '<div class="notice warn" style="margin-top:14px">Enter every number from the permitted displayed report, including real zeros. Blank is not zero. All three regional arithmetic checks must pass. Other products, prices, images and lifecycle remain unchanged.</div>'+
+        '<button type="button" class="btn btn-primary" id="manualStockApplyBtn" style="margin-top:12px">Validate and confirm one-model update</button>';
+      msg.textContent='Showing the latest saved values for '+code+'. Enter the new report figures in the empty boxes.';
+      const revision=res.data.updated_at;
+      el.querySelector('#manualStockApplyBtn').onclick=async()=>{
+        const date=document.getElementById('manualStockDate').value;
+        if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){msg.textContent='Select the source report date first.';return;}
+        const latestMyt=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kuala_Lumpur',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+        if(date>latestMyt){msg.textContent='A future source report date is not allowed.';return;}
+        const stock={AL8:{},AL2:{},AL3:{}};
+        for(const input of el.querySelectorAll('[data-manual-region]')){
+          const value=input.value.trim(),field=input.dataset.manualField,region=input.dataset.manualRegion;
+          if(!/^-?\d+$/.test(value) || !Number.isSafeInteger(Number(value)) || Math.abs(Number(value))>1000000 || (field!=='balance'&&Number(value)<0)){msg.textContent='Enter a valid whole number for every field; negative values are only allowed for balances.';input.focus();return;}
+          stock[region][field]=Number(value);
+        }
+        for(const region of ['AL8','AL2','AL3']){
+          const x=stock[region];const calc=x.opening+(region==='AL8'?x.incoming:x.inTransit+x.pending)-x.backorder-x.currentOrders;
+          if(calc!==x.balance){msg.textContent=region+' arithmetic mismatch: expected balance '+calc+', entered '+x.balance+'. Nothing changed.';return;}
+        }
+        if(!window.confirm('Apply verified '+date+' stock for '+code+' ONLY? AL8 '+stock.AL8.balance+', Sabah '+stock.AL2.balance+', Sarawak '+stock.AL3.balance+'. This does NOT mark the whole report synchronized.'))return;
+        if(cloudSyncing){msg.textContent='Another cloud save is running. Wait and reload the model before applying.';return;}
+        const btn=el.querySelector('#manualStockApplyBtn');btn.disabled=true;btn.textContent='Applying safely…';
+        try{
+          clearTimeout(cloudSyncTimer);clearTimeout(cloudNormaliseTimer);
+          const result=await cloud.rpc('apply_manual_stock_check',{p_workspace_id:PUBLIC_WORKSPACE_ID,p_model_code:code,p_report_date:date,p_expected_workspace_updated_at:revision,p_stock:stock});
+          if(result.error)throw result.error;
+          const reloaded=await cloud.from('workspace_state').select('state_json').eq('workspace_id',PUBLIC_WORKSPACE_ID).single();
+          if(reloaded.error)throw new Error('Database accepted the check; refreshing local stock failed. Reload the page before further edits. '+reloaded.error.message);
+          state=reloaded.data.state_json;localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+          render();
+          const status=document.getElementById('manualStockMessage');if(status)status.textContent='Verified '+code+' ('+date+'). '+(result.data?.status==='verified_no_change'?'Stock was already identical.':'One model updated.')+' Not a full daily sync.';
+          toast('One-model verification recorded. Daily sync status remains separate.');
+        }catch(err){msg.textContent='Could not complete or confirm this update: '+String(err?.message||err)+'. Check saved stock before retrying.';btn.disabled=false;btn.textContent='Validate and confirm one-model update';}
+      };
+    }catch(e){msg.textContent='Could not load: '+String(e?.message||e);}
   }
   function renderImportHistory(){
     const rows=(state.importHistory||[]).slice().reverse();
