@@ -228,7 +228,6 @@ function stopSubmission(product){
  return matched.every(x=>/stop|pause/i.test(String(x.submission_status||'')));
 }
 const icon=p=>icons[p.category]||'LG';
-function stockBadge(p){const s=stockFor(p);if(!s)return stockLoaded?'<span class="stock-badge loading">'+esc(tr('stockNotListed'))+'</span>':'<span class="stock-badge loading">'+esc(tr('stockSyncing'))+'</span>';const n=Math.max(0,Math.round(Number(s.total_stock)||0));const opening=Math.max(0,Math.round(Number(s.opening_stock)||0));if(n>0){const c=n<=3?'low':'good';return '<span class="stock-badge '+c+'">'+esc(n<=3?tr('lowStock',{n}):tr('stock',{n}))+'</span>';}if(opening>0)return '<span class="stock-badge low">'+esc(tr('openingStock',{n:opening}))+'</span>';return '<span class="stock-badge out">'+esc(tr('outStock'))+'</span>';}
 function visual(p){
   const src=p.imageData||p.imageUrl||'',fallback=p.fallbackImageUrl||'';
   if(!src)return '<div class="generic-icon">'+icon(p)+'</div>';
