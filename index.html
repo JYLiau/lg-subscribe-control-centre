@@ -952,9 +952,24 @@ window.__LG_SEED__ = {"version":1,"sourceReport":"","reportDate":null,"products"
           if(result.error)throw result.error;
           const reloaded=await cloud.from('workspace_state').select('state_json').eq('workspace_id',PUBLIC_WORKSPACE_ID).single();
           if(reloaded.error)throw new Error('Database accepted the check; refreshing local stock failed. Reload the page before further edits. '+reloaded.error.message);
+          const model=await cloud.from('products').select('id').eq('workspace_id',PUBLIC_WORKSPACE_ID).eq('model_code_full',code).single();
+          if(model.error)throw new Error('Update may have committed, but normalized model verification failed: '+model.error.message);
+          const regional=await cloud.from('product_availability_current').select('region_code,opening_stock,inbound_stock,backorder,balance_stock,as_of_date').eq('workspace_id',PUBLIC_WORKSPACE_ID).eq('product_id',model.data.id);
+          if(regional.error)throw new Error('Update may have committed, but regional verification failed: '+regional.error.message);
+          if((regional.data||[]).length!==3 || regional.data.some(row=>{
+            const v=stock[row.region_code];if(!v)return true;
+            const inbound=row.region_code==='AL8'?v.incoming:v.inTransit+v.pending;
+            return Number(row.opening_stock)!==v.opening || Number(row.inbound_stock)!==inbound || Number(row.backorder)!==v.backorder || Number(row.balance_stock)!==v.balance || row.as_of_date!==date;
+          }))throw new Error('Update may have committed, but read-back verification disagrees. Check stock records before retrying.');
+          if(JSON.stringify(reloaded.data.state_json?.products?.[code]?.stock)!==JSON.stringify(stock)){
+            const saved=reloaded.data.state_json?.products?.[code]?.stock||{};
+            if(['AL8','AL2','AL3'].some(region=>Object.keys(stock[region]).some(k=>Number(saved?.[region]?.[k])!==stock[region][k])))
+              throw new Error('Update may have committed, but saved workspace verification disagrees. Do not retry before checking.');
+          }
           state=reloaded.data.state_json;localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
           render();
-          const status=document.getElementById('manualStockMessage');if(status)status.textContent='Verified '+code+' ('+date+'). '+(result.data?.status==='verified_no_change'?'Stock was already identical.':'One model updated.')+' Not a full daily sync.';
+          const details=document.getElementById('manualStockDetails');if(details)details.open=true;
+          const status=document.getElementById('manualStockMessage');if(status)status.textContent='Verified '+code+' ('+date+'). '+(result.data?.status==='verified_no_change'?'Stock was already identical.':'One model updated and verified.')+' Not a full daily sync.';
           toast('One-model verification recorded. Daily sync status remains separate.');
         }catch(err){msg.textContent='Could not complete or confirm this update: '+String(err?.message||err)+'. Check saved stock before retrying.';btn.disabled=false;btn.textContent='Validate and confirm one-model update';}
       };
