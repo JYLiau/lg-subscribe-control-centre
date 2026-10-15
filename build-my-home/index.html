@@ -92,7 +92,8 @@
         <div class="share-products-title" data-i18n="selectedProducts">Produk dipilih</div>
         <div class="share-photo-grid" id="sharePhotoGrid"></div>
       </div>
-      <div class="cart-total"><div><span data-i18n="paymentNow">Bayaran sekarang</span><br><strong id="currentMonthly">RM0</strong> <em>/<span data-i18n="month">bulan</span></em></div><div class="tiny" id="cartUnits">0 unit</div></div>
+      <!-- Internal totals support budget and WhatsApp calculations; pricing is shown in the payment schedule. -->
+      <div hidden><span id="currentMonthly">RM0</span><span id="cartUnits">0 unit</span></div>
       <div class="cart-items" id="cartItems"></div>
 
       <div class="budget">
