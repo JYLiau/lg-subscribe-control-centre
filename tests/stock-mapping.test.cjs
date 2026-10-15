@@ -23,7 +23,7 @@ for(const shift of [0,2]){
  assert.equal(p.stock.AL8.balance,156);assert.equal(p.stock.AL2.opening,43);assert.equal(p.stock.AL2.balance,38);assert.equal(p.stock.AL3.opening,11);assert.equal(p.stock.AL3.balance,4);
 }
 const changed=fixture();changed.Sheets['Available Sum'][17][14]='Other';
-assert.throws(()=>ctx.parseStockWorkbook(changed,'test'),/layout changed/);
+assert.throws(()=>ctx.parseStockWorkbook(changed,'test'),/opening\/balance column headings/);
 const partial=fixture();partial.Sheets['Available Sum'][20].length=20;
 assert.throws(()=>ctx.parseStockWorkbook(partial,'test'),/Incomplete regional/);
 console.log('PASS: verified GC-J257 mapping, leading-column shifts, changed headers and incomplete rows.');
