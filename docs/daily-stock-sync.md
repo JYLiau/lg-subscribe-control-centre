@@ -6,7 +6,7 @@ Source: https://docs.google.com/spreadsheets/d/1GMPzP8jWTl_hzhY0CLyw-2S1ximTyePj
 
 Use the existing view-only browser access. Do not export, download, duplicate or clipboard-copy the source workbook. Do not change access permissions. Read the rendered Available Sum worksheet and its source timestamp afresh on every run. Do not treat the manual Google-link importer as an unattended read path: its export/visualization access is not established for this restricted workbook.
 
-## Data destination
+## Start-of-run heartbeat and evidence\n\nAt the START of every scheduled run, before visiting Google Drive, insert an `unverified` heartbeat in `public.stock_sync_runs` using the connected privileged Supabase SQL tool. The key is `daily-YYYY-MM-DD` in MYT, `origin=scheduled`, and `run_at` is the actual start time. Use `ON CONFLICT (workspace_id,run_key) DO NOTHING` so a verified outcome cannot be downgraded. This makes a started task visible even if browser or file access fails.\n\nAt the end, update the same row to `success`, `no_change`, or `failed` using the strict validation criteria below. If a run is interrupted before its final write, keep `unverified` visible as a warning; neither the heartbeat nor the fact that the task ran proves stock freshness. Never write stock during the heartbeat.\n\nThe 15 October 2026 task started around 10:35 MYT but had no completed outcome entry, so its historical row was backfilled as `unverified` (not success or failed); current stock was not modified by that repair.\n\n## Data destination
 
 - Public site: https://jyliau.github.io/lg-subscribe-control-centre/
 - Supabase project: jmnnesumjpkraugtzdkl
