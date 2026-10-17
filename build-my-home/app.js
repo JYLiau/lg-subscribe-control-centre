@@ -31,7 +31,7 @@ ms:{
   disclaimer:'Promosi 50% dan RM10 combo ialah pilihan berasingan dan tidak digabungkan. RM10 combo hanya aktif apabila sekurang-kurangnya 2 produk/order kedua-duanya memilih pakej RM10 combo. Sila sahkan butiran tawaran sebelum permohonan.',
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Imej produk daripada bahan rujukan yang dibekalkan. T&C apply.',
   comboHelp:'Pilih tempoh, servis dan promosi untuk setiap produk. Harga pakej akan dikira semula sebelum ditambah.',comboEstimate:'Anggaran bayaran bulan pertama',comboAdd:'Tambah set ke pakej',
-  choosePlan:'1. Pilih pelan',choosePromo:'2. Pilih promosi',qty:'Kuantiti',copy:'Salin ayat',copyTitle:'Salin copywriting untuk pelan & promosi dipilih',addPackage:'Tambah ke pakej',
+  choosePlan:'1. Pilih pelan',choosePromo:'2. Pilih promosi',qty:'Kuantiti',copy:'Salin ayat',copyTitle:'Salin ayat jualan untuk pelan dan promosi dipilih',addPackage:'Tambah ke pakej',
   all:'Semua',years:'tahun',month:'bulan',months:'bulan',from:'Dari',viewPlans:'Lihat pelan',pricePending:'Harga akan dikemas kini',planPending:'Pelan belum tersedia',currentSelection:'Lihat pilihan',availableLateNov:'Jangkaan pelancaran akhir Nov 2026',
   noProducts:'Belum ada produk.',startAppliance:'Mulakan dengan satu perkakas',startAppliance2:'Pilih produk di bawah untuk bina pakej rumah anda.',
   productSelected:'produk dipilih',unit:'unit',model:'model',standard:'standard',period:'Tempoh',service:'Servis',promotion:'Promosi',
@@ -45,12 +45,12 @@ ms:{
   addFirst:'Tambah produk dahulu sebelum jana link customer.',linkCopied:'Link customer disalin',copyLinkPrompt:'Salin link customer ini',packageCleared:'Pakej dikosongkan',
   copyDone:'Copywriting disalin',copyFail:'Salin copywriting ini',packageMsgTitle:'✨ *PAKEJ LG SUBSCRIBE PILIHAN ANDA*',packageMsgItemPay:'Bayaran',packageMsgSchedule:'💳 *Jadual bayaran bulanan:*',packageMsgSavings:'🎉 *Jumlah penjimatan*',packageMsgLink:'🔗 *Lihat gambar & butiran pakej:*',packageMsgCTA:'Berminat? Boleh terus WhatsApp Jason di 011-5972 6619 😊',packageMsgNote:'Harga dan kelayakan promosi tertakluk kepada pengesahan akhir. T&C apply.',packageMsgCopied:'Ayat pakej berjaya disalin',packageMsgCopyPrompt:'Salin ayat pakej ini',waIntro:'Hi Jason, saya berminat dengan pakej LG Subscribe ini:',estimateNow:'Anggaran sekarang',
   catAircond:'Penyaman Udara',catLaundry:'Dobi',catFridge:'Peti Sejuk',catAP:'Penapis Udara',catWP:'Penapis Air',catTV:'TV',catDishwasher:'Mesin Basuh Pinggan',
-  svcLaundryRV6:'Regular Visit setiap 6 bulan',svcLaundryRegularDetail:'Servis oleh juruteknik LG setiap 6 bulan (2 kali setahun)',svcLaundryCombinedDetail:'Kit penjagaan diri setiap 6 bulan + servis oleh juruteknik LG setiap 12 bulan',svcRV:'Regular Visit',svcRV1:'Regular Visit 1x/tahun',svcRV2:'Regular Visit 2x/tahun',svcRV2Y:'Regular Visit setiap 2 tahun',svcSS:'Self-Service',svcCM:'Combine Maintenance',svcSub:'Subscription',
+  svcLaundryRV6:'Regular Visit (servis setiap 6 bulan)',svcLaundryRegularDetail:'Servis oleh juruteknik LG setiap 6 bulan (2 kali setahun)',svcLaundryCombinedDetail:'Kit servis sendiri dihantar setiap 6 bulan + servis oleh juruteknik LG setiap 12 bulan',svcRV:'Regular Visit (lawatan servis)',svcRV1:'Regular Visit (servis setiap 12 bulan)',svcRV2:'Regular Visit (servis setiap 6 bulan)',svcRV2Y:'Regular Visit (servis setiap 24 bulan)',svcSS:'Self-Service (servis sendiri)',svcCM:'Combine Maintenance (servis gabungan)',svcSub:'Langganan',
   copyHeadline:'✨ LG Subscribe — {name}',copyModel:'Model: {code}',copyPlan:'Pelan {years} Tahun · {service}',copyNormal:'Harga biasa: {price}/bulan',
   copyHalf9:'🔥 50% OFF untuk 9 bulan pertama: {promo}/bulan\nBulan 10–{end}: {normal}/bulan',
   copyCombo:'🎁 RM10 OFF Combo: {promo}/bulan\n*Aktif apabila sekurang-kurangnya 2 produk/order memilih pakej RM10 OFF combo.',
   copyStandard:'💳 Bayaran bulanan: {normal}/bulan',copyOctober:'🎉 Promosi Oktober / Evergreen tersedia. Kadar promosi semasa akan disahkan oleh Jason.',
-  copyPackageIncludes:'Pakej termasuk:',copyDelivery:'🚚 Penghantaran & pemasangan asas percuma',copyServiceLine:'🛠️ Servis: {service}',copyCmKit:'✅️ Kit servis sendiri percuma setiap 6 bulan',copyCmVisit:'✅️ Lawatan juruteknik & servis setiap 12 bulan',copyCTA:'Nak saya bantu pilih pakej yang sesuai untuk anda? 😊\nWhatsApp Jason: 011-5972 6619',
+  copyPackageIncludes:'Pakej termasuk:',copyDelivery:'🚚 Penghantaran & pemasangan asas percuma',copyServiceLine:'🛠️ Servis: {service}',copyCmKit:'✅️ Kit servis sendiri dihantar percuma setiap 6 bulan',copyCmVisit:'✅️ Servis oleh juruteknik LG setiap 12 bulan',copyWpFilter:'✅️ Penapis gantian dihantar setiap 6 bulan',svcWaterRegularDetail:'Juruteknik LG datang servis setiap 6 bulan',svcWaterSelfDetail:'Penapis gantian dihantar setiap 6 bulan untuk ditukar sendiri',svcWaterCombinedDetail:'Penapis gantian dihantar setiap 6 bulan + servis oleh juruteknik LG setiap 12 bulan',svcAirRegularDetail:'Juruteknik LG datang servis setiap 12 bulan',svcAirSelfDetail:'Penapis gantian dihantar setiap 12 bulan untuk ditukar sendiri',copyCTA:'Nak saya bantu pilih pakej yang sesuai untuk anda? 😊\nWhatsApp Jason: 011-5972 6619',
   combo_setA_name:'Sejuk + Segar',combo_setA_desc:'Aircond 1.0HP + Peti Sejuk 493L',combo_setB_name:'Segar + Dobi',combo_setB_desc:'Peti Sejuk 493L + Mesin Basuh 12kg',combo_setC_name:'Sejuk + Dobi',combo_setC_desc:'Aircond 1.0HP + Mesin Basuh 12kg',combo_setD_name:'Trio Lengkap Rumah',combo_setD_desc:'Aircond + Peti Sejuk + Mesin Basuh',combo_setE_name:'Duo Dobi',combo_setE_desc:'Mesin Basuh 12kg + Pengering 10kg'
 },
 en:{
@@ -67,7 +67,7 @@ en:{
   disclaimer:'50% promotion and RM10 combo are separate choices and cannot be combined. RM10 combo is active only when at least 2 products/orders both use the RM10 combo package. Please confirm offer details before applying.',
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Product images are from supplied reference materials. T&C apply.',
   comboHelp:'Choose the term, service and promotion for each product. The package price will be recalculated before adding.',comboEstimate:'Estimated first-month payment',comboAdd:'Add set to package',
-  choosePlan:'1. Choose plan',choosePromo:'2. Choose promotion',qty:'Quantity',copy:'Copy text',copyTitle:'Copy copywriting for the selected plan & promotion',addPackage:'Add to package',
+  choosePlan:'1. Choose plan',choosePromo:'2. Choose promotion',qty:'Quantity',copy:'Copy text',copyTitle:'Copy the selected plan and promotion message',addPackage:'Add to package',
   all:'All',years:'years',month:'month',months:'months',from:'From',viewPlans:'View plans',pricePending:'Price pending',planPending:'Plan not available yet',currentSelection:'Explore options',availableLateNov:'Expected launch late Nov 2026',
   noProducts:'No products yet.',startAppliance:'Start with one appliance',startAppliance2:'Choose a product below to build your home package.',
   productSelected:'products selected',unit:'unit',model:'model',standard:'standard',period:'Term',service:'Service',promotion:'Promotion',
@@ -79,14 +79,14 @@ en:{
   comboInactive:'not active (need 2 combo items)',monthWord:'Month',notActiveAdd:'Not active — add 1 more item using RM10 OFF combo',
   withinBudget:'Within budget by {amount}/month',overBudget:'Over budget by {amount}/month',buildToCompare:'Build your package to compare with budget.',
   addFirst:'Add a product before generating a customer link.',linkCopied:'Customer link copied',copyLinkPrompt:'Copy this customer link',packageCleared:'Package cleared',
-  copyDone:'Copywriting copied',copyFail:'Copy this copywriting',packageMsgTitle:'✨ *YOUR LG SUBSCRIBE PACKAGE*',packageMsgItemPay:'Payment',packageMsgSchedule:'💳 *Monthly payment schedule:*',packageMsgSavings:'🎉 *Total savings*',packageMsgLink:'🔗 *View package photos & details:*',packageMsgCTA:'Interested? WhatsApp Jason at 011-5972 6619 😊',packageMsgNote:'Prices and promotion eligibility are subject to final confirmation. T&Cs apply.',packageMsgCopied:'Package message copied',packageMsgCopyPrompt:'Copy this package message',waIntro:'Hi Jason, I am interested in this LG Subscribe package:',estimateNow:'Estimated now',
+  copyDone:'Message copied',copyFail:'Copy this message',packageMsgTitle:'✨ *YOUR LG SUBSCRIBE PACKAGE*',packageMsgItemPay:'Payment',packageMsgSchedule:'💳 *Monthly payment schedule:*',packageMsgSavings:'🎉 *Total savings*',packageMsgLink:'🔗 *View package photos & details:*',packageMsgCTA:'Interested? WhatsApp Jason at 011-5972 6619 😊',packageMsgNote:'Prices and promotion eligibility are subject to final confirmation. T&Cs apply.',packageMsgCopied:'Package message copied',packageMsgCopyPrompt:'Copy this package message',waIntro:'Hi Jason, I am interested in this LG Subscribe package:',estimateNow:'Estimated now',
   catAircond:'Air Conditioner',catLaundry:'Laundry',catFridge:'Refrigerator',catAP:'Air Purifier',catWP:'Water Purifier',catTV:'TV',catDishwasher:'Dishwasher',
   svcLaundryRV6:'Regular Visit every 6 months',svcLaundryRegularDetail:'LG technician service every 6 months (twice yearly)',svcLaundryCombinedDetail:'Self-care kit every 6 months + LG technician service every 12 months',svcRV:'Regular Visit',svcRV1:'Regular Visit 1x/year',svcRV2:'Regular Visit 2x/year',svcRV2Y:'Regular Visit every 2 years',svcSS:'Self-Service',svcCM:'Combined Maintenance',svcSub:'Subscription',
   copyHeadline:'✨ LG Subscribe — {name}',copyModel:'Model: {code}',copyPlan:'{years}-Year Plan · {service}',copyNormal:'Normal price: {price}/month',
   copyHalf9:'🔥 50% OFF for the first 9 months: {promo}/month\nMonth 10–{end}: {normal}/month',
   copyCombo:'🎁 RM10 OFF Combo: {promo}/month\n*Active when at least 2 products/orders select the RM10 OFF combo package.',
   copyStandard:'💳 Monthly payment: {normal}/month',copyOctober:'🎉 October / Evergreen promotion is available. Jason will confirm the current promotional rate.',
-  copyPackageIncludes:'Package includes:',copyDelivery:'🚚 Free delivery & basic installation',copyServiceLine:'🛠️ Service: {service}',copyCmKit:'✅️ Free self-service kit every 6 months',copyCmVisit:'✅️ Technician visit & service every 12 months',copyCTA:'Want me to help choose the most suitable package for you? 😊\nWhatsApp Jason: 011-5972 6619',
+  copyPackageIncludes:'Package includes:',copyDelivery:'🚚 Free delivery & basic installation',copyServiceLine:'🛠️ Service: {service}',copyCmKit:'✅️ Complimentary self-service kit delivered every 6 months',copyCmVisit:'✅️ LG technician service every 12 months',copyWpFilter:'✅️ Replacement filters delivered every 6 months',svcWaterRegularDetail:'LG technician service every 6 months',svcWaterSelfDetail:'Replacement filters delivered every 6 months for self-replacement',svcWaterCombinedDetail:'Replacement filters delivered every 6 months + LG technician service every 12 months',svcAirRegularDetail:'LG technician service every 12 months',svcAirSelfDetail:'Replacement filters delivered every 12 months for self-replacement',copyCTA:'Want me to help choose the most suitable package for you? 😊\nWhatsApp Jason: 011-5972 6619',
   combo_setA_name:'Cool + Fresh',combo_setA_desc:'1.0HP Air Conditioner + 493L Refrigerator',combo_setB_name:'Fresh + Laundry',combo_setB_desc:'493L Refrigerator + 12kg Washer',combo_setC_name:'Cool + Laundry',combo_setC_desc:'1.0HP Air Conditioner + 12kg Washer',combo_setD_name:'Whole Home Trio',combo_setD_desc:'Air Conditioner + Refrigerator + Washer',combo_setE_name:'Laundry Duo',combo_setE_desc:'12kg Washer + 10kg Dryer'
 },
 zh:{
@@ -117,19 +117,25 @@ zh:{
   addFirst:'请先加入产品再生成客户链接。',linkCopied:'客户链接已复制',copyLinkPrompt:'复制此客户链接',packageCleared:'配套已清空',
   copyDone:'文案已复制',copyFail:'复制此文案',packageMsgTitle:'✨ *您的 LG Subscribe 精选配套*',packageMsgItemPay:'月费',packageMsgSchedule:'💳 *每月付款安排：*',packageMsgSavings:'🎉 *总共节省*',packageMsgLink:'🔗 *查看产品图片与配套详情：*',packageMsgCTA:'有兴趣？欢迎 WhatsApp Jason：011-5972 6619 😊',packageMsgNote:'价格与促销资格以最终确认为准。须符合条款与条件。',packageMsgCopied:'配套文案已复制',packageMsgCopyPrompt:'复制此配套文案',waIntro:'Hi Jason，我对以下 LG Subscribe 配套有兴趣：',estimateNow:'目前预计',
   catAircond:'空调',catLaundry:'洗衣家电',catFridge:'冰箱',catAP:'空气净化器',catWP:'净水器',catTV:'电视',catDishwasher:'洗碗机',
-  svcLaundryRV6:'每6个月技师上门保养',svcLaundryRegularDetail:'LG技师每6个月上门保养一次（每年2次）',svcLaundryCombinedDetail:'每6个月提供自助保养套件 + 每12个月LG技师上门保养',svcRV:'定期上门服务',svcRV1:'每年 1 次上门服务',svcRV2:'每年 2 次上门服务',svcRV2Y:'每 2 年 1 次上门服务',svcSS:'自助服务',svcCM:'综合保养',svcSub:'订阅方案',
+  svcLaundryRV6:'每6个月上门保养一次',svcLaundryRegularDetail:'LG技师每6个月上门保养一次（每年2次）',svcLaundryCombinedDetail:'每6个月寄送自助保养套件 + 每12个月由LG技师上门保养',svcRV:'定期上门保养',svcRV1:'每12个月上门保养一次',svcRV2:'每6个月上门保养一次',svcRV2Y:'每24个月上门保养一次',svcSS:'自行保养',svcCM:'组合保养',svcSub:'订阅方案',
   copyHeadline:'✨ LG Subscribe — {name}',copyModel:'型号：{code}',copyPlan:'{years} 年方案 · {service}',copyNormal:'原价：{price}/月',
   copyHalf9:'🔥 首 9 个月 50% OFF：{promo}/月\n第 10–{end} 个月：{normal}/月',
   copyCombo:'🎁 RM10 OFF 组合优惠：{promo}/月\n*至少 2 件产品/订单都选择 RM10 OFF combo 后才生效。',
   copyStandard:'💳 月费：{normal}/月',copyOctober:'🎉 可享 10 月 / Evergreen 优惠。当前优惠价格由 Jason 确认。',
-  copyPackageIncludes:'配套包括：',copyDelivery:'🚚 免费送货及基本安装',copyServiceLine:'🛠️ 服务：{service}',copyCmKit:'✅️ 每6个月免费提供自助保养套件',copyCmVisit:'✅️ 每12个月提供技师上门检查与保养',copyCTA:'要我帮你选择适合的配套吗？😊\nWhatsApp Jason：011-5972 6619',
+  copyPackageIncludes:'配套包括：',copyDelivery:'🚚 免费送货及基本安装',copyServiceLine:'🛠️ 服务：{service}',copyCmKit:'✅️ 每6个月免费配送自助保养套件',copyCmVisit:'✅️ LG技师每12个月上门保养一次',copyWpFilter:'✅️ 每6个月配送更换滤芯',svcWaterRegularDetail:'LG技师每6个月上门保养一次',svcWaterSelfDetail:'每6个月配送滤芯供客户自行更换',svcWaterCombinedDetail:'每6个月配送更换滤芯 + LG技师每12个月上门保养一次',svcAirRegularDetail:'LG技师每12个月上门保养一次',svcAirSelfDetail:'每12个月配送滤网供客户自行更换',copyCTA:'要我帮你选择适合的配套吗？😊\nWhatsApp Jason：011-5972 6619',
   combo_setA_name:'凉爽 + 保鲜',combo_setA_desc:'1.0HP 空调 + 493L 冰箱',combo_setB_name:'保鲜 + 洗衣',combo_setB_desc:'493L 冰箱 + 12kg 洗衣机',combo_setC_name:'凉爽 + 洗衣',combo_setC_desc:'1.0HP 空调 + 12kg 洗衣机',combo_setD_name:'全屋三件套',combo_setD_desc:'空调 + 冰箱 + 洗衣机',combo_setE_name:'洗衣双组合',combo_setE_desc:'12kg 洗衣机 + 10kg 烘干机'
 }};
 let currentLang=(()=>{const q=new URL(location.href).searchParams.get('lang');const s=q||localStorage.getItem('lg-bmh-lang')||'ms';return ['ms','en','zh'].includes(s)?s:'ms';})();
 function tr(key,vars={}){let s=(I18N[currentLang]&&I18N[currentLang][key])??I18N.en[key]??key;for(const[k,v]of Object.entries(vars))s=String(s).replaceAll('{'+k+'}',String(v));return s;}
 function categoryLabel(c){return c==='Aircond'?tr('catAircond'):c==='Laundry'?tr('catLaundry'):c==='Fridge'?tr('catFridge'):c==='Air Purifier'?tr('catAP'):c==='Water Purifier'?tr('catWP'):c==='TV'?tr('catTV'):c==='Dishwasher'?tr('catDishwasher'):c;}
 function serviceLabel(s){return s==='Regular Visit 1x/year'?tr('svcRV1'):s==='Regular Visit 2x/year'?tr('svcRV2'):s==='Regular Visit every 2 years'?tr('svcRV2Y'):s==='Regular Visit 6M'?tr('svcLaundryRV6'):s==='Regular Visit'?tr('svcRV'):s==='Self-Service'?tr('svcSS'):s==='Combine Maintenance'?tr('svcCM'):s==='Subscription'?tr('svcSub'):s;}
-function serviceDetail(product,plan){if(product?.category!=='Laundry'||!plan)return '';return plan.service==='Regular Visit 6M'?tr('svcLaundryRegularDetail'):plan.service==='Combine Maintenance'?tr('svcLaundryCombinedDetail'):'';}
+function serviceDetail(product,plan){
+   if(!product||!plan)return '';
+   if(product.category==='Laundry')return plan.service==='Regular Visit 6M'?tr('svcLaundryRegularDetail'):plan.service==='Combine Maintenance'?tr('svcLaundryCombinedDetail'):'';
+   if(product.category==='Water Purifier')return plan.service==='Self-Service'?tr('svcWaterSelfDetail'):plan.service==='Regular Visit'?tr('svcWaterRegularDetail'):plan.service==='Combine Maintenance'?tr('svcWaterCombinedDetail'):'';
+   if(product.category==='Air Purifier')return plan.service==='Self-Service'?tr('svcAirSelfDetail'):plan.service==='Regular Visit'?tr('svcAirRegularDetail'):'';
+   return '';
+ }
 function promoLabelById(id,fallback=''){return id==='standard'?tr('promoStandard'):id==='half9'?tr('promoHalf9'):id==='half12'?(currentLang==='zh'?'首12个月 50% OFF':currentLang==='en'?'50% OFF 12 months':'50% OFF 12 bulan'):id==='combo10'?tr('promoCombo10'):id==='octevergreen'?tr('promoOctober'):id==='dw99'?tr('promoDw99'):fallback;}
 function promoDescById(id,fallback=''){return id==='half9'?tr('promoHalf9Desc'):id==='half12'?(currentLang==='zh'?'首12个月享有 50% 折扣。':currentLang==='en'?'50% OFF for the first 12 months.':'50% OFF untuk 12 bulan pertama.'):id==='combo10'?tr('promoCombo10Desc'):id==='octevergreen'?tr('promoOctoberDesc'):id==='dw99'?tr('promoDw99Desc'):(fallback||tr('promoStandardDesc'));}
 function promoLocalized(p,field){
@@ -392,12 +398,12 @@ const PRODUCT_FEATURE_GROUPS={
     zh:['AI Air + LG ThinQ™ 智能送风','Soft Air 柔风模式','舒适湿度控制','kW Manager 能耗管理']
   },
   wt25:{
-    bm:['Sistem satu badan Washer 25kg + Dryer 20kg','Panel kawalan tengah all-in-one','AI Direct Drive™','TurboWash™ 360°','Serasi dengan LG ThinQ™'],
+    bm:['WashTower™ bersepadu: mesin basuh 25kg + pengering 20kg','Panel kawalan berpusat','AI Direct Drive™','TurboWash™ 360°','Serasi dengan LG ThinQ™'],
     en:['One-body 25kg Washer + 20kg Dryer','All-in-one center control','AI Direct Drive™','TurboWash™ 360°','LG ThinQ™ compatible'],
     zh:['25kg洗衣 + 20kg烘干一体式洗衣塔','中央一体控制面板','AI Direct Drive™','TurboWash™ 360°','支持 LG ThinQ™']
   },
   wt14:{
-    bm:['Sistem WashTower™ bersepadu 14/10kg','Center Control','AI DD™ + Smart Pairing™','TurboWash™ 360° + Dry Ready','DUAL Inverter HeatPump™'],
+    bm:['WashTower™ bersepadu: mesin basuh 14kg + pengering 10kg','Panel kawalan berpusat','AI DD™ + Smart Pairing™','TurboWash™ 360° + Dry Ready','DUAL Inverter HeatPump™'],
     en:['Integrated 14/10kg WashTower™','Center Control','AI DD™ + Smart Pairing™','TurboWash™ 360° + Dry Ready','DUAL Inverter HeatPump™'],
     zh:['14/10kg 一体式 WashTower™','中央控制面板','AI DD™ + Smart Pairing™','TurboWash™ 360° + Dry Ready','DUAL Inverter HeatPump™ 热泵']
   },
@@ -412,7 +418,7 @@ const PRODUCT_FEATURE_GROUPS={
     zh:['10公斤烘干容量','AI Dry™ 智能烘干','Turbo Dry 快速烘干','DUAL Inverter Heat Pump™ 热泵','自动清洁冷凝器']
   },
   fv1209:{
-    bm:['Washer 9kg + Dryer 5kg dalam satu mesin','AI Direct Drive™','Steam™','TurboWash™','LG ThinQ™'],
+    bm:['Mesin basuh 9kg + pengering 5kg dalam satu unit','AI Direct Drive™','Steam™','TurboWash™','LG ThinQ™'],
     en:['9kg washer + 5kg dryer in one machine','AI Direct Drive™','Steam™','TurboWash™','LG ThinQ™'],
     zh:['9kg洗衣 + 5kg烘干二合一','AI Direct Drive™','Steam™ 蒸汽护理','TurboWash™','LG ThinQ™ 智能控制']
   },
@@ -422,7 +428,7 @@ const PRODUCT_FEATURE_GROUPS={
     zh:['10.5公斤容量','AI Direct Drive™','TurboWash™ 360°','Steam+™ 蒸汽护理','LG ThinQ™ 智能控制']
   },
   tv2520:{
-    bm:['Kapasiti 20kg','AI Direct Drive™','TurboWash™','Scent+','Tab keluli tahan karat penuh','LG ThinQ™'],
+    bm:['Kapasiti 20kg','AI Direct Drive™','TurboWash™','Scent+','Tab basuhan keluli tahan karat','LG ThinQ™'],
     en:['20kg capacity','AI Direct Drive™','TurboWash™','Scent+','Full stainless steel tub','LG ThinQ™'],
     zh:['20公斤容量','AI Direct Drive™','TurboWash™','Scent+ 香氛护理','全不锈钢内桶','LG ThinQ™ 智能控制']
   },
@@ -442,7 +448,7 @@ const PRODUCT_FEATURE_GROUPS={
     zh:['15kg洗衣 + 8kg烘干','AI DD™ 智能洗涤','TurboWash™ 360°','Steam™ 帮助减少过敏原','LG ThinQ™ 智能连接']
   },
   fx1411:{
-    bm:['Mesin 2-dalam-1 11kg basuh + 7kg kering','AI DD™','Steam™','TurboWash™ 360°','Basuh & kering dalam satu mesin'],
+    bm:['Mesin basuh dan pengering 2-dalam-1: 11kg/7kg','AI DD™','Steam™','TurboWash™ 360°','Basuh & kering dalam satu mesin'],
     en:['2-in-1 11kg wash + 7kg dry','AI DD™','Steam™','TurboWash™ 360°','Wash and dry in one machine'],
     zh:['11kg洗衣 + 7kg烘干二合一','AI DD™','Steam™ 蒸汽护理','TurboWash™ 360°','洗烘一体']
   },
@@ -472,44 +478,44 @@ const PRODUCT_FEATURE_GROUPS={
     zh:['612L 法式多门大容量','InstaView™ 敲两下即可查看内部','饮水机','更宽敞的冷藏空间','保鲜技术']
   },
   as10:{
-    bm:['Penapisan udara 360°','Sistem multi-filtration','Clean Booster','Pet Mode + Allergy Care','Reka bentuk Alpha Pet Double'],
+    bm:['Penulenan udara 360°','Sistem penapisan berlapis','Clean Booster','Pet Mode + Allergy Care','Reka bentuk Alpha Pet Double'],
     en:['360° air purification','Multi-filtration system','Clean Booster','Pet Mode + Allergy Care','Alpha Pet Double design'],
     zh:['360°全方位空气净化','多重过滤系统','Clean Booster 净化增压','Pet Mode + Allergy Care 宠物/过敏护理','Alpha Pet Double 双层设计']
   },
   as65:{
-    bm:['Penapisan udara 360°','Sistem multi-filtration','Clean Booster','Pet Care','Allergy Care'],
+    bm:['Penulenan udara 360°','Sistem penapisan berlapis','Clean Booster','Pet Care','Allergy Care'],
     en:['360° purification','Multi-filtration system','Clean Booster','Pet Care','Allergy Care'],
     zh:['360°全方位净化','多重过滤系统','Clean Booster 净化增压','宠物护理','过敏护理']
   },
   as60hit:{
-    bm:['Reka bentuk kompak tetapi berkuasa','Sistem multi-filtration','Pet Care untuk rumah dengan haiwan','Penapisan udara menyeluruh','Kawalan pintar LG ThinQ™'],
+    bm:['Reka bentuk kompak tetapi berkuasa','Sistem penapisan berlapis','Pet Care untuk rumah dengan haiwan','Penapisan udara menyeluruh','Kawalan pintar LG ThinQ™'],
     en:['Compact yet powerful design','Multi-filtration system','Pet Care for pet-friendly homes','Thorough air purification','LG ThinQ™ smart control'],
     zh:['小巧但净化力强','多重过滤系统','Pet Care 宠物护理','全面空气净化','LG ThinQ™ 智能控制']
   },
   as55:{
-    bm:['Aero V Pet Filter','DUAL Airflow + Clean Booster','Pet Mode','Reka bentuk slim & premium','Mudah dibersihkan'],
+    bm:['Aero V Pet Filter','DUAL Airflow + Clean Booster','Pet Mode','Reka bentuk nipis dan elegan','Mudah dibersihkan'],
     en:['Aero V Pet Filter','DUAL Airflow + Clean Booster','Pet Mode','Slim & premium design','Easy-to-clean design'],
-    zh:['Aero V 宠物滤网','DUAL Airflow + Clean Booster','Pet Mode 宠物模式','纤薄高级设计','易于清洁']
+    zh:['Aero V 宠物滤网','DUAL Airflow + Clean Booster','Pet Mode 宠物模式','纤薄时尚设计','易于清洁']
   },
   as25:{
-    bm:['Tempat rehat dome dengan pemanas','Penapisan udara menyeluruh','Cat Relax Mode','Pet Care Tracking melalui LG ThinQ™','Penimbang terbina dalam untuk pantau berat kucing'],
+    bm:['Tempat rehat kucing berbentuk kubah dengan pemanas','Penapisan udara menyeluruh','Cat Relax Mode','Pet Care Tracking melalui LG ThinQ™','Penimbang terbina dalam untuk memantau berat kucing'],
     en:['Heated dome seat','Total air purification','Cat Relax Mode','Pet Care Tracking via LG ThinQ™','Built-in scale for cat weight tracking'],
-    zh:['恒温加热猫咪座舱','全面空气净化','Cat Relax 猫咪休息模式','通过 LG ThinQ™ 追踪宠物状态','内置体重秤监测猫咪体重']
+    zh:['带加热功能的猫咪休息座','全面空气净化','Cat Relax 猫咪休息模式','通过 LG ThinQ™ 追踪宠物状态','内置体重秤监测猫咪体重']
   },
   aeromini:{
-    bm:['Reka bentuk kompak & minimal','Penulenan udara 360°','Penapisan udara berkuasa','Operasi bunyi rendah','LG ThinQ™'],
+    bm:['Reka bentuk kompak dan minimalis','Penulenan udara 360°','Penapisan udara berkuasa','Operasi bunyi rendah','LG ThinQ™'],
     en:['Compact refined design','360° air purification','Powerful air filtration','Low-noise operation','LG ThinQ™'],
     zh:['精巧简约设计','360°空气净化','强效空气过滤','低噪音运行','LG ThinQ™ 智能控制']
   },
   wallfit:{
-    bm:['Dual Airflow','Reka bentuk slim & rata yang menjimatkan ruang','AI Mode','Smart Air Control melalui LG ThinQ™','Liputan sehingga 59.4m²'],
+    bm:['Dual Airflow','Reka bentuk nipis dan rata yang menjimatkan ruang','AI Mode','Kawal penulen udara melalui aplikasi LG ThinQ™','Liputan sehingga 59.4m²'],
     en:['Dual Airflow','Slim & flat space-saving design','AI Mode','Smart Air Control via LG ThinQ™','Coverage up to 59.4m²'],
-    zh:['Dual Airflow 双向气流','纤薄平面节省空间设计','AI 智能模式','通过 LG ThinQ™ 智能控制空气','净化面积高达 59.4m²']
+    zh:['Dual Airflow 双向气流','纤薄平面节省空间设计','AI 智能模式','通过 LG ThinQ™ App 远程操控净化器','净化面积高达 59.4m²']
   },
   wu525:{
-    bm:['Sistem All Puri Filter yang diperakui WQA','Auto-sanitization paip & outlet air','Reka bentuk built-in yang kemas','Kawalan pintar LG ThinQ™'],
+    bm:['Sistem penapisan All Puri yang diperakui WQA','Penyahkuman automatik paip dan muncung air','Reka bentuk terbina dalam yang kemas','Kawalan pintar LG ThinQ™'],
     en:['WQA-certified All Puri Filter system','Auto-sanitization of water pipes & outlet','Sleek built-in design','LG ThinQ™ smart control'],
-    zh:['WQA认证 All Puri 过滤系统','水管与出水口自动杀菌','简洁嵌入式设计','LG ThinQ™ 智能控制']
+    zh:['通过WQA认证的 All Puri 过滤系统','水管与出水口自动杀菌','简洁嵌入式设计','LG ThinQ™ 智能控制']
   },
   wd518:{
     bm:['Sistem tanpa tangki untuk air panas, sejuk & suhu bilik','4-Stage Filtration','Auto Sterilization','Tetapan suhu & isipadu boleh disesuaikan','LG ThinQ™'],
@@ -517,7 +523,7 @@ const PRODUCT_FEATURE_GROUPS={
     zh:['无水箱即热/冷/常温水','四阶段过滤系统','自动杀菌','可自定义温度与出水量','LG ThinQ™']
   },
   wd516:{
-    bm:['Pilihan air panas, suhu bilik & sejuk','Rekaan tanpa tangki','Auto Sterilization + 4-Stage All-Puri Filter','Rekaan ultra nipis 17cm','LG ThinQ™'],
+    bm:['Pilihan air panas, suhu bilik & sejuk','Rekaan tanpa tangki','Auto Sterilization + 4-Stage All-Puri Filter','Reka bentuk ultra nipis 17cm','LG ThinQ™'],
     en:['Hot, ambient & cold water','Tankless design','Auto Sterilization + 4-Stage All-Puri Filter','Ultra-slim 17cm design','LG ThinQ™'],
     zh:['热水、常温水与冷水','无水箱设计','自动杀菌 + 四阶段 All-Puri 过滤','17cm 超纤薄设计','LG ThinQ™']
   },
@@ -534,7 +540,7 @@ const PRODUCT_FEATURE_GROUPS={
   qned55:{
     bm:['QNED evo AI Mini LED 4K','Dynamic QNED Color Pro','Precision Dimming untuk kontras lebih tepat','α8 AI Processor 4K','webOS dengan pengalaman AI pintar'],
     en:['QNED evo AI Mini LED 4K','Dynamic QNED Color Pro','Precision Dimming for refined contrast','α8 AI Processor 4K','webOS with advanced AI experiences'],
-    zh:['QNED evo AI Mini LED 4K','Dynamic QNED Color Pro 广色域','Precision Dimming 精准控光','α8 AI Processor 4K AI处理器','webOS 智能AI体验']
+    zh:['QNED evo AI Mini LED 4K','Dynamic QNED Color Pro 广色域','Precision Dimming 精准控光','α8 AI Processor 4K AI处理器','webOS AI 智能体验']
   },
   nanoTV:{
     bm:['NANO 4K UHD AI','Nano Detail Enhancer','HDR10 Pro','α7 AI Processor 4K','webOS dengan AI Hub'],
@@ -547,9 +553,9 @@ const PRODUCT_FEATURE_GROUPS={
     zh:['TrueSteam™ 蒸汽洁净，更卫生','QuadWash™ 多角度强力清洗','EasyRack™ Plus 灵活碗篮设计','自动开门辅助烘干','LG ThinQ™ 智能控制']
   },
   dishwasher533:{
-    bm:['TrueSteam™ untuk cucian lebih bersih & higienik','QuadWash™ membersih dari pelbagai arah','EasyRack™ Plus untuk susunan pinggan fleksibel','Kapasiti 14 place settings','LG ThinQ™ untuk kawalan pintar'],
+    bm:['TrueSteam™ untuk cucian lebih bersih & higienik','QuadWash™ membersih dari pelbagai arah','EasyRack™ Plus untuk susunan pinggan fleksibel','Kapasiti 14 set pinggan mangkuk','LG ThinQ™ untuk kawalan pintar'],
     en:['TrueSteam™ for a cleaner, more hygienic wash','QuadWash™ cleans from multiple angles','EasyRack™ Plus for flexible loading','14 place settings capacity','LG ThinQ™ smart control'],
-    zh:['TrueSteam™ 蒸汽洁净，更卫生','QuadWash™ 多角度强力清洗','EasyRack™ Plus 灵活碗篮设计','14套餐具容量','LG ThinQ™ 智能控制']
+    zh:['TrueSteam™ 蒸汽洁净，更卫生','QuadWash™ 多角度强力清洗','EasyRack™ Plus 灵活碗篮设计','可容纳14人份餐具','LG ThinQ™ 智能控制']
   }
 };
 const PRODUCT_FEATURE_GROUP_BY_CODE={
@@ -565,7 +571,8 @@ const PRODUCT_FEATURE_GROUP_BY_CODE={
 function productFeatureLines(product){
   const base=String(product?.code||'').split('.')[0].toUpperCase();
   const group=PRODUCT_FEATURE_GROUP_BY_CODE[base],pack=group&&PRODUCT_FEATURE_GROUPS[group];
-  return pack?(pack[currentLang]||pack.en||[]):[];
+  const featureLang=currentLang==='ms'?'bm':currentLang;
+  return pack?(pack[featureLang]||pack.en||[]):[];
 }
 function featureHeading(){return currentLang==='zh'?'✨ 主要特点：':currentLang==='en'?'✨ Key features:':'✨ Ciri-ciri utama:';}
 function warrantyLine(years){return currentLang==='zh'?('🛡️ '+years+'年保修'):currentLang==='en'?('🛡️ '+years+'-year warranty'):('🛡️ Waranti '+years+' tahun');}
@@ -604,8 +611,11 @@ function selectedCopywriting(){
   const lines=[tr('copyHeadline',{name:activeProduct.name}),tr('copyModel',{code:activeProduct.code})];
   if(features.length)lines.push('',featureHeading(),...features.map(x=>'✔️ '+x));
   lines.push('',tr('copyPlan',{years:chosenPlan.years,service:serviceLabel(chosenPlan.service)}),offer,'',tr('copyPackageIncludes'),tr('copyDelivery'),warrantyLine(chosenPlan.years));
-  if(activeProduct.category!=='TV')lines.push(tr('copyServiceLine',{service:serviceLabel(chosenPlan.service)}));
-  if(activeProduct.category!=='TV'&&chosenPlan.service==='Combine Maintenance')lines.push(tr('copyCmKit'),tr('copyCmVisit'));
+  if(activeProduct.category!=='TV'){
+   lines.push(tr('copyServiceLine',{service:serviceLabel(chosenPlan.service)}));
+   if(chosenPlan.service==='Combine Maintenance')lines.push(activeProduct.category==='Water Purifier'?tr('copyWpFilter'):tr('copyCmKit'),tr('copyCmVisit'));
+   else if(serviceDetail(activeProduct,chosenPlan))lines.push('✅️ '+serviceDetail(activeProduct,chosenPlan));
+ }
   return lines.join('\n');
 }
 function copySelectedCopywriting(){
