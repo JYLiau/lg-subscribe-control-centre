@@ -32,7 +32,7 @@ ms:{
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Imej produk daripada bahan rujukan yang dibekalkan. T&C apply.',
   comboHelp:'Pilih tempoh, servis dan promosi untuk setiap produk. Harga pakej akan dikira semula sebelum ditambah.',comboEstimate:'Anggaran bayaran bulan pertama',comboAdd:'Tambah set ke pakej',
   choosePlan:'1. Pilih pelan',choosePromo:'2. Pilih promosi',qty:'Kuantiti',copy:'Salin ayat',copyTitle:'Salin ayat jualan untuk pelan dan promosi dipilih',addPackage:'Tambah ke pakej',
-  all:'Semua',years:'tahun',month:'bulan',months:'bulan',from:'Dari',viewPlans:'Lihat pelan',pricePending:'Harga akan dikemas kini',planPending:'Pelan belum tersedia',currentSelection:'Lihat pilihan',availableLateNov:'Jangkaan pelancaran akhir Nov 2026',
+  all:'Semua',years:'tahun',month:'bulan',months:'bulan',from:'Dari',viewPlans:'Lihat pelan',pricePending:'Harga akan dikemas kini',planPending:'Pelan belum tersedia',currentSelection:'Lihat pilihan',availableLateNov:'Jangkaan pelancaran akhir Nov 2026',orderRestocking:'Tempahan dibuka · Stok dijangka minggu depan',orderConfirm:'Tempahan dibuka · Tarikh penghantaran akan disahkan',
   noProducts:'Belum ada produk.',startAppliance:'Mulakan dengan satu perkakas',startAppliance2:'Pilih produk di bawah untuk bina pakej rumah anda.',
   productSelected:'produk dipilih',unit:'unit',model:'model',standard:'standard',period:'Tempoh',service:'Servis',promotion:'Promosi',
   notAvailable:'Tidak tersedia',chooseCustomize:'Pilih & ubah suai',standardPlanFrom:'Dari pelan standard',canCustomize:'boleh ubah tempoh/servis/promosi',
@@ -68,7 +68,7 @@ en:{
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Product images are from supplied reference materials. T&C apply.',
   comboHelp:'Choose the term, service and promotion for each product. The package price will be recalculated before adding.',comboEstimate:'Estimated first-month payment',comboAdd:'Add set to package',
   choosePlan:'1. Choose plan',choosePromo:'2. Choose promotion',qty:'Quantity',copy:'Copy text',copyTitle:'Copy the selected plan and promotion message',addPackage:'Add to package',
-  all:'All',years:'years',month:'month',months:'months',from:'From',viewPlans:'View plans',pricePending:'Price pending',planPending:'Plan not available yet',currentSelection:'Explore options',availableLateNov:'Expected launch late Nov 2026',
+  all:'All',years:'years',month:'month',months:'months',from:'From',viewPlans:'View plans',pricePending:'Price pending',planPending:'Plan not available yet',currentSelection:'Explore options',availableLateNov:'Expected launch late Nov 2026',orderRestocking:'Orders open · Restocking expected next week',orderConfirm:'Orders open · Delivery timing to be confirmed',
   noProducts:'No products yet.',startAppliance:'Start with one appliance',startAppliance2:'Choose a product below to build your home package.',
   productSelected:'products selected',unit:'unit',model:'model',standard:'standard',period:'Term',service:'Service',promotion:'Promotion',
   notAvailable:'Unavailable',chooseCustomize:'Choose & customise',standardPlanFrom:'From standard plan',canCustomize:'term/service/promotion can be changed',
@@ -104,7 +104,7 @@ zh:{
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>产品图片来自所提供的参考资料。须符合条款与条件。',
   comboHelp:'为每件产品选择年限、服务和优惠。加入前会重新计算配套价格。',comboEstimate:'首月预计月费',comboAdd:'加入整套配套',
   choosePlan:'1. 选择方案',choosePromo:'2. 选择优惠',qty:'数量',copy:'复制文案',copyTitle:'复制所选方案与优惠的文案',addPackage:'加入配套',
-  all:'全部',years:'年',month:'月',months:'个月',from:'每月低至',viewPlans:'查看方案',currentSelection:'查看方案',availableLateNov:'预计2026年11月底推出',
+  all:'全部',years:'年',month:'月',months:'个月',from:'每月低至',viewPlans:'查看方案',currentSelection:'查看方案',availableLateNov:'预计2026年11月底推出',orderRestocking:'开放预订 · 预计下周补货',orderConfirm:'开放预订 · 送货时间有待确认',
   noProducts:'尚未选择产品。',startAppliance:'从一件家电开始',startAppliance2:'从下方选择产品，建立你的家电配套。',
   productSelected:'件产品已选择',unit:'件',model:'型号',standard:'标准价',period:'年限',service:'服务',promotion:'优惠',
   notAvailable:'暂不可用',chooseCustomize:'选择并调整',standardPlanFrom:'标准方案起',canCustomize:'可更改年限/服务/优惠',
@@ -328,7 +328,9 @@ function addRefinedCombo(){
   closeComboModal();renderCart();scrollToPackage();toast(name+' '+tr('comboAdded'));
 }
 function renderCats(){const cats=['All',...new Set(CATALOG.map(x=>x.category))];$('catRow').innerHTML=cats.map(c=>'<button class="cat '+(c===activeCat?'active':'')+'" data-cat="'+esc(c)+'">'+esc(c==='All'?tr('all'):categoryLabel(c))+'</button>').join('');$('catRow').querySelectorAll('.cat').forEach(b=>b.onclick=()=>{activeCat=b.dataset.cat;renderCats();renderProducts();});}
-function isUpcoming(p){return Boolean(p.availableFrom && new Date(Date.now()+8*60*60*1000).toISOString().slice(0,10) < p.availableFrom);}
+function malaysiaToday(){return new Date(Date.now()+8*60*60*1000).toISOString().slice(0,10);}
+function isUpcoming(p){return Boolean(p.availableFrom && malaysiaToday()<p.availableFrom);}
+function orderNotice(p){if(!p?.availableForOrder)return '';return tr(p.restockNoteUntil&&malaysiaToday()<=p.restockNoteUntil?'orderRestocking':'orderConfirm');}
 function visibleProducts(){const q=($('search')?.value||'').trim().toLowerCase(),sort=$('sort')?.value||'featured';let rows=CATALOG.filter(p=>!stopSubmission(p)&&(activeCat==='All'||p.category===activeCat)&&(!q||((p.code+' '+p.name+' '+p.category).toLowerCase().includes(q))));if(sort==='price')rows.sort((a,b)=>minPrice(a)-minPrice(b));else if(sort==='model')rows.sort((a,b)=>a.code.localeCompare(b.code));else rows.sort((a,b)=>a.order-b.order);rows.sort((a,b)=>Number(isUpcoming(a))-Number(isUpcoming(b)));return rows;}
 function renderProducts(){
  const rows=visibleProducts();
@@ -338,11 +340,11 @@ function renderProducts(){
    const priceHtml=pending
      ?'<div class="price pending-price"><div><small>'+esc(tr('pricePending'))+'</small></div></div>'
      :'<div class="price"><div><small>'+esc(tr('from'))+'</small><strong>'+money(minPrice(p))+'</strong><em>/'+esc(tr('month'))+'</em></div></div>';
-   return '<article class="product '+(pending?'pricing-pending':'')+'"><div class="pvisual">'+visual(p)+'</div><div class="pbody"><div class="pcat">'+esc(categoryLabel(p.category))+'</div><h3>'+esc(p.code)+'</h3><div class="psub">'+esc(p.name)+'</div><span class="lifecycle current">'+esc(tr(isUpcoming(p)?'availableLateNov':'currentSelection'))+'</span>'+priceHtml+'<button class="addbtn" data-id="'+p.id+'" '+(pending?'disabled':'')+'>'+esc(pending?tr('planPending'):tr('viewPlans'))+'</button></div></article>';
+   return '<article class="product '+(pending?'pricing-pending':'')+'"><div class="pvisual">'+visual(p)+'</div><div class="pbody"><div class="pcat">'+esc(categoryLabel(p.category))+'</div><h3>'+esc(p.code)+'</h3><div class="psub">'+esc(p.name)+'</div><span class="lifecycle current">'+esc(orderNotice(p)||tr(isUpcoming(p)?'availableLateNov':'currentSelection'))+'</span>'+priceHtml+'<button class="addbtn" data-id="'+p.id+'" '+(pending?'disabled':'')+'>'+esc(pending?tr('planPending'):tr('viewPlans'))+'</button></div></article>';
  }).join('');
  $('products').querySelectorAll('.addbtn:not(:disabled)').forEach(b=>b.onclick=()=>openProduct(b.dataset.id));
 }
-function openProduct(id){activeProduct=CATALOG.find(x=>x.id===id);if(!activeProduct||!Array.isArray(activeProduct.plans)||!activeProduct.plans.length)return;chosenPlan=activeProduct.plans[0];chosenPromo='standard';$('qtyInput').value=1;$('modalModel').textContent=activeProduct.code;$('modalSub').textContent=activeProduct.name;renderPlans();renderPromos();$('modal').showModal();}
+function openProduct(id){activeProduct=CATALOG.find(x=>x.id===id);if(!activeProduct||!Array.isArray(activeProduct.plans)||!activeProduct.plans.length)return;chosenPlan=activeProduct.plans[0];chosenPromo='standard';$('qtyInput').value=1;$('modalModel').textContent=activeProduct.code;$('modalSub').textContent=activeProduct.name+(orderNotice(activeProduct)?' · '+orderNotice(activeProduct):'');renderPlans();renderPromos();$('modal').showModal();}
 window.closeModal=()=>$('modal').close();
 window.stepQty=d=>{const q=$('qtyInput');q.value=Math.max(1,Math.min(9,(Number(q.value)||1)+d));};
 function renderPlans(){$('planGrid').innerHTML=activeProduct.plans.map((p,i)=>'<button class="plan-card '+(p===chosenPlan?'active':'')+'" data-i="'+i+'"><b>'+p.years+' '+esc(tr('years'))+'</b><span>'+esc(serviceLabel(p.service))+'</span>'+(serviceDetail(activeProduct,p)?'<small class="service-cadence">'+esc(serviceDetail(activeProduct,p))+'</small>':'')+'<strong>'+money(p.monthly)+'/'+esc(tr('month'))+'</strong></button>').join('');$('planGrid').querySelectorAll('.plan-card').forEach(b=>b.onclick=()=>{chosenPlan=activeProduct.plans[Number(b.dataset.i)];renderPlans();});}
@@ -426,6 +428,11 @@ const PRODUCT_FEATURE_GROUPS={
     bm:['Kapasiti 10.5kg','AI Direct Drive™','TurboWash™ 360°','Steam+™','Kawalan pintar LG ThinQ™'],
     en:['10.5kg capacity','AI Direct Drive™','TurboWash™ 360°','Steam+™','LG ThinQ™ smart control'],
     zh:['10.5公斤容量','AI Direct Drive™','TurboWash™ 360°','Steam+™ 蒸汽护理','LG ThinQ™ 智能控制']
+  },
+  tv2517:{
+    bm:['Kapasiti basuhan 17kg','AI Direct Drive™ untuk cucian pintar','TurboDrum™ untuk cucian lebih berkesan','6 Motion DD™','Scent+ untuk kesegaran pakaian','Penapis habuk bersaiz lebar'],
+    en:['17kg wash capacity','AI Direct Drive™ smart fabric care','TurboDrum™ for effective washing','6 Motion DD™','Scent+ for fresher laundry','Wide lint filter'],
+    zh:['17公斤大容量','AI Direct Drive™ 智能衣物护理','TurboDrum™ 强劲洗涤','6 Motion DD™ 六种洗涤动作','Scent+ 衣物留香功能','大尺寸线屑过滤网']
   },
   tv2520:{
     bm:['Kapasiti 20kg','AI Direct Drive™','TurboWash™','Scent+','Tab basuhan keluli tahan karat','LG ThinQ™'],
@@ -562,7 +569,7 @@ const PRODUCT_FEATURE_GROUP_BY_CODE={
   'S3-Q09JAYPP':'acPremium','S3-Q12JAYPP':'acPremium','S3-Q18KAYPA':'acPremium','S3-Q24KLYPA':'acPremium',
   'S3-Q24K2RPA':'artcool','S3-Q120AGZB':'acAI','S3-Q2412GZC':'acAI',
   'WT2520NHEGR':'wt25','WT1410NHB':'wt14','FX1412S5GR':'fx1412','RX10VHP3KR':'rx10',
-  'FV1209D4W':'fv1209','FV1450S2W':'fv1450','TV2520SV9KR':'tv2520','F2520SNEKR':'f2520','TX2522AT9GR':'tx2522','F2515RNTKAR':'f2515','FX1411R5WR':'fx1411',
+  'FV1209D4W':'fv1209','FV1450S2W':'fv1450','TV2517DV3B':'tv2517','TV2520SV9KR':'tv2520','F2520SNEKR':'f2520','TX2522AT9GR':'tx2522','F2515RNTKAR':'f2515','FX1411R5WR':'fx1411',
   'GN-F452':'gnf452','GN-F452PQAK':'gnf452','GC-B257KLJR':'gcb257','GC-J257SQNW':'gcj257','GV-K25FFGER':'gvk25','GC-G22FFQAB':'gcg22','GXJB18JBQRC':'gxjb18',
   'AS10GDBY0':'as10','AS65GDBY0':'as65','AS30GGW10':'aeromini','AS60GHBT0':'as60hit','AS55GGSY0':'as55','AS25GCBZ0':'as25','AS60GLSG0':'wallfit',
   'WU525BS':'wu525','WD518AN':'wd518','WD516AN':'wd516',
@@ -609,6 +616,7 @@ function selectedCopywriting(){
   }
   const features=productFeatureLines(activeProduct);
   const lines=[tr('copyHeadline',{name:activeProduct.name}),tr('copyModel',{code:activeProduct.code})];
+  if(orderNotice(activeProduct))lines.push('📦 '+orderNotice(activeProduct));
   if(features.length)lines.push('',featureHeading(),...features.map(x=>'✔️ '+x));
   lines.push('',tr('copyPlan',{years:chosenPlan.years,service:serviceLabel(chosenPlan.service)}),offer,'',tr('copyPackageIncludes'),tr('copyDelivery'),warrantyLine(chosenPlan.years));
   if(activeProduct.category!=='TV'){
@@ -686,6 +694,7 @@ function packageCopywriting(){
   cart.forEach((item,index)=>{
     lines.push('*'+(index+1)+'. '+item.product.name+'*'+(item.qty>1?' ×'+item.qty:''));
     lines.push(tr('copyModel',{code:item.product.code}));
+    if(orderNotice(item.product))lines.push('📦 '+orderNotice(item.product));
     const features=productFeatureLines(item.product);
     if(features.length)lines.push(featureHeading(),...features.map(feature=>'✓ '+feature));
     lines.push(tr('period')+': '+item.plan.years+' '+tr('years')+' · '+tr('service')+': '+serviceLabel(item.plan.service));
