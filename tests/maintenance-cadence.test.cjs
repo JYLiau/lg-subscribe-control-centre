@@ -24,10 +24,10 @@ for(const [prefix,expected] of Object.entries({
   'GC-J257SQNW':[[5,130,24],[5,150,12]],
   'GV-K25FFGER':[[5,180,24],[5,200,12],[7,160,24],[7,180,12]]
 })){
-  assert.deepEqual(product(prefix).plans.map(p=>[p.years,p.monthly,p.visitIntervalMonths]),expected,prefix);
+  assert.deepEqual(JSON.parse(JSON.stringify(product(prefix).plans.map(p=>[p.years,p.monthly,p.visitIntervalMonths]))),expected,prefix);
 }
-assert.deepEqual(product('S3-Q24K2RPA').plans.map(p=>[p.monthly,p.visitIntervalMonths]),[[130,12],[150,6]]);
-assert.deepEqual(product('F2515RNTKAR').plans.map(p=>[p.years,p.monthly,p.visitIntervalMonths]),[[5,105,12],[5,115,6],[7,85,12],[7,95,6]]);
+assert.deepEqual(JSON.parse(JSON.stringify(product('S3-Q24K2RPA').plans.map(p=>[p.monthly,p.visitIntervalMonths]))),[[130,12],[150,6]]);
+assert.deepEqual(JSON.parse(JSON.stringify(product('F2515RNTKAR').plans.map(p=>[p.years,p.monthly,p.visitIntervalMonths]))),[[5,105,12],[5,115,6],[7,85,12],[7,95,6]]);
 for(const marker of ['svcLaundryRV6:','svcLaundryCombinedDetail:','function serviceDetail(','serviceDetail(activeProduct,p)','serviceDetail(item.product,item.plan)'])assert.ok(app.includes(marker),'Missing copywriting rule: '+marker);
 assert.doesNotThrow(()=>new Function(app));
 console.log('PASS: maintenance cadence, multilingual copywriting and fridge/ARTCOOL/15-8 plans');
