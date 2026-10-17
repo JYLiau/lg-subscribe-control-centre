@@ -7,7 +7,7 @@ const app=fs.readFileSync(path.join(__dirname,'../build-my-home/app.js'),'utf8')
 const context={window:{}};
 vm.runInNewContext(code,context);
 const catalog=context.window.LG_CATALOG;
-assert.equal(catalog.length,43);
+assert.equal(catalog.length,44);
 const product=prefix=>{const p=catalog.find(p=>p.code.startsWith(prefix));assert.ok(p,'Missing '+prefix);return p;};
 for(const p of catalog.filter(p=>p.category==='Laundry')){
   for(const plan of p.plans){
@@ -28,6 +28,11 @@ for(const [prefix,expected] of Object.entries({
 }
 assert.deepEqual(JSON.parse(JSON.stringify(product('S3-Q24K2RPA').plans.map(p=>[p.monthly,p.visitIntervalMonths]))),[[130,12],[150,6]]);
 assert.deepEqual(JSON.parse(JSON.stringify(product('F2515RNTKAR').plans.map(p=>[p.years,p.monthly,p.visitIntervalMonths]))),[[5,105,12],[5,115,6],[7,85,12],[7,95,6]]);
+assert.deepEqual(JSON.parse(JSON.stringify(product('TV2517DV3B').plans.map(p=>[p.years,p.monthly,p.visitIntervalMonths]))),[[5,95,6],[5,85,12],[7,75,6],[7,65,12]]);
+assert.equal(product('TV2517DV3B').availableForOrder,true);
+assert.equal(product('TV2517DV3B').restockNoteUntil,'2026-10-25');
+assert.ok(app.includes('orderNotice(p)'),'Restocking note needs display');
+assert.ok(app.includes('orderRestocking:'),'Three-language restocking label missing');
 for(const marker of ['svcLaundryRV6:','svcLaundryCombinedDetail:','function serviceDetail(','serviceDetail(activeProduct,p)','serviceDetail(item.product,item.plan)'])assert.ok(app.includes(marker),'Missing copywriting rule: '+marker);
 assert.doesNotThrow(()=>new Function(app));
 console.log('PASS: maintenance cadence, multilingual copywriting and fridge/ARTCOOL/15-8 plans');
