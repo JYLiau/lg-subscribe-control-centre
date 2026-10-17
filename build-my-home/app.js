@@ -696,7 +696,7 @@ function packageCopywriting(){
     lines.push(tr('copyModel',{code:item.product.code}));
     if(orderNotice(item.product))lines.push('📦 '+orderNotice(item.product));
     const features=productFeatureLines(item.product);
-    if(features.length)lines.push(featureHeading(),...features.map(feature=>'✓ '+feature));
+    if(features.length)lines.push(featureHeading(),...features.map(feature=>'✓ '+feature),'');
     lines.push(tr('period')+': '+item.plan.years+' '+tr('years')+' · '+tr('service')+': '+serviceLabel(item.plan.service));
     if(serviceDetail(item.product,item.plan))lines.push('🛠️ '+serviceDetail(item.product,item.plan));
     lines.push(tr('promotion')+': '+promoLabelFor(item));
