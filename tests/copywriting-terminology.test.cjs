@@ -32,5 +32,6 @@ assert.ok(app.includes("activeProduct.category==='Water Purifier'?tr('copyWpFilt
 assert.ok(!app.includes('控制空气'));
 assert.ok(!app.toLowerCase().includes('kit penjagaan diri'));
 assert.ok(!app.includes('pack[currentLang]'));
-assert.ok(html.includes('copy-polish-v2'));
+assert.ok(html.includes('tv2517-v1'));
+assert.ok(app.includes('TV2517DV3B'));
 console.log('PASS: Malay/Chinese copywriting, filter-vs-kit service terms and language selection.');
