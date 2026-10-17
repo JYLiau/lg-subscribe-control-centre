@@ -1,0 +1,36 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const app=fs.readFileSync(path.join(__dirname,'../build-my-home/app.js'),'utf8');
+const html=fs.readFileSync(path.join(__dirname,'../build-my-home/index.html'),'utf8');
+assert.doesNotThrow(()=>new Function(app),'Customer JS syntax');
+const i18nStart=app.indexOf('const I18N='),i18nEnd=app.indexOf('\nlet currentLang=',i18nStart);
+assert.ok(i18nStart>=0&&i18nEnd>i18nStart);
+const locales=new Function(app.slice(i18nStart,i18nEnd)+';return I18N;')();
+const begin=app.indexOf('const PRODUCT_FEATURE_GROUPS='),end=app.indexOf('function featureHeading()',begin);
+assert.ok(begin>=0&&end>begin);
+const segment=app.slice(begin,end);
+const features=lang=>new Function('currentLang',segment+";return productFeatureLines({code:'AS60GLSG0.AML'});")(lang);
+assert.ok(features('ms').some(t=>t.includes('Kawal penulen udara melalui aplikasi LG ThinQ')));
+assert.ok(features('en').some(t=>t.includes('Smart Air Control')));
+assert.ok(features('zh').some(t=>t.includes('远程操控净化器')));
+const detailBegin=app.indexOf('function serviceDetail('),detailEnd=app.indexOf('function promoLabelById(',detailBegin);
+assert.ok(detailBegin>=0&&detailEnd>detailBegin);
+const detailCode=app.slice(detailBegin,detailEnd);
+function service(lang,category,service){
+ const tr=k=>locales[lang][k];
+ return new Function('tr','product','plan',detailCode+';return serviceDetail(product,plan);')(tr,{category},{service});
+}
+assert.match(service('ms','Laundry','Combine Maintenance'),/Kit servis sendiri/);
+assert.match(service('ms','Laundry','Regular Visit 6M'),/6 bulan/);
+assert.match(service('zh','Laundry','Combine Maintenance'),/12个月/);
+assert.match(service('ms','Water Purifier','Combine Maintenance'),/Penapis gantian/);
+assert.match(service('en','Water Purifier','Self-Service'),/6 months/);
+assert.match(service('zh','Air Purifier','Regular Visit'),/12个月/);
+assert.match(service('ms','Air Purifier','Self-Service'),/12 bulan/);
+assert.ok(app.includes("activeProduct.category==='Water Purifier'?tr('copyWpFilter'):tr('copyCmKit')"));
+assert.ok(!app.includes('控制空气'));
+assert.ok(!app.toLowerCase().includes('kit penjagaan diri'));
+assert.ok(!app.includes('pack[currentLang]'));
+assert.ok(html.includes('copy-polish-v2'));
+console.log('PASS: Malay/Chinese copywriting, filter-vs-kit service terms and language selection.');
