@@ -45,7 +45,7 @@ ms:{
   addFirst:'Tambah produk dahulu sebelum jana link customer.',linkCopied:'Link customer disalin',copyLinkPrompt:'Salin link customer ini',packageCleared:'Pakej dikosongkan',
   copyDone:'Copywriting disalin',copyFail:'Salin copywriting ini',packageMsgTitle:'✨ *PAKEJ LG SUBSCRIBE PILIHAN ANDA*',packageMsgItemPay:'Bayaran',packageMsgSchedule:'💳 *Jadual bayaran bulanan:*',packageMsgSavings:'🎉 *Jumlah penjimatan*',packageMsgLink:'🔗 *Lihat gambar & butiran pakej:*',packageMsgCTA:'Berminat? Boleh terus WhatsApp Jason di 011-5972 6619 😊',packageMsgNote:'Harga dan kelayakan promosi tertakluk kepada pengesahan akhir. T&C apply.',packageMsgCopied:'Ayat pakej berjaya disalin',packageMsgCopyPrompt:'Salin ayat pakej ini',waIntro:'Hi Jason, saya berminat dengan pakej LG Subscribe ini:',estimateNow:'Anggaran sekarang',
   catAircond:'Penyaman Udara',catLaundry:'Dobi',catFridge:'Peti Sejuk',catAP:'Penapis Udara',catWP:'Penapis Air',catTV:'TV',catDishwasher:'Mesin Basuh Pinggan',
-  svcRV:'Regular Visit',svcRV1:'Regular Visit 1x/tahun',svcRV2:'Regular Visit 2x/tahun',svcRV2Y:'Regular Visit setiap 2 tahun',svcSS:'Self-Service',svcCM:'Combine Maintenance',svcSub:'Subscription',
+  svcLaundryRV6:'Regular Visit setiap 6 bulan',svcLaundryRegularDetail:'Servis oleh juruteknik LG setiap 6 bulan (2 kali setahun)',svcLaundryCombinedDetail:'Kit penjagaan diri setiap 6 bulan + servis oleh juruteknik LG setiap 12 bulan',svcRV:'Regular Visit',svcRV1:'Regular Visit 1x/tahun',svcRV2:'Regular Visit 2x/tahun',svcRV2Y:'Regular Visit setiap 2 tahun',svcSS:'Self-Service',svcCM:'Combine Maintenance',svcSub:'Subscription',
   copyHeadline:'✨ LG Subscribe — {name}',copyModel:'Model: {code}',copyPlan:'Pelan {years} Tahun · {service}',copyNormal:'Harga biasa: {price}/bulan',
   copyHalf9:'🔥 50% OFF untuk 9 bulan pertama: {promo}/bulan\nBulan 10–{end}: {normal}/bulan',
   copyCombo:'🎁 RM10 OFF Combo: {promo}/bulan\n*Aktif apabila sekurang-kurangnya 2 produk/order memilih pakej RM10 OFF combo.',
@@ -81,7 +81,7 @@ en:{
   addFirst:'Add a product before generating a customer link.',linkCopied:'Customer link copied',copyLinkPrompt:'Copy this customer link',packageCleared:'Package cleared',
   copyDone:'Copywriting copied',copyFail:'Copy this copywriting',packageMsgTitle:'✨ *YOUR LG SUBSCRIBE PACKAGE*',packageMsgItemPay:'Payment',packageMsgSchedule:'💳 *Monthly payment schedule:*',packageMsgSavings:'🎉 *Total savings*',packageMsgLink:'🔗 *View package photos & details:*',packageMsgCTA:'Interested? WhatsApp Jason at 011-5972 6619 😊',packageMsgNote:'Prices and promotion eligibility are subject to final confirmation. T&Cs apply.',packageMsgCopied:'Package message copied',packageMsgCopyPrompt:'Copy this package message',waIntro:'Hi Jason, I am interested in this LG Subscribe package:',estimateNow:'Estimated now',
   catAircond:'Air Conditioner',catLaundry:'Laundry',catFridge:'Refrigerator',catAP:'Air Purifier',catWP:'Water Purifier',catTV:'TV',catDishwasher:'Dishwasher',
-  svcRV:'Regular Visit',svcRV1:'Regular Visit 1x/year',svcRV2:'Regular Visit 2x/year',svcRV2Y:'Regular Visit every 2 years',svcSS:'Self-Service',svcCM:'Combined Maintenance',svcSub:'Subscription',
+  svcLaundryRV6:'Regular Visit every 6 months',svcLaundryRegularDetail:'LG technician service every 6 months (twice yearly)',svcLaundryCombinedDetail:'Self-care kit every 6 months + LG technician service every 12 months',svcRV:'Regular Visit',svcRV1:'Regular Visit 1x/year',svcRV2:'Regular Visit 2x/year',svcRV2Y:'Regular Visit every 2 years',svcSS:'Self-Service',svcCM:'Combined Maintenance',svcSub:'Subscription',
   copyHeadline:'✨ LG Subscribe — {name}',copyModel:'Model: {code}',copyPlan:'{years}-Year Plan · {service}',copyNormal:'Normal price: {price}/month',
   copyHalf9:'🔥 50% OFF for the first 9 months: {promo}/month\nMonth 10–{end}: {normal}/month',
   copyCombo:'🎁 RM10 OFF Combo: {promo}/month\n*Active when at least 2 products/orders select the RM10 OFF combo package.',
@@ -117,7 +117,7 @@ zh:{
   addFirst:'请先加入产品再生成客户链接。',linkCopied:'客户链接已复制',copyLinkPrompt:'复制此客户链接',packageCleared:'配套已清空',
   copyDone:'文案已复制',copyFail:'复制此文案',packageMsgTitle:'✨ *您的 LG Subscribe 精选配套*',packageMsgItemPay:'月费',packageMsgSchedule:'💳 *每月付款安排：*',packageMsgSavings:'🎉 *总共节省*',packageMsgLink:'🔗 *查看产品图片与配套详情：*',packageMsgCTA:'有兴趣？欢迎 WhatsApp Jason：011-5972 6619 😊',packageMsgNote:'价格与促销资格以最终确认为准。须符合条款与条件。',packageMsgCopied:'配套文案已复制',packageMsgCopyPrompt:'复制此配套文案',waIntro:'Hi Jason，我对以下 LG Subscribe 配套有兴趣：',estimateNow:'目前预计',
   catAircond:'空调',catLaundry:'洗衣家电',catFridge:'冰箱',catAP:'空气净化器',catWP:'净水器',catTV:'电视',catDishwasher:'洗碗机',
-  svcRV:'定期上门服务',svcRV1:'每年 1 次上门服务',svcRV2:'每年 2 次上门服务',svcRV2Y:'每 2 年 1 次上门服务',svcSS:'自助服务',svcCM:'综合保养',svcSub:'订阅方案',
+  svcLaundryRV6:'每6个月技师上门保养',svcLaundryRegularDetail:'LG技师每6个月上门保养一次（每年2次）',svcLaundryCombinedDetail:'每6个月提供自助保养套件 + 每12个月LG技师上门保养',svcRV:'定期上门服务',svcRV1:'每年 1 次上门服务',svcRV2:'每年 2 次上门服务',svcRV2Y:'每 2 年 1 次上门服务',svcSS:'自助服务',svcCM:'综合保养',svcSub:'订阅方案',
   copyHeadline:'✨ LG Subscribe — {name}',copyModel:'型号：{code}',copyPlan:'{years} 年方案 · {service}',copyNormal:'原价：{price}/月',
   copyHalf9:'🔥 首 9 个月 50% OFF：{promo}/月\n第 10–{end} 个月：{normal}/月',
   copyCombo:'🎁 RM10 OFF 组合优惠：{promo}/月\n*至少 2 件产品/订单都选择 RM10 OFF combo 后才生效。',
@@ -128,7 +128,8 @@ zh:{
 let currentLang=(()=>{const q=new URL(location.href).searchParams.get('lang');const s=q||localStorage.getItem('lg-bmh-lang')||'ms';return ['ms','en','zh'].includes(s)?s:'ms';})();
 function tr(key,vars={}){let s=(I18N[currentLang]&&I18N[currentLang][key])??I18N.en[key]??key;for(const[k,v]of Object.entries(vars))s=String(s).replaceAll('{'+k+'}',String(v));return s;}
 function categoryLabel(c){return c==='Aircond'?tr('catAircond'):c==='Laundry'?tr('catLaundry'):c==='Fridge'?tr('catFridge'):c==='Air Purifier'?tr('catAP'):c==='Water Purifier'?tr('catWP'):c==='TV'?tr('catTV'):c==='Dishwasher'?tr('catDishwasher'):c;}
-function serviceLabel(s){return s==='Regular Visit 1x/year'?tr('svcRV1'):s==='Regular Visit 2x/year'?tr('svcRV2'):s==='Regular Visit every 2 years'?tr('svcRV2Y'):s==='Regular Visit'?tr('svcRV'):s==='Self-Service'?tr('svcSS'):s==='Combine Maintenance'?tr('svcCM'):s==='Subscription'?tr('svcSub'):s;}
+function serviceLabel(s){return s==='Regular Visit 1x/year'?tr('svcRV1'):s==='Regular Visit 2x/year'?tr('svcRV2'):s==='Regular Visit every 2 years'?tr('svcRV2Y'):s==='Regular Visit 6M'?tr('svcLaundryRV6'):s==='Regular Visit'?tr('svcRV'):s==='Self-Service'?tr('svcSS'):s==='Combine Maintenance'?tr('svcCM'):s==='Subscription'?tr('svcSub'):s;}
+function serviceDetail(product,plan){if(product?.category!=='Laundry'||!plan)return '';return plan.service==='Regular Visit 6M'?tr('svcLaundryRegularDetail'):plan.service==='Combine Maintenance'?tr('svcLaundryCombinedDetail'):'';}
 function promoLabelById(id,fallback=''){return id==='standard'?tr('promoStandard'):id==='half9'?tr('promoHalf9'):id==='half12'?(currentLang==='zh'?'首12个月 50% OFF':currentLang==='en'?'50% OFF 12 months':'50% OFF 12 bulan'):id==='combo10'?tr('promoCombo10'):id==='octevergreen'?tr('promoOctober'):id==='dw99'?tr('promoDw99'):fallback;}
 function promoDescById(id,fallback=''){return id==='half9'?tr('promoHalf9Desc'):id==='half12'?(currentLang==='zh'?'首12个月享有 50% 折扣。':currentLang==='en'?'50% OFF for the first 12 months.':'50% OFF untuk 12 bulan pertama.'):id==='combo10'?tr('promoCombo10Desc'):id==='octevergreen'?tr('promoOctoberDesc'):id==='dw99'?tr('promoDw99Desc'):(fallback||tr('promoStandardDesc'));}
 function promoLocalized(p,field){
@@ -338,7 +339,7 @@ function renderProducts(){
 function openProduct(id){activeProduct=CATALOG.find(x=>x.id===id);if(!activeProduct||!Array.isArray(activeProduct.plans)||!activeProduct.plans.length)return;chosenPlan=activeProduct.plans[0];chosenPromo='standard';$('qtyInput').value=1;$('modalModel').textContent=activeProduct.code;$('modalSub').textContent=activeProduct.name;renderPlans();renderPromos();$('modal').showModal();}
 window.closeModal=()=>$('modal').close();
 window.stepQty=d=>{const q=$('qtyInput');q.value=Math.max(1,Math.min(9,(Number(q.value)||1)+d));};
-function renderPlans(){$('planGrid').innerHTML=activeProduct.plans.map((p,i)=>'<button class="plan-card '+(p===chosenPlan?'active':'')+'" data-i="'+i+'"><b>'+p.years+' '+esc(tr('years'))+'</b><span>'+esc(serviceLabel(p.service))+'</span><strong>'+money(p.monthly)+'/'+esc(tr('month'))+'</strong></button>').join('');$('planGrid').querySelectorAll('.plan-card').forEach(b=>b.onclick=()=>{chosenPlan=activeProduct.plans[Number(b.dataset.i)];renderPlans();});}
+function renderPlans(){$('planGrid').innerHTML=activeProduct.plans.map((p,i)=>'<button class="plan-card '+(p===chosenPlan?'active':'')+'" data-i="'+i+'"><b>'+p.years+' '+esc(tr('years'))+'</b><span>'+esc(serviceLabel(p.service))+'</span>'+(serviceDetail(activeProduct,p)?'<small class="service-cadence">'+esc(serviceDetail(activeProduct,p))+'</small>':'')+'<strong>'+money(p.monthly)+'/'+esc(tr('month'))+'</strong></button>').join('');$('planGrid').querySelectorAll('.plan-card').forEach(b=>b.onclick=()=>{chosenPlan=activeProduct.plans[Number(b.dataset.i)];renderPlans();});}
 function renderPromos(){
   const promos=livePromos(activeProduct);
   if(!promos.some(p=>p.id===chosenPromo))chosenPromo=promos[0]?.id||'standard';
@@ -678,6 +679,7 @@ function packageCopywriting(){
     const features=productFeatureLines(item.product);
     if(features.length)lines.push(featureHeading(),...features.map(feature=>'✓ '+feature));
     lines.push(tr('period')+': '+item.plan.years+' '+tr('years')+' · '+tr('service')+': '+serviceLabel(item.plan.service));
+    if(serviceDetail(item.product,item.plan))lines.push('🛠️ '+serviceDetail(item.product,item.plan));
     lines.push(tr('promotion')+': '+promoLabelFor(item));
     const itemPeriods=packagePricePeriods(month=>monthlyFor(item,month),item.plan.years*12);
     lines.push(tr('packageMsgItemPay')+': '+itemPeriods.map(packagePeriodText).join(' | '));
