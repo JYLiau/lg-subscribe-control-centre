@@ -1,0 +1,41 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+const path=require('node:path');
+
+const root=path.join(__dirname,'..','build-my-home');
+const catalogSource=fs.readFileSync(path.join(root,'catalog.js'),'utf8');
+const app=fs.readFileSync(path.join(root,'app.js'),'utf8');
+const context={window:{}};
+vm.runInNewContext(catalogSource,context);
+const original=context.window.LG_CATALOG;
+const begin=app.indexOf('const DEFAULT_HALF9_PROMO=');
+const end=app.indexOf('const icons=');
+const startPricing=app.indexOf('function promoIsLive(');
+const endPricing=app.indexOf('function comboName(');
+assert.ok(begin>=0&&end>begin&&startPricing>=0&&endPricing>startPricing);
+vm.runInNewContext(app.slice(begin,end)+'\n'+app.slice(startPricing,endPricing)+'\nwindow.__promo={CATALOG,livePromos,promoPrice,promoObj};',context);
+const {CATALOG,livePromos,promoPrice,promoObj}=context.window.__promo;
+assert.equal(CATALOG.length,original.length,'Keep the full catalog');
+const target=CATALOG.find(x=>x.code==='FX1411R5WR');
+assert.ok(target,'11/7kg washer dryer is present');
+assert.deepEqual(Array.from(livePromos(target),x=>x.id),['standard','half12','combo10'],'Use 12-month offer instead of 9 months');
+const half12=promoObj(target,'half12');
+assert.equal(half12.value,50);
+assert.equal(half12.months,12);
+for(const plan of target.plans){
+  const normal=Number(plan.monthly);
+  assert.equal(promoPrice(target,plan,'half12',1),normal/2,'First month');
+  assert.equal(promoPrice(target,plan,'half12',12),normal/2,'Month 12 discounted');
+  assert.equal(promoPrice(target,plan,'half12',13),normal,'Month 13 normal');
+  assert.equal(promoPrice(target,plan,'combo10',1),normal-10,'Combo remains available');
+}
+const other=CATALOG.find(x=>x.code==='TV2517DV3B');
+assert.ok(livePromos(other).some(p=>p.id==='half9'),'Other products retain 9-month promotions');
+assert.equal(promoPrice(other,other.plans[0],'half9',10),95);
+assert.ok(app.includes("x.promo==='half9'&&livePromos(p).some(z=>z.id==='half12')"),'Previously shared 9-month packages must upgrade to 12-month offer');
+assert.ok(app.includes('const n=Number(promo.months)||0'),'Copied sales text must use actual promotion duration');
+assert.ok(app.includes('if(p.months)cuts.add(Number(p.months)+1)'),'Payment schedule must use actual duration');
+assert.ok(app.includes('livePromos(activeProduct)'),'Modal displays current promotions');
+console.log('PASS: FX1411R5WR 50% OFF for 12 months; month 13 reset; multilingual copywriting, combo and other models preserved');

@@ -6,7 +6,8 @@ const DEFAULT_HALF9_PROMO={id:'half9',label:'50% OFF 9 bulan',type:'percent',val
  const DEFAULT_COMBO10_PROMO={id:'combo10',label:'RM10 OFF combo',type:'fixed',value:10,months:null};
 const CATALOG=(window.LG_CATALOG||[]).map((p,i)=>{
   const promos=Array.isArray(p.promos)?p.promos.map(x=>x.id==='half9'?{...x,...DEFAULT_HALF9_PROMO,validFrom:null,validTo:null}:x):[];
-  if(!promos.some(x=>x.id==='half9'))promos.splice(Math.min(1,promos.length),0,{...DEFAULT_HALF9_PROMO});
+  // Only default to 9 months when a model has no explicit 9- or 12-month offer.
+  if(!promos.some(x=>x.id==='half9'||x.id==='half12'))promos.splice(Math.min(1,promos.length),0,{...DEFAULT_HALF9_PROMO});
    // RM10 OFF Combo is a universal, alternative promotion, including newly added models.
    if(!promos.some(x=>x.id==='combo10'))promos.push({...DEFAULT_COMBO10_PROMO});
   return {...p,promos,order:i};
@@ -140,7 +141,7 @@ function serviceDetail(product,plan){
    return '';
  }
 function promoLabelById(id,fallback=''){return id==='standard'?tr('promoStandard'):id==='half9'?tr('promoHalf9'):id==='half12'?(currentLang==='zh'?'首12个月 50% OFF':currentLang==='en'?'50% OFF 12 months':'50% OFF 12 bulan'):id==='combo10'?tr('promoCombo10'):id==='octevergreen'?tr('promoOctober'):id==='dw99'?tr('promoDw99'):fallback;}
-function promoDescById(id,fallback=''){return id==='half9'?tr('promoHalf9Desc'):id==='half12'?(currentLang==='zh'?'首12个月享有 50% 折扣。':currentLang==='en'?'50% OFF for the first 12 months.':'50% OFF untuk 12 bulan pertama.'):id==='combo10'?tr('promoCombo10Desc'):id==='octevergreen'?tr('promoOctoberDesc'):id==='dw99'?tr('promoDw99Desc'):(fallback||tr('promoStandardDesc'));}
+function promoDescById(id,fallback=''){return id==='half9'?tr('promoHalf9Desc'):id==='half12'?(currentLang==='zh'?'首12个月享有 50% 折扣，不可与 RM10 OFF combo 叠加。':currentLang==='en'?'50% OFF for the first 12 months. Cannot combine with RM10 OFF combo on the same item.':'50% OFF untuk 12 bulan pertama. Tidak boleh digabungkan dengan RM10 OFF combo pada item yang sama.'):id==='combo10'?tr('promoCombo10Desc'):id==='octevergreen'?tr('promoOctoberDesc'):id==='dw99'?tr('promoDw99Desc'):(fallback||tr('promoStandardDesc'));}
 function promoLocalized(p,field){
   if(!p)return'';
   const k=currentLang==='zh'?field+'Zh':currentLang==='en'?field+'En':field+'Ms';
@@ -669,7 +670,7 @@ function customerShareUrl(){
   return u.toString();
 }
 function syncUrl(push=true){const u=new URL(location.href);if(cart.length)u.searchParams.set('pkg',packageToken());else u.searchParams.delete('pkg');if(push)history.pushState({},'',u);else history.replaceState({},'',u);}
-function loadFromUrl(){const u=new URL(location.href),v=u.searchParams.get('pkg');if(u.searchParams.get('share')==='1'){document.body.classList.add('shared-package-view');const b=document.querySelector('.budget');if(b)b.style.display='none';const k=document.querySelectorAll('.kpis .kpi');if(k.length>1)k[k.length-1].style.display='none';}if(!v)return;try{const pad=v+'==='.slice((v.length+3)%4),data=JSON.parse(decodeURIComponent(escape(atob(pad))));cart=data.map(x=>{const p=CATALOG.find(y=>y.id===x.id);if(!p)return null;const exact=p.plans.find(pl=>Number(pl.years)===Number(x.years)&&pl.service===x.service&&Number(pl.monthly)===Number(x.monthly));const plan=exact||p.plans[x.plan]||p.plans[0];return{key:Date.now()+Math.random(),product:p,plan:{...plan},promo:p.promos.some(z=>z.id===x.promo)?x.promo:'standard',qty:Math.max(1,Math.min(9,Number(x.qty)||1))};}).filter(Boolean);}catch(e){console.warn('bad package link',e);}}
+function loadFromUrl(){const u=new URL(location.href),v=u.searchParams.get('pkg');if(u.searchParams.get('share')==='1'){document.body.classList.add('shared-package-view');const b=document.querySelector('.budget');if(b)b.style.display='none';const k=document.querySelectorAll('.kpis .kpi');if(k.length>1)k[k.length-1].style.display='none';}if(!v)return;try{const pad=v+'==='.slice((v.length+3)%4),data=JSON.parse(decodeURIComponent(escape(atob(pad))));cart=data.map(x=>{const p=CATALOG.find(y=>y.id===x.id);if(!p)return null;const exact=p.plans.find(pl=>Number(pl.years)===Number(x.years)&&pl.service===x.service&&Number(pl.monthly)===Number(x.monthly));const plan=exact||p.plans[x.plan]||p.plans[0];return{key:Date.now()+Math.random(),product:p,plan:{...plan},promo:x.promo==='half9'&&livePromos(p).some(z=>z.id==='half12')?'half12':p.promos.some(z=>z.id===x.promo)?x.promo:'standard',qty:Math.max(1,Math.min(9,Number(x.qty)||1))};}).filter(Boolean);}catch(e){console.warn('bad package link',e);}}
 function sharePackage(){
   if(!cart.length)return toast(tr('addFirst'));
   const url=customerShareUrl();
