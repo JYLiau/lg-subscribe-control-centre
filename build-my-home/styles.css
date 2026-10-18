@@ -216,3 +216,36 @@ a{color:inherit}
   .modal-bottom .copywriting-btn{grid-column:2;grid-row:1;min-width:112px}
   .modal-bottom .modal-add{grid-column:1/-1!important;width:100%}
 }
+
+/* Shared customer packages: clear price comparison and mobile-friendly spacing. */
+.cart-item-details{min-width:0}
+.cart-item-heading{display:flex;flex-wrap:wrap;align-items:baseline;gap:5px 11px;line-height:1.45}
+.cart-item-heading b{overflow-wrap:anywhere}
+.cart-item-plan{display:inline-block;white-space:normal}
+.cart-item-promo{font-size:11px;color:#81766d;margin-top:7px;line-height:1.4}
+.shared-item-pricing{display:none}
+.shared-package-view .cart-item{padding:17px 53px 17px 17px}
+.shared-package-view .cart-item-heading{gap:7px 13px}
+.shared-package-view .cart-item-heading b{font-size:16px;font-weight:850}
+.shared-package-view .cart-item-plan{font-size:14px}
+.shared-package-view .cart-item-promo{font-size:15px;font-weight:800;color:#b42329;margin-top:11px}
+.shared-package-view .shared-item-pricing{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:13px;padding:11px 12px;background:#fff4f4;border-radius:11px}
+.shared-original{color:#999;text-decoration:line-through;text-decoration-thickness:1.5px;font-size:13px}
+.shared-price{font-size:18px;font-weight:850;color:#d71920}
+.shared-price.standard{color:#242424}
+.shared-discount{background:#ed3639;color:#fff;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:850}
+.schedule-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:9px 0;flex-wrap:wrap}
+.schedule-period{white-space:nowrap}
+.schedule-pricing{display:flex;align-items:baseline;justify-content:flex-end;gap:8px 12px;flex-wrap:wrap}
+.schedule-price-old{display:none}
+.shared-package-view .schedule-price-old{display:inline;color:#999;text-decoration:line-through;font-weight:500;font-size:12px}
+.shared-package-view .schedule-pricing.is-discounted b{color:#d71920}
+@media(max-width:460px){
+  .shared-package-view .cart-item-heading b{font-size:15px}
+  .shared-package-view .cart-item-plan{font-size:13px}
+  .shared-package-view .cart-item-promo{font-size:15px}
+  .shared-package-view .shared-item-pricing{padding:10px;gap:7px 10px}
+  .shared-price{font-size:17px}
+  .schedule-row{gap:8px}
+  .schedule-pricing{gap:5px 9px}
+}
