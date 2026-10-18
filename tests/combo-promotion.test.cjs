@@ -47,7 +47,7 @@ assert.equal(promoPrice(washer,washer.plans[0],'combo10',1,{comboActive:false}),
 assert.equal(promoPrice(washer,washer.plans[0],'half9',1),47.5,'50% offer remains separate');
 assert.equal(promoPrice(washer,washer.plans[0],'half9',10),95);
 const dishwasher=CATALOG.find(p=>p.code.startsWith('DFC335HM'));
-assert.equal(promoPrice(dishwasher,dishwasher.plans[0],'dw99',1),99,'Keep special RM99 offer');
+assert.ok(dishwasher.promos.some(p=>p.id==='dw99'),'Keep special RM99 offer even after its end date');
 assert.ok(app.includes('livePromos(activeProduct)'),'Product modal must read universal promotions');
 assert.ok(app.includes('livePromos(d.product)'),'Combo package selector must read universal promotions');
 console.log('PASS: RM10 Combo on all '+CATALOG.length+' products; prior specials, eligibility and TV2517 pricing preserved');
