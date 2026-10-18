@@ -46,7 +46,7 @@ ms:{
   promoStandardDesc:'Tiada diskaun pengenalan.',promoHalf9Desc:'Promosi asas LG Subscribe: 50% OFF untuk 9 bulan pertama. Tidak boleh digabungkan dengan RM10 OFF combo pada item yang sama.',promoCombo10Desc:'Perlu sekurang-kurangnya 2 produk/order dan kedua-duanya mesti pilih RM10 OFF combo. Tidak boleh campur satu item combo dengan item 50% OFF.',promoOctoberDesc:'Helaian pelancaran mengesahkan Promosi Oktober & Evergreen tetapi kadar/tempoh diskaun tidak dinyatakan. Jason akan sahkan tawaran semasa.',
   comboInactive:'belum aktif (perlu 2 item combo)',monthWord:'Bulan',notActiveAdd:'Belum aktif — tambah 1 lagi item menggunakan RM10 OFF combo',
   withinBudget:'Dalam bajet sebanyak {amount}/bulan',overBudget:'Melebihi bajet sebanyak {amount}/bulan',buildToCompare:'Bina pakej untuk banding dengan bajet.',
-  addFirst:'Tambah produk dahulu sebelum jana link customer.',linkCopied:'Link customer disalin',copyLinkPrompt:'Salin link customer ini',packageCleared:'Pakej dikosongkan',
+  addFirst:'Tambah produk dahulu sebelum jana link customer.',linkCopied:'Link customer disalin',linkCopiedFallback:'Link penuh disalin kerana servis link pendek tidak tersedia',shortLinkUnavailable:'Link pakej ini tidak tersedia. Sila minta link baharu daripada Jason.',copyLinkPrompt:'Salin link customer ini',packageCleared:'Pakej dikosongkan',
   copyDone:'Copywriting disalin',copyFail:'Salin copywriting ini',packageMsgTitle:'✨ *PAKEJ LG SUBSCRIBE PILIHAN ANDA*',packageMsgItemPay:'Bayaran',packageMsgSchedule:'💳 *Jadual bayaran bulanan:*',packageMsgSavings:'🎉 *Jumlah penjimatan*',packageMsgLink:'🔗 *Lihat gambar & butiran pakej:*',packageMsgCTA:'Berminat? Boleh terus WhatsApp Jason di 011-5972 6619 😊',packageMsgNote:'Harga dan kelayakan promosi tertakluk kepada pengesahan akhir. T&C apply.',packageMsgCopied:'Ayat pakej berjaya disalin',packageMsgCopyPrompt:'Salin ayat pakej ini',waIntro:'Hi Jason, saya berminat dengan pakej LG Subscribe ini:',estimateNow:'Anggaran sekarang',
   catAircond:'Penyaman Udara',catLaundry:'Dobi',catFridge:'Peti Sejuk',catAP:'Penapis Udara',catWP:'Penapis Air',catTV:'TV',catDishwasher:'Mesin Basuh Pinggan',
   svcLaundryRV6:'Regular Visit (servis setiap 6 bulan)',svcLaundryRegularDetail:'Servis oleh juruteknik LG setiap 6 bulan (2 kali setahun)',svcLaundryCombinedDetail:'Kit servis sendiri dihantar setiap 6 bulan + servis oleh juruteknik LG setiap 12 bulan',svcRV:'Regular Visit (lawatan servis)',svcRV1:'Regular Visit (servis setiap 12 bulan)',svcRV2:'Regular Visit (servis setiap 6 bulan)',svcRV2Y:'Regular Visit (servis setiap 24 bulan)',svcSS:'Self-Service (servis sendiri)',svcCM:'Combine Maintenance (servis gabungan)',svcSub:'Langganan',
@@ -82,7 +82,7 @@ en:{
   promoStandardDesc:'No introductory discount.',promoHalf9Desc:'LG Subscribe baseline offer: 50% OFF for the first 9 months. Cannot be combined with RM10 OFF combo on the same item.',promoCombo10Desc:'Requires at least 2 products/orders and both must select RM10 OFF combo. Cannot mix one combo item with a 50% OFF item.',promoOctoberDesc:'The launch sheet confirms October & Evergreen promotions but does not state the discount amount/duration. Jason will confirm the current offer.',
   comboInactive:'not active (need 2 combo items)',monthWord:'Month',notActiveAdd:'Not active — add 1 more item using RM10 OFF combo',
   withinBudget:'Within budget by {amount}/month',overBudget:'Over budget by {amount}/month',buildToCompare:'Build your package to compare with budget.',
-  addFirst:'Add a product before generating a customer link.',linkCopied:'Customer link copied',copyLinkPrompt:'Copy this customer link',packageCleared:'Package cleared',
+  addFirst:'Add a product before generating a customer link.',linkCopied:'Customer link copied',linkCopiedFallback:'Full link copied because short-link service is unavailable',shortLinkUnavailable:'This package link is unavailable. Please ask Jason for a new link.',copyLinkPrompt:'Copy this customer link',packageCleared:'Package cleared',
   copyDone:'Message copied',copyFail:'Copy this message',packageMsgTitle:'✨ *YOUR LG SUBSCRIBE PACKAGE*',packageMsgItemPay:'Payment',packageMsgSchedule:'💳 *Monthly payment schedule:*',packageMsgSavings:'🎉 *Total savings*',packageMsgLink:'🔗 *View package photos & details:*',packageMsgCTA:'Interested? WhatsApp Jason at 011-5972 6619 😊',packageMsgNote:'Prices and promotion eligibility are subject to final confirmation. T&Cs apply.',packageMsgCopied:'Package message copied',packageMsgCopyPrompt:'Copy this package message',waIntro:'Hi Jason, I am interested in this LG Subscribe package:',estimateNow:'Estimated now',
   catAircond:'Air Conditioner',catLaundry:'Laundry',catFridge:'Refrigerator',catAP:'Air Purifier',catWP:'Water Purifier',catTV:'TV',catDishwasher:'Dishwasher',
   svcLaundryRV6:'Regular Visit every 6 months',svcLaundryRegularDetail:'LG technician service every 6 months (twice yearly)',svcLaundryCombinedDetail:'Self-care kit every 6 months + LG technician service every 12 months',svcRV:'Regular Visit',svcRV1:'Regular Visit 1x/year',svcRV2:'Regular Visit 2x/year',svcRV2Y:'Regular Visit every 2 years',svcSS:'Self-Service',svcCM:'Combined Maintenance',svcSub:'Subscription',
@@ -118,7 +118,7 @@ zh:{
   promoStandardDesc:'没有首期折扣。',promoHalf9Desc:'LG Subscribe 基础优惠：首9个月 50% OFF。同一件产品不可与 RM10 OFF combo 叠加。',promoCombo10Desc:'至少需要 2 件产品/订单，而且两件都必须选择 RM10 OFF combo。不可一件选 combo、另一件选 50% OFF。',promoOctoberDesc:'新品资料确认有 10 月及 Evergreen 优惠，但没有注明折扣金额/期限。Jason 会确认当前优惠。',
   comboInactive:'尚未生效（需 2 件 combo 产品）',monthWord:'第',notActiveAdd:'尚未生效 — 再加入 1 件使用 RM10 OFF combo 的产品',
   withinBudget:'每月比预算少 {amount}',overBudget:'每月超出预算 {amount}',buildToCompare:'先建立配套以比较预算。',
-  addFirst:'请先加入产品再生成客户链接。',linkCopied:'客户链接已复制',copyLinkPrompt:'复制此客户链接',packageCleared:'配套已清空',
+  addFirst:'请先加入产品再生成客户链接。',linkCopied:'客户链接已复制',linkCopiedFallback:'短链接服务暂不可用，已复制完整链接',shortLinkUnavailable:'此配套链接暂不可用，请向 Jason 索取新链接。',copyLinkPrompt:'复制此客户链接',packageCleared:'配套已清空',
   copyDone:'文案已复制',copyFail:'复制此文案',packageMsgTitle:'✨ *您的 LG Subscribe 精选配套*',packageMsgItemPay:'月费',packageMsgSchedule:'💳 *每月付款安排：*',packageMsgSavings:'🎉 *总共节省*',packageMsgLink:'🔗 *查看产品图片与配套详情：*',packageMsgCTA:'有兴趣？欢迎 WhatsApp Jason：011-5972 6619 😊',packageMsgNote:'价格与促销资格以最终确认为准。须符合条款与条件。',packageMsgCopied:'配套文案已复制',packageMsgCopyPrompt:'复制此配套文案',waIntro:'Hi Jason，我对以下 LG Subscribe 配套有兴趣：',estimateNow:'目前预计',
   catAircond:'空调',catLaundry:'洗衣家电',catFridge:'冰箱',catAP:'空气净化器',catWP:'净水器',catTV:'电视',catDishwasher:'洗碗机',
   svcLaundryRV6:'每6个月上门保养一次',svcLaundryRegularDetail:'LG技师每6个月上门保养一次（每年2次）',svcLaundryCombinedDetail:'每6个月寄送自助保养套件 + 每12个月由LG技师上门保养',svcRV:'定期上门保养',svcRV1:'每12个月上门保养一次',svcRV2:'每6个月上门保养一次',svcRV2Y:'每24个月上门保养一次',svcSS:'自行保养',svcCM:'组合保养',svcSub:'订阅方案',
@@ -653,7 +653,7 @@ function renderCart(){
   $('selectedCount').textContent=units+' '+tr('productSelected');
   const sharePhotos=$('sharePhotoGrid');
   if(!cart.length){
-    $('cartItems').innerHTML='<div class="room-empty" style="padding:16px">'+esc(tr('noProducts'))+'</div>';
+    $('cartItems').innerHTML='<div class="room-empty" style="padding:16px">'+esc(tr(quoteLoadFailed?'shortLinkUnavailable':'noProducts'))+'</div>';
     $('roomGrid').innerHTML='<div class="room-empty"><b>'+esc(tr('startAppliance'))+'</b><br>'+esc(tr('startAppliance2'))+'</div>';
     if(sharePhotos)sharePhotos.innerHTML='';
     $('currentMonthly').textContent='RM0';
@@ -700,19 +700,96 @@ async function loadSubmissionStatuses(){
 }
 function payload(){return cart.map(x=>({id:x.product.id,plan:x.product.plans.findIndex(p=>p.years===x.plan.years&&p.service===x.plan.service&&p.monthly===x.plan.monthly),years:x.plan.years,service:x.plan.service,monthly:x.plan.monthly,promo:x.promo,qty:x.qty}));}
 function packageToken(){return btoa(unescape(encodeURIComponent(JSON.stringify(payload())))).replace(/=+$/,'');}
-function customerShareUrl(){
+// Keep the original self-contained format as a fallback and for existing links.
+const QUOTE_API=SUPABASE_URL+'/functions/v1/lg-share-quote';
+let cachedQuote={signature:'',code:''},pendingQuote=null,quoteLoadFailed=false;
+function legacyCustomerShareUrl(){
   const u=new URL(location.origin+location.pathname);
   if(cart.length)u.searchParams.set('pkg',packageToken());
   u.searchParams.set('share','1');
   u.searchParams.set('v','20261018-offer-v2');u.searchParams.set('lang',currentLang);
   return u.toString();
 }
-function syncUrl(push=true){const u=new URL(location.href);if(cart.length)u.searchParams.set('pkg',packageToken());else u.searchParams.delete('pkg');if(push)history.pushState({},'',u);else history.replaceState({},'',u);}
-function loadFromUrl(){const u=new URL(location.href),v=u.searchParams.get('pkg');if(u.searchParams.get('share')==='1'){document.body.classList.add('shared-package-view');const b=document.querySelector('.budget');if(b)b.style.display='none';const k=document.querySelectorAll('.kpis .kpi');if(k.length>1)k[k.length-1].style.display='none';}if(!v)return;try{const pad=v+'==='.slice((v.length+3)%4),data=JSON.parse(decodeURIComponent(escape(atob(pad))));cart=data.map(x=>{const p=CATALOG.find(y=>y.id===x.id);if(!p)return null;const exact=p.plans.find(pl=>Number(pl.years)===Number(x.years)&&pl.service===x.service&&Number(pl.monthly)===Number(x.monthly));const plan=exact||p.plans[x.plan]||p.plans[0];return{key:Date.now()+Math.random(),product:p,plan:{...plan},promo:x.promo==='half9'&&livePromos(p).some(z=>z.id==='half12')?'half12':p.promos.some(z=>z.id===x.promo)?x.promo:'standard',qty:Math.max(1,Math.min(9,Number(x.qty)||1))};}).filter(Boolean);}catch(e){console.warn('bad package link',e);}}
-function sharePackage(){
+async function customerShareUrl(){
+  if(!cart.length)return {url:legacyCustomerShareUrl(),short:false};
+  const items=payload(),signature=JSON.stringify(items);
+  try{
+    let code;
+    if(cachedQuote.signature===signature&&cachedQuote.code){
+      code=cachedQuote.code;
+    }else{
+      let request;
+      if(pendingQuote?.signature===signature)request=pendingQuote.promise;
+      else{
+        request=(async()=>{
+          const r=await fetch(QUOTE_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items}),cache:'no-store'});
+          if(!r.ok)throw new Error('Short quotation creation HTTP '+r.status);
+          const data=await r.json();
+          if(!/^[A-Za-z0-9_-]{10,16}$/.test(data.code||''))throw new Error('Invalid quotation ID');
+          return data.code;
+        })();
+        pendingQuote={signature,promise:request};
+      }
+      try{code=await request;cachedQuote={signature,code};}
+      finally{if(pendingQuote?.promise===request)pendingQuote=null;}
+    }
+    const u=new URL(location.origin+location.pathname);
+    u.searchParams.set('q',code);
+    u.searchParams.set('share','1');
+    u.searchParams.set('lang',currentLang);
+    return {url:u.toString(),short:true};
+  }catch(e){
+    console.warn('Short quotation link unavailable; using compatible full link.',e);
+    return {url:legacyCustomerShareUrl(),short:false};
+  }
+}
+function syncUrl(push=true){
+  const u=new URL(location.href);
+  // Do not expand a customer-facing short link as the page renders.
+  if(u.searchParams.get('share')==='1'&&u.searchParams.has('q'))return;
+  u.searchParams.delete('q');
+  if(cart.length)u.searchParams.set('pkg',packageToken());else u.searchParams.delete('pkg');
+  if(push)history.pushState({},'',u);else history.replaceState({},'',u);
+}
+async function loadFromUrl(){
+  const u=new URL(location.href),v=u.searchParams.get('pkg'),code=u.searchParams.get('q');
+  if(u.searchParams.get('share')==='1'){
+    document.body.classList.add('shared-package-view');
+    const b=document.querySelector('.budget');if(b)b.style.display='none';
+    const k=document.querySelectorAll('.kpis .kpi');if(k.length>1)k[k.length-1].style.display='none';
+  }
+  if(!v&&!code)return;
+  try{
+    let data;
+    if(code){
+      if(!/^[A-Za-z0-9_-]{10,16}$/.test(code))throw new Error('Invalid quotation ID');
+      const r=await fetch(QUOTE_API+'?q='+encodeURIComponent(code),{cache:'no-store'});
+      if(!r.ok)throw new Error('Quotation retrieval HTTP '+r.status);
+      data=(await r.json()).items;
+    }else{
+      const pad=v+'==='.slice((v.length+3)%4);
+      data=JSON.parse(decodeURIComponent(escape(atob(pad))));
+    }
+    if(!Array.isArray(data))throw new Error('Invalid quotation payload');
+    cart=data.map(x=>{
+      const p=CATALOG.find(y=>y.id===x.id);if(!p)return null;
+      const exact=p.plans.find(pl=>Number(pl.years)===Number(x.years)&&pl.service===x.service&&Number(pl.monthly)===Number(x.monthly));
+      const plan=exact||p.plans[x.plan]||p.plans[0];if(!plan)return null;
+      return {key:Date.now()+Math.random(),product:p,plan:{...plan},promo:x.promo==='half9'&&livePromos(p).some(z=>z.id==='half12')?'half12':p.promos.some(z=>z.id===x.promo)?x.promo:'standard',qty:Math.max(1,Math.min(9,Number(x.qty)||1))};
+    }).filter(Boolean);
+  }catch(e){
+    console.warn('Unable to load customer quotation link',e);
+    if(code)quoteLoadFailed=true;
+  }
+}
+async function sharePackage(){
   if(!cart.length)return toast(tr('addFirst'));
-  const url=customerShareUrl();
-  navigator.clipboard?.writeText(url).then(()=>toast(tr('linkCopied'))).catch(()=>prompt(tr('copyLinkPrompt'),url));
+  const {url,short}=await customerShareUrl();
+  try{
+    if(!navigator.clipboard?.writeText)throw new Error('Clipboard not available');
+    await navigator.clipboard.writeText(url);
+    toast(tr(short?'linkCopied':'linkCopiedFallback'));
+  }catch(e){prompt(tr('copyLinkPrompt'),url);}
 }
 // Build the copyable customer message from the same live cart and pricing rules as the page.
 function packagePricePeriods(monthlyValue,maxMonths){
@@ -768,12 +845,21 @@ function copyPackageCopywriting(){
 }
 function editSharedPackage(){
   document.body.classList.remove('shared-package-view');
-  const u=new URL(location.href);u.searchParams.delete('share');history.replaceState({},'',u);
+  const u=new URL(location.href);u.searchParams.delete('share');u.searchParams.delete('q');history.replaceState({},'',u);syncUrl(false);
   $('catalogSection')?.scrollIntoView({behavior:'smooth',block:'start'});
 }
-function wa(){const lines=[tr('waIntro')];cart.forEach(x=>lines.push('• '+x.qty+'x '+x.product.code+' — '+x.plan.years+'Y '+serviceLabel(x.plan.service)+' — '+promoLabelById(x.promo,(x.product.promos.find(p=>p.id===x.promo)||{}).label||'')));const link=cart.length?customerShareUrl():location.href;lines.push(tr('estimateNow')+': '+$('currentMonthly').textContent+'/'+tr('month'),link);window.open('https://wa.me/601159726619?text='+encodeURIComponent(lines.join('\n')),'_blank');}
+async function wa(){
+  // Reserve the popup in the click handler before the asynchronous short-link lookup.
+  const popup=window.open('about:blank','_blank');
+  const lines=[tr('waIntro')];
+  cart.forEach(x=>lines.push('• '+x.qty+'x '+x.product.code+' — '+x.plan.years+'Y '+serviceLabel(x.plan.service)+' — '+promoLabelById(x.promo,(x.product.promos.find(p=>p.id===x.promo)||{}).label||'')));
+  const link=cart.length?(await customerShareUrl()).url:location.href;
+  lines.push(tr('estimateNow')+': '+$('currentMonthly').textContent+'/'+tr('month'),link);
+  const target='https://wa.me/601159726619?text='+encodeURIComponent(lines.join('\n'));
+  if(popup)popup.location.replace(target);else location.href=target;
+}
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1800);}
 window.scrollToCatalog=()=>$('catalogSection').scrollIntoView({behavior:'smooth',block:'start'});
 window.scrollToPackage=()=>$('packageSide').scrollIntoView({behavior:'smooth',block:'start'});
-document.addEventListener('DOMContentLoaded',()=>{applyI18n();loadFromUrl();renderCats();renderComboMenu();renderProducts();renderCart();loadSubmissionStatuses();$('langSelect').addEventListener('change',e=>setLanguage(e.target.value));$('search').addEventListener('input',renderProducts);$('sort').addEventListener('change',renderProducts);$('budget').addEventListener('input',budgetCheck);$('modalAdd').onclick=addActive;$('copyCopyBtn').onclick=copySelectedCopywriting;$('comboAddBtn').onclick=addRefinedCombo;$('shareBtn').onclick=sharePackage;$('copyPackageBtn').onclick=copyPackageCopywriting;$('waBtn').onclick=wa;$('editSharedBtn').onclick=editSharedPackage;$('resetBtn').onclick=()=>{cart=[];renderCart();toast(tr('packageCleared'));};$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal();});$('comboModal').addEventListener('click',e=>{if(e.target===$('comboModal'))closeComboModal();});if(document.body.classList.contains('shared-package-view')&&cart.length)setTimeout(()=>scrollToPackage(),80);});
+document.addEventListener('DOMContentLoaded',async()=>{applyI18n();await loadFromUrl();renderCats();renderComboMenu();renderProducts();renderCart();loadSubmissionStatuses();$('langSelect').addEventListener('change',e=>setLanguage(e.target.value));$('search').addEventListener('input',renderProducts);$('sort').addEventListener('change',renderProducts);$('budget').addEventListener('input',budgetCheck);$('modalAdd').onclick=addActive;$('copyCopyBtn').onclick=copySelectedCopywriting;$('comboAddBtn').onclick=addRefinedCombo;$('shareBtn').onclick=sharePackage;$('copyPackageBtn').onclick=copyPackageCopywriting;$('waBtn').onclick=wa;$('editSharedBtn').onclick=editSharedPackage;$('resetBtn').onclick=()=>{cart=[];renderCart();toast(tr('packageCleared'));};$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal();});$('comboModal').addEventListener('click',e=>{if(e.target===$('comboModal'))closeComboModal();});if(document.body.classList.contains('shared-package-view')&&cart.length)setTimeout(()=>scrollToPackage(),80);});
 })();
