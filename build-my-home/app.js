@@ -704,7 +704,7 @@ function customerShareUrl(){
   const u=new URL(location.origin+location.pathname);
   if(cart.length)u.searchParams.set('pkg',packageToken());
   u.searchParams.set('share','1');
-  u.searchParams.set('v','20261008n');u.searchParams.set('lang',currentLang);
+  u.searchParams.set('v','20261018-offer-v2');u.searchParams.set('lang',currentLang);
   return u.toString();
 }
 function syncUrl(push=true){const u=new URL(location.href);if(cart.length)u.searchParams.set('pkg',packageToken());else u.searchParams.delete('pkg');if(push)history.pushState({},'',u);else history.replaceState({},'',u);}
