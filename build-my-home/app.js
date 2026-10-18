@@ -3,9 +3,12 @@
 const SUPABASE_URL='https://jmnnesumjpkraugtzdkl.supabase.co';
 const SUPABASE_KEY='sb_publishable__CO_CJqvrVqG-LClfcD_Wg_CVdZZZU8';
 const DEFAULT_HALF9_PROMO={id:'half9',label:'50% OFF 9 bulan',type:'percent',value:50,months:9};
+ const DEFAULT_COMBO10_PROMO={id:'combo10',label:'RM10 OFF combo',type:'fixed',value:10,months:null};
 const CATALOG=(window.LG_CATALOG||[]).map((p,i)=>{
   const promos=Array.isArray(p.promos)?p.promos.map(x=>x.id==='half9'?{...x,...DEFAULT_HALF9_PROMO,validFrom:null,validTo:null}:x):[];
   if(!promos.some(x=>x.id==='half9'))promos.splice(Math.min(1,promos.length),0,{...DEFAULT_HALF9_PROMO});
+   // RM10 OFF Combo is a universal, alternative promotion, including newly added models.
+   if(!promos.some(x=>x.id==='combo10'))promos.push({...DEFAULT_COMBO10_PROMO});
   return {...p,promos,order:i};
 });
 const icons={'Aircond':'❄️','Laundry':'🧺','Fridge':'🧊','Air Purifier':'🌿','Water Purifier':'💧','TV':'📺','Dishwasher':'🍽️','Soundbar':'🔊','Vacuum':'🧹','Styler':'👔','Microwave':'♨️','Massage Recliner':'🪑','Monitor':'🖥️'};
