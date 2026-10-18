@@ -637,8 +637,46 @@ function copySelectedCopywriting(){
 window.copySelectedCopywriting=copySelectedCopywriting;
 function addActive(){if(!activeProduct||!chosenPlan)return;const qty=Math.max(1,Math.min(9,Number($('qtyInput').value)||1));cart.push({key:Date.now()+Math.random(),product:activeProduct,plan:{...chosenPlan},promo:chosenPromo,qty});closeModal();renderCart();toast(chosenPromo==='combo10'&&!comboEligible()?tr('comboNeedAnother'):tr('addedPackage'));}
 function totalUnits(){return cart.reduce((a,x)=>a+x.qty,0);}
-function renderCart(){const units=totalUnits();$('cartUnits').textContent=units+' '+tr('unit');$('selectedCount').textContent=units+' '+tr('productSelected');const sharePhotos=$('sharePhotoGrid');if(!cart.length){$('cartItems').innerHTML='<div class="room-empty" style="padding:16px">'+esc(tr('noProducts'))+'</div>';$('roomGrid').innerHTML='<div class="room-empty"><b>'+esc(tr('startAppliance'))+'</b><br>'+esc(tr('startAppliance2'))+'</div>';if(sharePhotos)sharePhotos.innerHTML='';$('currentMonthly').textContent='RM0';$('scheduleRows').innerHTML='';$('saving').textContent='RM0';$('contractTotal').textContent='RM0';budgetCheck();syncUrl(false);return;}$('cartItems').innerHTML=cart.map((x,i)=>'<div class="cart-item"><div><b>'+esc(x.product.code)+'</b><span>'+x.qty+' × '+x.plan.years+'Y · '+esc(serviceLabel(x.plan.service))+'</span><small>'+esc(promoLabelFor(x))+'</small></div><button type="button" data-i="'+i+'" class="remove" aria-label="'+esc(tr('removeItem'))+' '+esc(x.product.code)+'"><span aria-hidden="true">✕</span></button></div>').join('');$('cartItems').querySelectorAll('.remove').forEach(b=>b.onclick=()=>{cart.splice(Number(b.dataset.i),1);renderCart();toast(tr('itemRemoved'));});const productCards=cart.map(x=>'<div class="room-item"><div class="qtydot">×'+x.qty+'</div><div class="miniimg">'+visual(x.product)+'</div><b>'+esc(x.product.code)+'</b><span>'+esc(x.product.name)+'</span></div>').join('');$('roomGrid').innerHTML=productCards;if(sharePhotos)sharePhotos.innerHTML=productCards;$('currentMonthly').textContent=money(cart.reduce((a,x)=>a+monthlyFor(x,1),0));renderSchedule();budgetCheck();syncUrl(false);}
-function renderSchedule(){const units=totalUnits(),maxMonths=Math.max(...cart.map(x=>x.plan.years*12)),cuts=new Set([1,maxMonths+1]);cart.forEach(x=>{const p=promoObj(x.product,x.promo);if(p.months)cuts.add(Number(p.months)+1);cuts.add(x.plan.years*12+1);});const pts=[...cuts].filter(n=>n>=1&&n<=maxMonths+1).sort((a,b)=>a-b);let rows=[],total=0,standard=0;for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1]-1;if(a>b)continue;const m=cart.reduce((s,x)=>a<=x.plan.years*12?s+monthlyFor(x,a):s,0),normal=cart.reduce((s,x)=>a<=x.plan.years*12?s+(Number(x.plan.monthly)||0)*x.qty:s,0),months=b-a+1;total+=m*months;standard+=normal*months;rows.push('<div class="schedule-row"><span>'+esc(tr('monthWord'))+' '+a+(b>a?'–'+b:'')+'</span><b>'+money(m)+'/'+esc(tr('month'))+'</b></div>');}$('scheduleRows').innerHTML=rows.join('')+(comboLineCount()===1?'<div class="schedule-row combo-warning"><span>RM10 OFF combo</span><b>'+esc(tr('notActiveAdd'))+'</b></div>':'');$('saving').textContent=money(Math.max(0,standard-total));$('contractTotal').textContent=money(total);}
+function sharedItemPricing(item){
+  const original=(Number(item.plan.monthly)||0)*item.qty;
+  const discounted=monthlyFor(item,1);
+  const perMonth='/'+esc(tr('month'));
+  if(!(discounted<original))return '<div class="shared-item-pricing"><strong class="shared-price standard">'+money(original)+perMonth+'</strong></div>';
+  const offer=promoObj(item.product,item.promo);
+  const savingPct=original>0?Math.round((original-discounted)/original*100):0;
+  const badge=offer.type==='percent'?'-'+savingPct+'%':money(original-discounted)+' OFF';
+  return '<div class="shared-item-pricing"><del class="shared-original">'+money(original)+perMonth+'</del><strong class="shared-price">'+money(discounted)+perMonth+'</strong><span class="shared-discount">'+esc(badge)+'</span></div>';
+}
+function renderCart(){
+  const units=totalUnits();
+  $('cartUnits').textContent=units+' '+tr('unit');
+  $('selectedCount').textContent=units+' '+tr('productSelected');
+  const sharePhotos=$('sharePhotoGrid');
+  if(!cart.length){
+    $('cartItems').innerHTML='<div class="room-empty" style="padding:16px">'+esc(tr('noProducts'))+'</div>';
+    $('roomGrid').innerHTML='<div class="room-empty"><b>'+esc(tr('startAppliance'))+'</b><br>'+esc(tr('startAppliance2'))+'</div>';
+    if(sharePhotos)sharePhotos.innerHTML='';
+    $('currentMonthly').textContent='RM0';
+    $('scheduleRows').innerHTML='';
+    $('saving').textContent='RM0';
+    $('contractTotal').textContent='RM0';
+    budgetCheck();syncUrl(false);return;
+  }
+  $('cartItems').innerHTML=cart.map((x,i)=>
+    '<div class="cart-item"><div class="cart-item-details">'+
+      '<div class="cart-item-heading"><b>'+esc(x.product.code)+'</b><span class="cart-item-plan">'+x.qty+' × '+x.plan.years+'Y · '+esc(serviceLabel(x.plan.service))+'</span></div>'+
+      '<div class="cart-item-promo">'+esc(promoLabelFor(x))+'</div>'+
+      sharedItemPricing(x)+
+    '</div><button type="button" data-i="'+i+'" class="remove" aria-label="'+esc(tr('removeItem'))+' '+esc(x.product.code)+'"><span aria-hidden="true">✕</span></button></div>'
+  ).join('');
+  $('cartItems').querySelectorAll('.remove').forEach(b=>b.onclick=()=>{cart.splice(Number(b.dataset.i),1);renderCart();toast(tr('itemRemoved'));});
+  const productCards=cart.map(x=>'<div class="room-item"><div class="qtydot">×'+x.qty+'</div><div class="miniimg">'+visual(x.product)+'</div><b>'+esc(x.product.code)+'</b><span>'+esc(x.product.name)+'</span></div>').join('');
+  $('roomGrid').innerHTML=productCards;
+  if(sharePhotos)sharePhotos.innerHTML=productCards;
+  $('currentMonthly').textContent=money(cart.reduce((a,x)=>a+monthlyFor(x,1),0));
+  renderSchedule();budgetCheck();syncUrl(false);
+}
+function renderSchedule(){const units=totalUnits(),maxMonths=Math.max(...cart.map(x=>x.plan.years*12)),cuts=new Set([1,maxMonths+1]);cart.forEach(x=>{const p=promoObj(x.product,x.promo);if(p.months)cuts.add(Number(p.months)+1);cuts.add(x.plan.years*12+1);});const pts=[...cuts].filter(n=>n>=1&&n<=maxMonths+1).sort((a,b)=>a-b);let rows=[],total=0,standard=0;for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1]-1;if(a>b)continue;const m=cart.reduce((s,x)=>a<=x.plan.years*12?s+monthlyFor(x,a):s,0),normal=cart.reduce((s,x)=>a<=x.plan.years*12?s+(Number(x.plan.monthly)||0)*x.qty:s,0),months=b-a+1;total+=m*months;standard+=normal*months;rows.push('<div class="schedule-row"><span class="schedule-period">'+esc(tr('monthWord'))+' '+a+(b>a?'–'+b:'')+'</span><div class="schedule-pricing'+(m<normal?' is-discounted':'')+'">'+(m<normal?'<del class="schedule-price-old">'+money(normal)+'/'+esc(tr('month'))+'</del>':'')+'<b>'+money(m)+'/'+esc(tr('month'))+'</b></div></div>');}$('scheduleRows').innerHTML=rows.join('')+(comboLineCount()===1?'<div class="schedule-row combo-warning"><span>RM10 OFF combo</span><b>'+esc(tr('notActiveAdd'))+'</b></div>':'');$('saving').textContent=money(Math.max(0,standard-total));$('contractTotal').textContent=money(total);}
 function budgetCheck(){const budget=Number($('budget')?.value)||0,cur=Number($('currentMonthly')?.textContent.replace(/[^\d.]/g,''))||0,e=$('budgetResult');if(!cart.length){e.textContent=tr('buildToCompare');e.className='budget-result';return;}if(cur<=budget){e.textContent=tr('withinBudget',{amount:money(budget-cur)});e.className='budget-result ok';}else{e.textContent=tr('overBudget',{amount:money(cur-budget)});e.className='budget-result over';}}
 // Retrieves only product submission status (no warehouse balances or stock quantities).
 async function loadSubmissionStatuses(){
