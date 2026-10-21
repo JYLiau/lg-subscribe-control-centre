@@ -35,7 +35,7 @@ ms:{
   shareTitle:'Pakej khas untuk anda',shareText:'Produk, tempoh, servis dan promosi di bawah telah dipilih berdasarkan permintaan anda.',editChoice:'Ubah pilihan',
   packageTitle:'PAKEJ PILIHAN ANDA',packageIntro:'Bayaran berubah ikut promosi & tempoh.',selectedProducts:'Produk dipilih',paymentNow:'Bayaran sekarang',budget:'Bajet bulanan',
   schedule:'Jadual bayaran',savings:'Jumlah penjimatan',contract:'Jumlah kontrak',askWa:'Tanya Jason di WhatsApp',copyLink:'Salin link untuk customer',copyPackage:'📋 Salin ayat pakej',clearPackage:'Kosongkan pakej',removeItem:'Buang',itemRemoved:'Produk dibuang daripada pakej',
-  disclaimer:'Promosi 50% dan RM10 combo ialah pilihan berasingan dan tidak digabungkan. RM10 combo hanya aktif apabila sekurang-kurangnya 2 produk/order kedua-duanya memilih pakej RM10 combo. Sila sahkan butiran tawaran sebelum permohonan.',
+  disclaimer:'Promosi 50% dan RM10 combo ialah pilihan berasingan dan tidak digabungkan. RM10 combo hanya aktif apabila sekurang-kurangnya 2 unit (model sama atau berlainan) kedua-duanya memilih pakej RM10 combo. Sila sahkan butiran tawaran sebelum permohonan.',
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Imej produk daripada bahan rujukan yang dibekalkan. T&C apply.',
   comboHelp:'Pilih tempoh, servis dan promosi untuk setiap produk. Harga pakej akan dikira semula sebelum ditambah.',comboEstimate:'Anggaran bayaran bulan pertama',comboAdd:'Tambah set ke pakej',
   choosePlan:'1. Pilih pelan',choosePromo:'2. Pilih promosi',outright:'Outright',oneTime:'sekali bayar',noService:'Tanpa servis',qty:'Kuantiti',copy:'Salin ayat',copyTitle:'Salin ayat jualan untuk pelan dan promosi dipilih',addPackage:'Tambah ke pakej',
@@ -43,10 +43,10 @@ ms:{
   noProducts:'Belum ada produk.',startAppliance:'Mulakan dengan satu perkakas',startAppliance2:'Pilih produk di bawah untuk bina pakej rumah anda.',
   productSelected:'produk dipilih',unit:'unit',model:'model',standard:'standard',period:'Tempoh',service:'Servis',promotion:'Promosi',
   notAvailable:'Tidak tersedia',chooseCustomize:'Pilih & ubah suai',standardPlanFrom:'Dari pelan standard',canCustomize:'boleh ubah tempoh/servis/promosi',
-  comboNeed2:'RM10 OFF combo perlukan sekurang-kurangnya 2 produk/order dalam pakej yang kedua-duanya memilih RM10 OFF combo.',
+  comboNeed2:'RM10 OFF combo perlukan sekurang-kurangnya 2 unit (model sama atau berlainan) dalam pakej yang kedua-duanya memilih RM10 OFF combo.',
   addedPackage:'Ditambah ke pakej',comboAdded:'ditambah ke pakej',comboNeedAnother:'Ditambah. RM10 combo perlukan satu lagi item dengan pakej RM10 OFF combo yang sama.',
   promoStandard:'Harga standard',promoHalf9:'50% OFF 9 bulan',promoCombo10:'RM10 OFF combo',promoOctober:'Promosi Oktober / Evergreen · Jason sahkan',promoDw99:'Promosi khas RM99/bulan',promoDw99Desc:'Sah untuk permohonan 1 Okt–31 Dis 2026. Harga biasa RM150/bulan.',
-  promoStandardDesc:'Tiada diskaun pengenalan.',promoHalf9Desc:'Promosi asas LG Subscribe: 50% OFF untuk 9 bulan pertama. Tidak boleh digabungkan dengan RM10 OFF combo pada item yang sama.',promoCombo10Desc:'Perlu sekurang-kurangnya 2 produk/order dan kedua-duanya mesti pilih RM10 OFF combo. Tidak boleh campur satu item combo dengan item 50% OFF.',promoOctoberDesc:'Helaian pelancaran mengesahkan Promosi Oktober & Evergreen tetapi kadar/tempoh diskaun tidak dinyatakan. Jason akan sahkan tawaran semasa.',
+  promoStandardDesc:'Tiada diskaun pengenalan.',promoHalf9Desc:'Promosi asas LG Subscribe: 50% OFF untuk 9 bulan pertama. Tidak boleh digabungkan dengan RM10 OFF combo pada item yang sama.',promoCombo10Desc:'Perlu sekurang-kurangnya 2 unit (model sama atau berlainan) dan kedua-duanya mesti pilih RM10 OFF combo. Tidak boleh campur satu item combo dengan item 50% OFF.',promoOctoberDesc:'Helaian pelancaran mengesahkan Promosi Oktober & Evergreen tetapi kadar/tempoh diskaun tidak dinyatakan. Jason akan sahkan tawaran semasa.',
   comboInactive:'belum aktif (perlu 2 item combo)',monthWord:'Bulan',notActiveAdd:'Belum aktif — tambah 1 lagi item menggunakan RM10 OFF combo',
   withinBudget:'Dalam bajet sebanyak {amount}/bulan',overBudget:'Melebihi bajet sebanyak {amount}/bulan',buildToCompare:'Bina pakej untuk banding dengan bajet.',
   addFirst:'Tambah produk dahulu sebelum jana link customer.',linkCopied:'Link customer disalin',linkCopiedFallback:'Link penuh disalin kerana servis link pendek tidak tersedia',shortLinkUnavailable:'Link pakej ini tidak tersedia. Sila minta link baharu daripada Jason.',copyLinkPrompt:'Salin link customer ini',packageCleared:'Pakej dikosongkan',
@@ -55,7 +55,7 @@ ms:{
   svcLaundryRV6:'Regular Visit (servis setiap 6 bulan)',svcLaundryRegularDetail:'Servis oleh juruteknik LG setiap 6 bulan (2 kali setahun)',svcLaundryCombinedDetail:'Kit servis sendiri dihantar setiap 6 bulan + servis oleh juruteknik LG setiap 12 bulan',svcRV:'Regular Visit (lawatan servis)',svcRV1:'Regular Visit (servis setiap 12 bulan)',svcRV2:'Regular Visit (servis setiap 6 bulan)',svcRV2Y:'Regular Visit (servis setiap 24 bulan)',svcSS:'Self-Service (servis sendiri)',svcCM:'Combine Maintenance (servis gabungan)',svcSub:'Langganan',
   copyHeadline:'✨ LG Subscribe — {name}',copyModel:'Model: {code}',copyPlan:'Pelan {years} Tahun · {service}',copyNormal:'Harga biasa: {price}/bulan',
   copyHalf9:'🔥 50% OFF untuk 9 bulan pertama: {promo}/bulan\nBulan 10–{end}: {normal}/bulan',
-  copyCombo:'🎁 RM10 OFF Combo: {promo}/bulan\n*Aktif apabila sekurang-kurangnya 2 produk/order memilih pakej RM10 OFF combo.',
+  copyCombo:'🎁 RM10 OFF Combo: {promo}/bulan\n*Aktif apabila sekurang-kurangnya 2 unit (model sama atau berlainan) memilih pakej RM10 OFF combo.',
   copyStandard:'💳 Bayaran bulanan: {normal}/bulan',copyOctober:'🎉 Promosi Oktober / Evergreen tersedia. Kadar promosi semasa akan disahkan oleh Jason.',
   copyPackageIncludes:'Pakej termasuk:',copyDelivery:'🚚 Penghantaran & pemasangan asas percuma',copyServiceLine:'🛠️ Servis: {service}',copyCmKit:'✅️ Kit servis sendiri dihantar percuma setiap 6 bulan',copyCmVisit:'✅️ Servis oleh juruteknik LG setiap 12 bulan',copyWpFilter:'✅️ Penapis gantian dihantar setiap 6 bulan',svcWaterRegularDetail:'Juruteknik LG datang servis setiap 6 bulan',svcWaterSelfDetail:'Penapis gantian dihantar setiap 6 bulan untuk ditukar sendiri',svcWaterCombinedDetail:'Penapis gantian dihantar setiap 6 bulan + servis oleh juruteknik LG setiap 12 bulan',svcAirRegularDetail:'Juruteknik LG datang servis setiap 12 bulan',svcAirSelfDetail:'Penapis gantian dihantar setiap 12 bulan untuk ditukar sendiri',copyCTA:'Nak saya bantu pilih pakej yang sesuai untuk anda? 😊\nWhatsApp Jason: 011-5972 6619',
   combo_setA_name:'Sejuk + Segar',combo_setA_desc:'Aircond 1.0HP + Peti Sejuk 493L',combo_setB_name:'Segar + Dobi',combo_setB_desc:'Peti Sejuk 493L + Mesin Basuh 12kg',combo_setC_name:'Sejuk + Dobi',combo_setC_desc:'Aircond 1.0HP + Mesin Basuh 12kg',combo_setD_name:'Trio Lengkap Rumah',combo_setD_desc:'Aircond + Peti Sejuk + Mesin Basuh',combo_setE_name:'Duo Dobi',combo_setE_desc:'Mesin Basuh 12kg + Pengering 10kg'
@@ -71,7 +71,7 @@ en:{
   shareTitle:'A package selected for you',shareText:'The products, term, service and promotion below were selected based on your request.',editChoice:'Change selection',
   packageTitle:'YOUR SELECTED PACKAGE',packageIntro:'Payment changes with promotion & term.',selectedProducts:'Selected products',paymentNow:'Payment now',budget:'Monthly budget',
   schedule:'Payment schedule',savings:'Total savings',contract:'Contract total',askWa:'Ask Jason on WhatsApp',copyLink:'Copy customer link',copyPackage:'📋 Copy package message',clearPackage:'Clear package',removeItem:'Remove',itemRemoved:'Product removed from package',
-  disclaimer:'50% promotion and RM10 combo are separate choices and cannot be combined. RM10 combo is active only when at least 2 products/orders both use the RM10 combo package. Please confirm offer details before applying.',
+  disclaimer:'50% promotion and RM10 combo are separate choices and cannot be combined. RM10 combo is active only when at least 2 units (same or different models) both use the RM10 combo package. Please confirm offer details before applying.',
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Product images are from supplied reference materials. T&C apply.',
   comboHelp:'Choose the term, service and promotion for each product. The package price will be recalculated before adding.',comboEstimate:'Estimated first-month payment',comboAdd:'Add set to package',
   choosePlan:'1. Choose plan',choosePromo:'2. Choose promotion',outright:'Outright',oneTime:'one-time',noService:'No service',qty:'Quantity',copy:'Copy text',copyTitle:'Copy the selected plan and promotion message',addPackage:'Add to package',
@@ -79,10 +79,10 @@ en:{
   noProducts:'No products yet.',startAppliance:'Start with one appliance',startAppliance2:'Choose a product below to build your home package.',
   productSelected:'products selected',unit:'unit',model:'model',standard:'standard',period:'Term',service:'Service',promotion:'Promotion',
   notAvailable:'Unavailable',chooseCustomize:'Choose & customise',standardPlanFrom:'From standard plan',canCustomize:'term/service/promotion can be changed',
-  comboNeed2:'RM10 OFF combo requires at least 2 products/orders in the package, and both must select RM10 OFF combo.',
+  comboNeed2:'RM10 OFF combo requires at least 2 units (same or different models) in the package, and both must select RM10 OFF combo.',
   addedPackage:'Added to package',comboAdded:'added to package',comboNeedAnother:'Added. RM10 combo needs one more item using the same RM10 OFF combo package.',
   promoStandard:'Standard price',promoHalf9:'50% OFF 9 months',promoCombo10:'RM10 OFF combo',promoOctober:'October / Evergreen promo · Jason confirms',
-  promoStandardDesc:'No introductory discount.',promoHalf9Desc:'LG Subscribe baseline offer: 50% OFF for the first 9 months. Cannot be combined with RM10 OFF combo on the same item.',promoCombo10Desc:'Requires at least 2 products/orders and both must select RM10 OFF combo. Cannot mix one combo item with a 50% OFF item.',promoOctoberDesc:'The launch sheet confirms October & Evergreen promotions but does not state the discount amount/duration. Jason will confirm the current offer.',
+  promoStandardDesc:'No introductory discount.',promoHalf9Desc:'LG Subscribe baseline offer: 50% OFF for the first 9 months. Cannot be combined with RM10 OFF combo on the same item.',promoCombo10Desc:'Requires at least 2 units (same or different models) and both must select RM10 OFF combo. Cannot mix one combo item with a 50% OFF item.',promoOctoberDesc:'The launch sheet confirms October & Evergreen promotions but does not state the discount amount/duration. Jason will confirm the current offer.',
   comboInactive:'not active (need 2 combo items)',monthWord:'Month',notActiveAdd:'Not active — add 1 more item using RM10 OFF combo',
   withinBudget:'Within budget by {amount}/month',overBudget:'Over budget by {amount}/month',buildToCompare:'Build your package to compare with budget.',
   addFirst:'Add a product before generating a customer link.',linkCopied:'Customer link copied',linkCopiedFallback:'Full link copied because short-link service is unavailable',shortLinkUnavailable:'This package link is unavailable. Please ask Jason for a new link.',copyLinkPrompt:'Copy this customer link',packageCleared:'Package cleared',
@@ -91,7 +91,7 @@ en:{
   svcLaundryRV6:'Regular Visit every 6 months',svcLaundryRegularDetail:'LG technician service every 6 months (twice yearly)',svcLaundryCombinedDetail:'Self-care kit every 6 months + LG technician service every 12 months',svcRV:'Regular Visit',svcRV1:'Regular Visit 1x/year',svcRV2:'Regular Visit 2x/year',svcRV2Y:'Regular Visit every 2 years',svcSS:'Self-Service',svcCM:'Combined Maintenance',svcSub:'Subscription',
   copyHeadline:'✨ LG Subscribe — {name}',copyModel:'Model: {code}',copyPlan:'{years}-Year Plan · {service}',copyNormal:'Normal price: {price}/month',
   copyHalf9:'🔥 50% OFF for the first 9 months: {promo}/month\nMonth 10–{end}: {normal}/month',
-  copyCombo:'🎁 RM10 OFF Combo: {promo}/month\n*Active when at least 2 products/orders select the RM10 OFF combo package.',
+  copyCombo:'🎁 RM10 OFF Combo: {promo}/month\n*Active when at least 2 units (same or different models) select the RM10 OFF combo package.',
   copyStandard:'💳 Monthly payment: {normal}/month',copyOctober:'🎉 October / Evergreen promotion is available. Jason will confirm the current promotional rate.',
   copyPackageIncludes:'Package includes:',copyDelivery:'🚚 Free delivery & basic installation',copyServiceLine:'🛠️ Service: {service}',copyCmKit:'✅️ Complimentary self-service kit delivered every 6 months',copyCmVisit:'✅️ LG technician service every 12 months',copyWpFilter:'✅️ Replacement filters delivered every 6 months',svcWaterRegularDetail:'LG technician service every 6 months',svcWaterSelfDetail:'Replacement filters delivered every 6 months for self-replacement',svcWaterCombinedDetail:'Replacement filters delivered every 6 months + LG technician service every 12 months',svcAirRegularDetail:'LG technician service every 12 months',svcAirSelfDetail:'Replacement filters delivered every 12 months for self-replacement',copyCTA:'Want me to help choose the most suitable package for you? 😊\nWhatsApp Jason: 011-5972 6619',
   combo_setA_name:'Cool + Fresh',combo_setA_desc:'1.0HP Air Conditioner + 493L Refrigerator',combo_setB_name:'Fresh + Laundry',combo_setB_desc:'493L Refrigerator + 12kg Washer',combo_setC_name:'Cool + Laundry',combo_setC_desc:'1.0HP Air Conditioner + 12kg Washer',combo_setD_name:'Whole Home Trio',combo_setD_desc:'Air Conditioner + Refrigerator + Washer',combo_setE_name:'Laundry Duo',combo_setE_desc:'12kg Washer + 10kg Dryer'
@@ -107,7 +107,7 @@ zh:{
   shareTitle:'为你挑选的配套',shareText:'以下产品、年限、服务和优惠是根据你的需求预先选择。',editChoice:'修改选择',
   packageTitle:'你选择的配套',packageIntro:'月费会根据优惠与年限变化。',selectedProducts:'已选产品',paymentNow:'目前月费',budget:'每月预算',
   schedule:'付款时间表',savings:'总节省',contract:'合约总额',askWa:'WhatsApp 咨询 Jason',copyLink:'复制客户链接',copyPackage:'📋 复制配套文案',clearPackage:'清空配套',removeItem:'移除',itemRemoved:'已从配套移除产品',
-  disclaimer:'50% 优惠与 RM10 组合优惠为不同方案，不可叠加。RM10 组合优惠只有在至少 2 件产品/订单都选择 RM10 combo 时才生效。申请前请确认优惠详情。',
+  disclaimer:'50% 优惠与 RM10 组合优惠为不同方案，不可叠加。RM10 组合优惠只有在至少 2 台产品（相同或不同型号）都选择 RM10 combo 时才生效。申请前请确认优惠详情。',
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>产品图片来自所提供的参考资料。须符合条款与条件。',
   comboHelp:'为每件产品选择年限、服务和优惠。加入前会重新计算配套价格。',comboEstimate:'首月预计月费',comboAdd:'加入整套配套',
   choosePlan:'1. 选择方案',choosePromo:'2. 选择优惠',outright:'直接购买',oneTime:'一次性付款',noService:'无服务',qty:'数量',copy:'复制文案',copyTitle:'复制所选方案与优惠的文案',addPackage:'加入配套',
@@ -115,10 +115,10 @@ zh:{
   noProducts:'尚未选择产品。',startAppliance:'从一件家电开始',startAppliance2:'从下方选择产品，建立你的家电配套。',
   productSelected:'件产品已选择',unit:'件',model:'型号',standard:'标准价',period:'年限',service:'服务',promotion:'优惠',
   notAvailable:'暂不可用',chooseCustomize:'选择并调整',standardPlanFrom:'标准方案起',canCustomize:'可更改年限/服务/优惠',
-  comboNeed2:'RM10 OFF 组合优惠需要至少 2 件产品/订单，而且两件都必须选择 RM10 OFF combo。',
+  comboNeed2:'RM10 OFF 组合优惠需要至少 2 台产品（相同或不同型号），而且两件都必须选择 RM10 OFF combo。',
   addedPackage:'已加入配套',comboAdded:'已加入配套',comboNeedAnother:'已加入。RM10 combo 还需要另一件产品选择相同 RM10 OFF combo 才会生效。',
   promoStandard:'标准价格',promoHalf9:'首 9 个月 50% OFF',promoCombo10:'RM10 OFF 组合优惠',promoOctober:'10 月 / Evergreen 优惠 · Jason 确认',
-  promoStandardDesc:'没有首期折扣。',promoHalf9Desc:'LG Subscribe 基础优惠：首9个月 50% OFF。同一件产品不可与 RM10 OFF combo 叠加。',promoCombo10Desc:'至少需要 2 件产品/订单，而且两件都必须选择 RM10 OFF combo。不可一件选 combo、另一件选 50% OFF。',promoOctoberDesc:'新品资料确认有 10 月及 Evergreen 优惠，但没有注明折扣金额/期限。Jason 会确认当前优惠。',
+  promoStandardDesc:'没有首期折扣。',promoHalf9Desc:'LG Subscribe 基础优惠：首9个月 50% OFF。同一件产品不可与 RM10 OFF combo 叠加。',promoCombo10Desc:'至少需要 2 台产品（相同或不同型号），而且两件都必须选择 RM10 OFF combo。不可一件选 combo、另一件选 50% OFF。',promoOctoberDesc:'新品资料确认有 10 月及 Evergreen 优惠，但没有注明折扣金额/期限。Jason 会确认当前优惠。',
   comboInactive:'尚未生效（需 2 件 combo 产品）',monthWord:'第',notActiveAdd:'尚未生效 — 再加入 1 件使用 RM10 OFF combo 的产品',
   withinBudget:'每月比预算少 {amount}',overBudget:'每月超出预算 {amount}',buildToCompare:'先建立配套以比较预算。',
   addFirst:'请先加入产品再生成客户链接。',linkCopied:'客户链接已复制',linkCopiedFallback:'短链接服务暂不可用，已复制完整链接',shortLinkUnavailable:'此配套链接暂不可用，请向 Jason 索取新链接。',copyLinkPrompt:'复制此客户链接',packageCleared:'配套已清空',
@@ -127,7 +127,7 @@ zh:{
   svcLaundryRV6:'每6个月上门保养一次',svcLaundryRegularDetail:'LG技师每6个月上门保养一次（每年2次）',svcLaundryCombinedDetail:'每6个月寄送自助保养套件 + 每12个月由LG技师上门保养',svcRV:'定期上门保养',svcRV1:'每12个月上门保养一次',svcRV2:'每6个月上门保养一次',svcRV2Y:'每24个月上门保养一次',svcSS:'自行保养',svcCM:'组合保养',svcSub:'订阅方案',
   copyHeadline:'✨ LG Subscribe — {name}',copyModel:'型号：{code}',copyPlan:'{years} 年方案 · {service}',copyNormal:'原价：{price}/月',
   copyHalf9:'🔥 首 9 个月 50% OFF：{promo}/月\n第 10–{end} 个月：{normal}/月',
-  copyCombo:'🎁 RM10 OFF 组合优惠：{promo}/月\n*至少 2 件产品/订单都选择 RM10 OFF combo 后才生效。',
+  copyCombo:'🎁 RM10 OFF 组合优惠：{promo}/月\n*至少 2 台产品（相同或不同型号）都选择 RM10 OFF combo 后才生效。',
   copyStandard:'💳 月费：{normal}/月',copyOctober:'🎉 可享 10 月 / Evergreen 优惠。当前优惠价格由 Jason 确认。',
   copyPackageIncludes:'配套包括：',copyDelivery:'🚚 免费送货及基本安装',copyServiceLine:'🛠️ 服务：{service}',copyCmKit:'✅️ 每6个月免费配送自助保养套件',copyCmVisit:'✅️ LG技师每12个月上门保养一次',copyWpFilter:'✅️ 每6个月配送更换滤芯',svcWaterRegularDetail:'LG技师每6个月上门保养一次',svcWaterSelfDetail:'每6个月配送滤芯供客户自行更换',svcWaterCombinedDetail:'每6个月配送更换滤芯 + LG技师每12个月上门保养一次',svcAirRegularDetail:'LG技师每12个月上门保养一次',svcAirSelfDetail:'每12个月配送滤网供客户自行更换',copyCTA:'要我帮你选择适合的配套吗？😊\nWhatsApp Jason：011-5972 6619',
   combo_setA_name:'凉爽 + 保鲜',combo_setA_desc:'1.0HP 空调 + 493L 冰箱',combo_setB_name:'保鲜 + 洗衣',combo_setB_desc:'493L 冰箱 + 12kg 洗衣机',combo_setC_name:'凉爽 + 洗衣',combo_setC_desc:'1.0HP 空调 + 12kg 洗衣机',combo_setD_name:'全屋三件套',combo_setD_desc:'空调 + 冰箱 + 洗衣机',combo_setE_name:'洗衣双组合',combo_setE_desc:'12kg 洗衣机 + 10kg 烘干机'
@@ -264,7 +264,7 @@ function comboPlanFor(d){
     || d.product.plans[0];
 }
 function comboEligibleDraft(){
-  return cart.filter(x=>x.promo==='combo10').length+comboDraft.filter(x=>x.promo==='combo10').length>=2;
+  return comboUnitCount(cart)+comboUnitCount(comboDraft)>=2;
 }
 function comboDraftPairEligible(item){
   const target=String(item?.product?.pairPromoWith||'').split('.')[0].toUpperCase();
@@ -316,8 +316,8 @@ function renderComboRefine(){
   updateComboRefineSummary();
 }
 function updateComboRefineSummary(){
-  const comboCount=comboDraft.filter(x=>x.promo==='combo10').length;
-  const combinedComboCount=cart.filter(x=>x.promo==='combo10').length+comboCount;
+  const comboCount=comboUnitCount(comboDraft);
+  const combinedComboCount=comboUnitCount(cart)+comboCount;
   const err=comboCount>0&&combinedComboCount<2?tr('comboNeed2'):'';
   $('comboRefineError').textContent=err;
   $('comboRefineError').classList.toggle('show',!!err);
@@ -327,8 +327,8 @@ function updateComboRefineSummary(){
 }
 function addRefinedCombo(){
   if(!activeComboPreset||!comboDraft.length)return;
-  const draftComboCount=comboDraft.filter(x=>x.promo==='combo10').length;
-  if(draftComboCount>0&&cart.filter(x=>x.promo==='combo10').length+draftComboCount<2){updateComboRefineSummary();return;}
+  const draftComboCount=comboUnitCount(comboDraft);
+  if(draftComboCount>0&&comboUnitCount(cart)+draftComboCount<2){updateComboRefineSummary();return;}
   const seed=Date.now();
   cart.push(...comboDraft.map((d,i)=>({key:seed+i+Math.random(),product:d.product,plan:{...comboPlanFor(d)},promo:d.promo,qty:1})));
   const name=comboName(activeComboPreset);
@@ -384,8 +384,9 @@ function renderPromos(){
   $('promoGrid').innerHTML=info+promos.map(p=>'<button class="promo-card '+(p.id===chosenPromo?'active':'')+'" data-id="'+p.id+'"><b>'+esc(promoLabel(p))+'</b><span>'+esc(promoDescription(p))+'</span></button>').join('');
   $('promoGrid').querySelectorAll('.promo-card').forEach(b=>b.onclick=()=>{chosenPromo=b.dataset.id;renderPromos();});
 }
-function comboLineCount(){return cart.filter(x=>x.promo==='combo10').length;}
-function comboEligible(){return comboLineCount()>=2;}
+function comboUnitCount(items){return items.reduce((total,item)=>total+(item.promo==='combo10'&&!item.plan?.outright?Math.max(1,Math.floor(Number(item.qty)||1)):0),0);}
+function comboCartUnitCount(){return comboUnitCount(cart);}
+function comboEligible(){return comboCartUnitCount()>=2;}
 function pairPromoEligible(item){
   const target=String(item?.product?.pairPromoWith||'').split('.')[0].toUpperCase();
   if(!target)return true;
@@ -631,7 +632,7 @@ function selectedCopywriting(){
       :currentLang==='en'
       ?('🔥 RM'+v+' OFF/month: '+money(month1)+'/month (Normal '+money(normal)+'/month)')
       :('🔥 RM'+v+' OFF/bulan: '+money(month1)+'/bulan (Harga biasa '+money(normal)+'/bulan)');
-    if(promo.id==='combo10')offer+='\n'+(currentLang==='zh'?'*至少 2 件产品/订单都选择 RM10 OFF combo 后才生效。':currentLang==='en'?'*Active when at least 2 products/orders select the RM10 OFF combo package.':'*Aktif apabila sekurang-kurangnya 2 produk/order memilih pakej RM10 OFF combo.');
+    if(promo.id==='combo10')offer+='\n'+(currentLang==='zh'?'*至少 2 台产品（相同或不同型号）都选择 RM10 OFF combo 后才生效。':currentLang==='en'?'*Active when at least 2 units (same or different models) select the RM10 OFF combo package.':'*Aktif apabila sekurang-kurangnya 2 unit (model sama atau berlainan) memilih pakej RM10 OFF combo.');
     if(promo.id==='airpair15')offer+='\n'+(currentLang==='zh'?'*需与 AS30GGW10 配套。':currentLang==='en'?'*Requires pairing with AS30GGW10.':'*Perlu dipasangkan dengan AS30GGW10.');
   }else if(promo.type==='fixedMonthly'){
     offer=currentLang==='zh'
@@ -691,7 +692,7 @@ function renderCart(){
   $('currentMonthly').textContent=money(cart.reduce((a,x)=>a+monthlyFor(x,1),0));
   renderSchedule();budgetCheck();syncUrl(false);
 }
-function renderSchedule(){const units=totalUnits(),maxMonths=Math.max(...cart.map(x=>planMonths(x.plan))),cuts=new Set([1,maxMonths+1]);cart.forEach(x=>{const p=promoObj(x.product,x.promo);if(p.months)cuts.add(Number(p.months)+1);cuts.add(planMonths(x.plan)+1);});const pts=[...cuts].filter(n=>n>=1&&n<=maxMonths+1).sort((a,b)=>a-b);let rows=[],total=0,standard=0;for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1]-1;if(a>b)continue;const m=cart.reduce((s,x)=>a<=planMonths(x.plan)?s+monthlyFor(x,a):s,0),normal=cart.reduce((s,x)=>a<=planMonths(x.plan)?s+(Number(x.plan.monthly)||0)*x.qty:s,0),months=b-a+1;total+=m*months;standard+=normal*months;rows.push('<div class="schedule-row"><span class="schedule-period">'+esc(tr('monthWord'))+' '+a+(b>a?'–'+b:'')+'</span><div class="schedule-pricing'+(m<normal?' is-discounted':'')+'">'+(m<normal?'<del class="schedule-price-old">'+money(normal)+'/'+esc(tr('month'))+'</del>':'')+'<b>'+money(m)+'/'+esc(tr('month'))+'</b></div></div>');}$('scheduleRows').innerHTML=rows.join('')+(comboLineCount()===1?'<div class="schedule-row combo-warning"><span>RM10 OFF combo</span><b>'+esc(tr('notActiveAdd'))+'</b></div>':'');$('saving').textContent=money(Math.max(0,standard-total));$('contractTotal').textContent=money(total);}
+function renderSchedule(){const units=totalUnits(),maxMonths=Math.max(...cart.map(x=>planMonths(x.plan))),cuts=new Set([1,maxMonths+1]);cart.forEach(x=>{const p=promoObj(x.product,x.promo);if(p.months)cuts.add(Number(p.months)+1);cuts.add(planMonths(x.plan)+1);});const pts=[...cuts].filter(n=>n>=1&&n<=maxMonths+1).sort((a,b)=>a-b);let rows=[],total=0,standard=0;for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1]-1;if(a>b)continue;const m=cart.reduce((s,x)=>a<=planMonths(x.plan)?s+monthlyFor(x,a):s,0),normal=cart.reduce((s,x)=>a<=planMonths(x.plan)?s+(Number(x.plan.monthly)||0)*x.qty:s,0),months=b-a+1;total+=m*months;standard+=normal*months;rows.push('<div class="schedule-row"><span class="schedule-period">'+esc(tr('monthWord'))+' '+a+(b>a?'–'+b:'')+'</span><div class="schedule-pricing'+(m<normal?' is-discounted':'')+'">'+(m<normal?'<del class="schedule-price-old">'+money(normal)+'/'+esc(tr('month'))+'</del>':'')+'<b>'+money(m)+'/'+esc(tr('month'))+'</b></div></div>');}$('scheduleRows').innerHTML=rows.join('')+(comboCartUnitCount()===1?'<div class="schedule-row combo-warning"><span>RM10 OFF combo</span><b>'+esc(tr('notActiveAdd'))+'</b></div>':'');$('saving').textContent=money(Math.max(0,standard-total));$('contractTotal').textContent=money(total);}
 function budgetCheck(){const budget=Number($('budget')?.value)||0,cur=Number($('currentMonthly')?.textContent.replace(/[^\d.]/g,''))||0,e=$('budgetResult');if(!cart.length){e.textContent=tr('buildToCompare');e.className='budget-result';return;}if(cur<=budget){e.textContent=tr('withinBudget',{amount:money(budget-cur)});e.className='budget-result ok';}else{e.textContent=tr('overBudget',{amount:money(cur-budget)});e.className='budget-result over';}}
 // Retrieves only product submission status (no warehouse balances or stock quantities).
 async function loadSubmissionStatuses(){
