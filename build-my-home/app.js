@@ -214,9 +214,12 @@ const baseCode=s=>{
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const minPrice=p=>Array.isArray(p.plans)&&p.plans.length?Math.min(...p.plans.map(x=>Number(x.monthly)||999999)):Infinity;
 // Customer catalog does not fetch stock. Submission restriction checks use status-only data.
-const STATIC_BLOCKED_BASES=new Set(['AS30GGW10','FV1209D4W']);
+const STATIC_BLOCKED_BASES=new Set(['FV1209D4W']);
+// Owner-approved availability overrides for the customer showroom.
+const ORDER_ENABLED_BASES=new Set(['AS30GGW10']);
 function stopSubmission(product){
  const code=baseCode(product?.code);
+ if(ORDER_ENABLED_BASES.has(code))return false;
  if(!submissionRows)return STATIC_BLOCKED_BASES.has(code);
  const exact=submissionRows.filter(x=>baseCode(x.model_code)===code);
  const matched=exact.length?exact:submissionRows.filter(x=>{
