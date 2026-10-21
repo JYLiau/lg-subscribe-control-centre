@@ -5,12 +5,15 @@ const SUPABASE_KEY='sb_publishable__CO_CJqvrVqG-LClfcD_Wg_CVdZZZU8';
 const DEFAULT_HALF9_PROMO={id:'half9',label:'50% OFF 9 bulan',type:'percent',value:50,months:9};
  const DEFAULT_COMBO10_PROMO={id:'combo10',label:'RM10 OFF combo',type:'fixed',value:10,months:null};
 const CATALOG=(window.LG_CATALOG||[]).map((p,i)=>{
-  const promos=Array.isArray(p.promos)?p.promos.map(x=>x.id==='half9'?{...x,...DEFAULT_HALF9_PROMO,validFrom:null,validTo:null}:x):[];
-  // Only default to 9 months when a model has no explicit 9- or 12-month offer.
-  if(!promos.some(x=>x.id==='half9'||x.id==='half12'))promos.splice(Math.min(1,promos.length),0,{...DEFAULT_HALF9_PROMO});
-   // RM10 OFF Combo is a universal, alternative promotion, including newly added models.
-   if(!promos.some(x=>x.id==='combo10'))promos.push({...DEFAULT_COMBO10_PROMO});
-  return {...p,promos,order:i};
+  let promos=Array.isArray(p.promos)?p.promos.map(x=>x.id==='half9'?{...x,...DEFAULT_HALF9_PROMO,validFrom:null,validTo:null}:x):[];
+  const hasHalf12=promos.some(x=>x.id==='half12');
+  // Universal customer-site rule: every subscription product has 50% OFF for 9 months,
+  // except models with a 50% OFF 12-month offer, where 9-month is excluded.
+  if(hasHalf12)promos=promos.filter(x=>x.id!=='half9');
+  else if(!promos.some(x=>x.id==='half9'))promos.splice(Math.min(1,promos.length),0,{...DEFAULT_HALF9_PROMO});
+  if(!promos.some(x=>x.id==='combo10'))promos.push({...DEFAULT_COMBO10_PROMO});
+  const outrightOptions=Array.isArray(p.outrightOptions)?p.outrightOptions.map(o=>({years:0,service:o.service||'Outright (No Service)',monthly:0,upfront:Number(o.price)||0,outright:true})):[];
+  return {...p,promos,outrightOptions,order:i};
 });
 const icons={'Aircond':'❄️','Laundry':'🧺','Fridge':'🧊','Air Purifier':'🌿','Water Purifier':'💧','TV':'📺','Dishwasher':'🍽️','Soundbar':'🔊','Vacuum':'🧹','Styler':'👔','Microwave':'♨️','Massage Recliner':'🪑','Monitor':'🖥️'};
 const COMBO_PRESETS=[
@@ -35,7 +38,7 @@ ms:{
   disclaimer:'Promosi 50% dan RM10 combo ialah pilihan berasingan dan tidak digabungkan. RM10 combo hanya aktif apabila sekurang-kurangnya 2 produk/order kedua-duanya memilih pakej RM10 combo. Sila sahkan butiran tawaran sebelum permohonan.',
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Imej produk daripada bahan rujukan yang dibekalkan. T&C apply.',
   comboHelp:'Pilih tempoh, servis dan promosi untuk setiap produk. Harga pakej akan dikira semula sebelum ditambah.',comboEstimate:'Anggaran bayaran bulan pertama',comboAdd:'Tambah set ke pakej',
-  choosePlan:'1. Pilih pelan',choosePromo:'2. Pilih promosi',qty:'Kuantiti',copy:'Salin ayat',copyTitle:'Salin ayat jualan untuk pelan dan promosi dipilih',addPackage:'Tambah ke pakej',
+  choosePlan:'1. Pilih pelan',choosePromo:'2. Pilih promosi',outright:'Outright',oneTime:'sekali bayar',noService:'Tanpa servis',qty:'Kuantiti',copy:'Salin ayat',copyTitle:'Salin ayat jualan untuk pelan dan promosi dipilih',addPackage:'Tambah ke pakej',
   all:'Semua',years:'tahun',month:'bulan',months:'bulan',from:'Dari',viewPlans:'Lihat pelan',pricePending:'Harga akan dikemas kini',planPending:'Pelan belum tersedia',currentSelection:'Lihat pilihan',availableLateNov:'Jangkaan pelancaran akhir Nov 2026',orderRestocking:'Tempahan dibuka · Stok dijangka minggu depan',orderConfirm:'Tempahan dibuka · Tarikh penghantaran akan disahkan',
   noProducts:'Belum ada produk.',startAppliance:'Mulakan dengan satu perkakas',startAppliance2:'Pilih produk di bawah untuk bina pakej rumah anda.',
   productSelected:'produk dipilih',unit:'unit',model:'model',standard:'standard',period:'Tempoh',service:'Servis',promotion:'Promosi',
@@ -71,7 +74,7 @@ en:{
   disclaimer:'50% promotion and RM10 combo are separate choices and cannot be combined. RM10 combo is active only when at least 2 products/orders both use the RM10 combo package. Please confirm offer details before applying.',
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Product images are from supplied reference materials. T&C apply.',
   comboHelp:'Choose the term, service and promotion for each product. The package price will be recalculated before adding.',comboEstimate:'Estimated first-month payment',comboAdd:'Add set to package',
-  choosePlan:'1. Choose plan',choosePromo:'2. Choose promotion',qty:'Quantity',copy:'Copy text',copyTitle:'Copy the selected plan and promotion message',addPackage:'Add to package',
+  choosePlan:'1. Choose plan',choosePromo:'2. Choose promotion',outright:'Outright',oneTime:'one-time',noService:'No service',qty:'Quantity',copy:'Copy text',copyTitle:'Copy the selected plan and promotion message',addPackage:'Add to package',
   all:'All',years:'years',month:'month',months:'months',from:'From',viewPlans:'View plans',pricePending:'Price pending',planPending:'Plan not available yet',currentSelection:'Explore options',availableLateNov:'Expected launch late Nov 2026',orderRestocking:'Orders open · Restocking expected next week',orderConfirm:'Orders open · Delivery timing to be confirmed',
   noProducts:'No products yet.',startAppliance:'Start with one appliance',startAppliance2:'Choose a product below to build your home package.',
   productSelected:'products selected',unit:'unit',model:'model',standard:'standard',period:'Term',service:'Service',promotion:'Promotion',
@@ -107,7 +110,7 @@ zh:{
   disclaimer:'50% 优惠与 RM10 组合优惠为不同方案，不可叠加。RM10 组合优惠只有在至少 2 件产品/订单都选择 RM10 combo 时才生效。申请前请确认优惠详情。',
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>产品图片来自所提供的参考资料。须符合条款与条件。',
   comboHelp:'为每件产品选择年限、服务和优惠。加入前会重新计算配套价格。',comboEstimate:'首月预计月费',comboAdd:'加入整套配套',
-  choosePlan:'1. 选择方案',choosePromo:'2. 选择优惠',qty:'数量',copy:'复制文案',copyTitle:'复制所选方案与优惠的文案',addPackage:'加入配套',
+  choosePlan:'1. 选择方案',choosePromo:'2. 选择优惠',outright:'直接购买',oneTime:'一次性付款',noService:'无服务',qty:'数量',copy:'复制文案',copyTitle:'复制所选方案与优惠的文案',addPackage:'加入配套',
   all:'全部',years:'年',month:'月',months:'个月',from:'每月低至',viewPlans:'查看方案',currentSelection:'查看方案',availableLateNov:'预计2026年11月底推出',orderRestocking:'开放预订 · 预计下周补货',orderConfirm:'开放预订 · 送货时间有待确认',
   noProducts:'尚未选择产品。',startAppliance:'从一件家电开始',startAppliance2:'从下方选择产品，建立你的家电配套。',
   productSelected:'件产品已选择',unit:'件',model:'型号',standard:'标准价',period:'年限',service:'服务',promotion:'优惠',
@@ -348,12 +351,20 @@ function renderProducts(){
  }).join('');
  $('products').querySelectorAll('.addbtn:not(:disabled)').forEach(b=>b.onclick=()=>openProduct(b.dataset.id));
 }
-function openProduct(id){activeProduct=CATALOG.find(x=>x.id===id);if(!activeProduct||!Array.isArray(activeProduct.plans)||!activeProduct.plans.length)return;chosenPlan=activeProduct.plans[0];chosenPromo='standard';$('qtyInput').value=1;$('modalModel').textContent=activeProduct.code;$('modalSub').textContent=activeProduct.name+(orderNotice(activeProduct)?' · '+orderNotice(activeProduct):'');renderPlans();renderPromos();$('modal').showModal();}
+function allPlans(product){return [...(product?.plans||[]),...(product?.outrightOptions||[])];}
+function openProduct(id){activeProduct=CATALOG.find(x=>x.id===id);const plans=allPlans(activeProduct);if(!activeProduct||!plans.length)return;chosenPlan=plans[0];chosenPromo='standard';$('qtyInput').value=1;$('modalModel').textContent=activeProduct.code;$('modalSub').textContent=activeProduct.name+(orderNotice(activeProduct)?' · '+orderNotice(activeProduct):'');renderPlans();renderPromos();$('modal').showModal();}
 window.closeModal=()=>$('modal').close();
 window.stepQty=d=>{const q=$('qtyInput');q.value=Math.max(1,Math.min(9,(Number(q.value)||1)+d));};
-function renderPlans(){$('planGrid').innerHTML=activeProduct.plans.map((p,i)=>'<button class="plan-card '+(p===chosenPlan?'active':'')+'" data-i="'+i+'"><b>'+p.years+' '+esc(tr('years'))+'</b><span>'+esc(serviceLabel(p.service))+'</span>'+(serviceDetail(activeProduct,p)?'<small class="service-cadence">'+esc(serviceDetail(activeProduct,p))+'</small>':'')+'<strong>'+money(p.monthly)+'/'+esc(tr('month'))+'</strong></button>').join('');$('planGrid').querySelectorAll('.plan-card').forEach(b=>b.onclick=()=>{chosenPlan=activeProduct.plans[Number(b.dataset.i)];renderPlans();});}
+function renderPlans(){
+  const plans=allPlans(activeProduct);
+  $('planGrid').innerHTML=plans.map((p,i)=>{
+    if(p.outright)return '<button class="plan-card '+(p===chosenPlan?'active':'')+'" data-i="'+i+'"><b>'+esc(tr('outright'))+'</b><span>'+esc(serviceLabel(p.service))+'</span><strong>'+money(p.upfront)+' · '+esc(tr('oneTime'))+'</strong></button>';
+    return '<button class="plan-card '+(p===chosenPlan?'active':'')+'" data-i="'+i+'"><b>'+p.years+' '+esc(tr('years'))+'</b><span>'+esc(serviceLabel(p.service))+'</span>'+(serviceDetail(activeProduct,p)?'<small class="service-cadence">'+esc(serviceDetail(activeProduct,p))+'</small>':'')+'<strong>'+money(p.monthly)+'/'+esc(tr('month'))+'</strong></button>';
+  }).join('');
+  $('planGrid').querySelectorAll('.plan-card').forEach(b=>b.onclick=()=>{chosenPlan=plans[Number(b.dataset.i)];if(chosenPlan.outright)chosenPromo='standard';renderPlans();renderPromos();});
+}
 function renderPromos(){
-  const promos=livePromos(activeProduct);
+  const promos=chosenPlan?.outright?[promoObj(activeProduct,'standard')]:livePromos(activeProduct);
   if(!promos.some(p=>p.id===chosenPromo))chosenPromo=promos[0]?.id||'standard';
   let info='';
   if(activeProduct?.doubleMatchEligible){
@@ -383,7 +394,9 @@ function promoLabelFor(item){
   if(item.promo==='airpair15'&&!pairPromoEligible(item)){const target=String(item.product.pairPromoWith||'').split('.')[0].toUpperCase();label+=(currentLang==='zh'?' — 需搭配 '+target:currentLang==='en'?' — pair '+target+' required':' — perlu padan '+target);}
   return label;
 }
+function planMonths(plan){return plan?.outright?1:Math.max(1,Number(plan?.years)||0)*12;}
 function monthlyFor(item,month){
+  if(item.plan?.outright)return month===1?(Number(item.plan.upfront)||0)*item.qty:0;
   return promoPrice(item.product,item.plan,item.promo,month,{comboActive:comboEligible(),pairActive:pairPromoEligible(item)})*item.qty;
 }
 
@@ -590,6 +603,14 @@ function warrantyLine(years){return currentLang==='zh'?('🛡️ '+years+'年保
 
 function selectedCopywriting(){
   if(!activeProduct||!chosenPlan)return'';
+  const features=productFeatureLines(activeProduct);
+  const lines=[tr('copyHeadline',{name:activeProduct.name}),tr('copyModel',{code:activeProduct.code})];
+  if(features.length)lines.push('',featureHeading(),...features.map(x=>'✔️ '+x));
+  if(chosenPlan.outright){
+    lines.push('',currentLang==='zh'?'💳 直接购买':'💳 '+tr('outright'),'*'+money(chosenPlan.upfront)+'* · '+tr('oneTime'));
+    if(chosenPlan.service&&chosenPlan.service!=='Outright (No Service)')lines.push('🛠️ '+serviceLabel(chosenPlan.service));
+    return lines.join('\n');
+  }
   const normal=Math.round(Number(chosenPlan.monthly)||0),promo=promoObj(activeProduct,chosenPromo),end=Number(chosenPlan.years)*12;
   const month1=Math.round(promoPrice(activeProduct,chosenPlan,chosenPromo,1,{comboActive:true,pairActive:true}));
   let offer;
@@ -615,19 +636,11 @@ function selectedCopywriting(){
       :currentLang==='en'
       ?('🔥 Special: '+money(month1)+'/month (Normal '+money(normal)+'/month)')
       :('🔥 Promosi khas: '+money(month1)+'/bulan (Harga biasa '+money(normal)+'/bulan)');
-  }else{
-    offer=tr('copyStandard',{normal:money(normal)});
-  }
-  const features=productFeatureLines(activeProduct);
-  const lines=[tr('copyHeadline',{name:activeProduct.name}),tr('copyModel',{code:activeProduct.code})];
-  if(orderNotice(activeProduct))lines.push('📦 '+orderNotice(activeProduct));
-  if(features.length)lines.push('',featureHeading(),...features.map(x=>'✔️ '+x));
+  }else offer=tr('copyStandard',{normal:money(normal)});
   lines.push('',tr('copyPlan',{years:chosenPlan.years,service:serviceLabel(chosenPlan.service)}),offer,'',tr('copyPackageIncludes'),tr('copyDelivery'),warrantyLine(chosenPlan.years));
-  if(activeProduct.category!=='TV'){
-   lines.push(tr('copyServiceLine',{service:serviceLabel(chosenPlan.service)}));
-   if(chosenPlan.service==='Combine Maintenance')lines.push(activeProduct.category==='Water Purifier'?tr('copyWpFilter'):tr('copyCmKit'),tr('copyCmVisit'));
-   else if(serviceDetail(activeProduct,chosenPlan))lines.push('✅️ '+serviceDetail(activeProduct,chosenPlan));
- }
+  // TV copywriting intentionally ends without the service bullet.
+  if(activeProduct.category!=='TV')lines.push(tr('copyServiceLine',{service:serviceLabel(chosenPlan.service)}));
+  if(chosenPlan.service==='Combine Maintenance')lines.push(tr('copyCmKit'),tr('copyCmVisit'));
   return lines.join('\n');
 }
 function copySelectedCopywriting(){
@@ -638,12 +651,11 @@ window.copySelectedCopywriting=copySelectedCopywriting;
 function addActive(){if(!activeProduct||!chosenPlan)return;const qty=Math.max(1,Math.min(9,Number($('qtyInput').value)||1));cart.push({key:Date.now()+Math.random(),product:activeProduct,plan:{...chosenPlan},promo:chosenPromo,qty});closeModal();renderCart();toast(chosenPromo==='combo10'&&!comboEligible()?tr('comboNeedAnother'):tr('addedPackage'));}
 function totalUnits(){return cart.reduce((a,x)=>a+x.qty,0);}
 function sharedItemPricing(item){
+  if(item.plan?.outright)return '<div class="shared-item-pricing"><strong class="shared-price standard">'+money((Number(item.plan.upfront)||0)*item.qty)+' · '+esc(tr('oneTime'))+'</strong></div>';
   const original=(Number(item.plan.monthly)||0)*item.qty;
-  const discounted=monthlyFor(item,1);
-  const perMonth='/'+esc(tr('month'));
+  const discounted=monthlyFor(item,1),perMonth='/'+esc(tr('month'));
   if(!(discounted<original))return '<div class="shared-item-pricing"><strong class="shared-price standard">'+money(original)+perMonth+'</strong></div>';
-  const offer=promoObj(item.product,item.promo);
-  const savingPct=original>0?Math.round((original-discounted)/original*100):0;
+  const offer=promoObj(item.product,item.promo),savingPct=original>0?Math.round((original-discounted)/original*100):0;
   const badge=offer.type==='percent'?'-'+savingPct+'%':money(original-discounted)+' OFF';
   return '<div class="shared-item-pricing"><del class="shared-original">'+money(original)+perMonth+'</del><strong class="shared-price">'+money(discounted)+perMonth+'</strong><span class="shared-discount">'+esc(badge)+'</span></div>';
 }
@@ -664,7 +676,7 @@ function renderCart(){
   }
   $('cartItems').innerHTML=cart.map((x,i)=>
     '<div class="cart-item"><div class="cart-item-details">'+
-      '<div class="cart-item-heading"><b>'+esc(x.product.code)+'</b><span class="cart-item-plan">'+x.qty+' × '+x.plan.years+'Y · '+esc(serviceLabel(x.plan.service))+'</span></div>'+
+      '<div class="cart-item-heading"><b>'+esc(x.product.code)+'</b><span class="cart-item-plan">'+x.qty+' × '+(x.plan.outright?esc(tr('outright')):(x.plan.years+'Y · '+esc(serviceLabel(x.plan.service))))+'</span></div>'+
       '<div class="cart-item-promo">'+esc(promoLabelFor(x))+'</div>'+
       sharedItemPricing(x)+
     '</div><button type="button" data-i="'+i+'" class="remove" aria-label="'+esc(tr('removeItem'))+' '+esc(x.product.code)+'"><span aria-hidden="true">✕</span></button></div>'
@@ -676,7 +688,7 @@ function renderCart(){
   $('currentMonthly').textContent=money(cart.reduce((a,x)=>a+monthlyFor(x,1),0));
   renderSchedule();budgetCheck();syncUrl(false);
 }
-function renderSchedule(){const units=totalUnits(),maxMonths=Math.max(...cart.map(x=>x.plan.years*12)),cuts=new Set([1,maxMonths+1]);cart.forEach(x=>{const p=promoObj(x.product,x.promo);if(p.months)cuts.add(Number(p.months)+1);cuts.add(x.plan.years*12+1);});const pts=[...cuts].filter(n=>n>=1&&n<=maxMonths+1).sort((a,b)=>a-b);let rows=[],total=0,standard=0;for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1]-1;if(a>b)continue;const m=cart.reduce((s,x)=>a<=x.plan.years*12?s+monthlyFor(x,a):s,0),normal=cart.reduce((s,x)=>a<=x.plan.years*12?s+(Number(x.plan.monthly)||0)*x.qty:s,0),months=b-a+1;total+=m*months;standard+=normal*months;rows.push('<div class="schedule-row"><span class="schedule-period">'+esc(tr('monthWord'))+' '+a+(b>a?'–'+b:'')+'</span><div class="schedule-pricing'+(m<normal?' is-discounted':'')+'">'+(m<normal?'<del class="schedule-price-old">'+money(normal)+'/'+esc(tr('month'))+'</del>':'')+'<b>'+money(m)+'/'+esc(tr('month'))+'</b></div></div>');}$('scheduleRows').innerHTML=rows.join('')+(comboLineCount()===1?'<div class="schedule-row combo-warning"><span>RM10 OFF combo</span><b>'+esc(tr('notActiveAdd'))+'</b></div>':'');$('saving').textContent=money(Math.max(0,standard-total));$('contractTotal').textContent=money(total);}
+function renderSchedule(){const units=totalUnits(),maxMonths=Math.max(...cart.map(x=>planMonths(x.plan))),cuts=new Set([1,maxMonths+1]);cart.forEach(x=>{const p=promoObj(x.product,x.promo);if(p.months)cuts.add(Number(p.months)+1);cuts.add(planMonths(x.plan)+1);});const pts=[...cuts].filter(n=>n>=1&&n<=maxMonths+1).sort((a,b)=>a-b);let rows=[],total=0,standard=0;for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1]-1;if(a>b)continue;const m=cart.reduce((s,x)=>a<=planMonths(x.plan)?s+monthlyFor(x,a):s,0),normal=cart.reduce((s,x)=>a<=planMonths(x.plan)?s+(Number(x.plan.monthly)||0)*x.qty:s,0),months=b-a+1;total+=m*months;standard+=normal*months;rows.push('<div class="schedule-row"><span class="schedule-period">'+esc(tr('monthWord'))+' '+a+(b>a?'–'+b:'')+'</span><div class="schedule-pricing'+(m<normal?' is-discounted':'')+'">'+(m<normal?'<del class="schedule-price-old">'+money(normal)+'/'+esc(tr('month'))+'</del>':'')+'<b>'+money(m)+'/'+esc(tr('month'))+'</b></div></div>');}$('scheduleRows').innerHTML=rows.join('')+(comboLineCount()===1?'<div class="schedule-row combo-warning"><span>RM10 OFF combo</span><b>'+esc(tr('notActiveAdd'))+'</b></div>':'');$('saving').textContent=money(Math.max(0,standard-total));$('contractTotal').textContent=money(total);}
 function budgetCheck(){const budget=Number($('budget')?.value)||0,cur=Number($('currentMonthly')?.textContent.replace(/[^\d.]/g,''))||0,e=$('budgetResult');if(!cart.length){e.textContent=tr('buildToCompare');e.className='budget-result';return;}if(cur<=budget){e.textContent=tr('withinBudget',{amount:money(budget-cur)});e.className='budget-result ok';}else{e.textContent=tr('overBudget',{amount:money(cur-budget)});e.className='budget-result over';}}
 // Retrieves only product submission status (no warehouse balances or stock quantities).
 async function loadSubmissionStatuses(){
@@ -698,7 +710,7 @@ async function loadSubmissionStatuses(){
    renderCats();renderProducts();renderComboMenu();renderCart();
  }
 }
-function payload(){return cart.map(x=>({id:x.product.id,plan:x.product.plans.findIndex(p=>p.years===x.plan.years&&p.service===x.plan.service&&p.monthly===x.plan.monthly),years:x.plan.years,service:x.plan.service,monthly:x.plan.monthly,promo:x.promo,qty:x.qty}));}
+function payload(){return cart.map(x=>{const plans=allPlans(x.product);return{id:x.product.id,plan:plans.findIndex(p=>p.years===x.plan.years&&p.service===x.plan.service&&Number(p.monthly||0)===Number(x.plan.monthly||0)&&Number(p.upfront||0)===Number(x.plan.upfront||0)),years:x.plan.years,service:x.plan.service,monthly:x.plan.monthly,upfront:x.plan.upfront,outright:!!x.plan.outright,promo:x.promo,qty:x.qty};});}
 function packageToken(){return btoa(unescape(encodeURIComponent(JSON.stringify(payload())))).replace(/=+$/,'');}
 // Keep the original self-contained format as a fallback and for existing links.
 const QUOTE_API=SUPABASE_URL+'/functions/v1/lg-share-quote';
@@ -773,8 +785,8 @@ async function loadFromUrl(){
     if(!Array.isArray(data))throw new Error('Invalid quotation payload');
     cart=data.map(x=>{
       const p=CATALOG.find(y=>y.id===x.id);if(!p)return null;
-      const exact=p.plans.find(pl=>Number(pl.years)===Number(x.years)&&pl.service===x.service&&Number(pl.monthly)===Number(x.monthly));
-      const plan=exact||p.plans[x.plan]||p.plans[0];if(!plan)return null;
+      const plans=allPlans(p);const exact=plans.find(pl=>Number(pl.years)===Number(x.years)&&pl.service===x.service&&Number(pl.monthly||0)===Number(x.monthly||0)&&Number(pl.upfront||0)===Number(x.upfront||0));
+      const plan=exact||plans[x.plan]||plans[0];if(!plan)return null;
       return {key:Date.now()+Math.random(),product:p,plan:{...plan},promo:x.promo==='half9'&&livePromos(p).some(z=>z.id==='half12')?'half12':p.promos.some(z=>z.id===x.promo)?x.promo:'standard',qty:Math.max(1,Math.min(9,Number(x.qty)||1))};
     }).filter(Boolean);
   }catch(e){
@@ -816,22 +828,27 @@ function packageCopywriting(){
     if(orderNotice(item.product))lines.push('📦 '+orderNotice(item.product));
     const features=productFeatureLines(item.product);
     if(features.length)lines.push(featureHeading(),...features.map(feature=>'✓ '+feature),'');
-    lines.push(tr('period')+': '+item.plan.years+' '+tr('years')+' · '+tr('service')+': '+serviceLabel(item.plan.service));
-    if(serviceDetail(item.product,item.plan))lines.push('🛠️ '+serviceDetail(item.product,item.plan));
-    lines.push(tr('promotion')+': '+promoLabelFor(item));
-    const itemPeriods=packagePricePeriods(month=>monthlyFor(item,month),item.plan.years*12);
-    lines.push(tr('packageMsgItemPay')+': '+itemPeriods.map(packagePeriodText).join(' | '));
+    if(item.plan.outright){
+      lines.push(tr('period')+': '+tr('outright'));
+      lines.push(tr('packageMsgItemPay')+': '+money((Number(item.plan.upfront)||0)*item.qty)+' · '+tr('oneTime'));
+    }else{
+      lines.push(tr('period')+': '+item.plan.years+' '+tr('years')+(item.product.category==='TV'?'':' · '+tr('service')+': '+serviceLabel(item.plan.service)));
+      if(item.product.category!=='TV'&&serviceDetail(item.product,item.plan))lines.push('🛠️ '+serviceDetail(item.product,item.plan));
+      lines.push(tr('promotion')+': '+promoLabelFor(item));
+      const itemPeriods=packagePricePeriods(month=>monthlyFor(item,month),planMonths(item.plan));
+      lines.push(tr('packageMsgItemPay')+': '+itemPeriods.map(packagePeriodText).join(' | '));
+    }
     lines.push('');
   });
   lines.push(tr('packageMsgSchedule'));
-  const maxMonths=Math.max(...cart.map(item=>item.plan.years*12));
-  const periods=packagePricePeriods(month=>cart.reduce((sum,item)=>sum+(month<=item.plan.years*12?monthlyFor(item,month):0),0),maxMonths);
+  const maxMonths=Math.max(...cart.map(item=>planMonths(item.plan)));
+  const periods=packagePricePeriods(month=>cart.reduce((sum,item)=>sum+(month<=planMonths(item.plan)?monthlyFor(item,month):0),0),maxMonths);
   periods.forEach(period=>lines.push('• '+packagePeriodText(period)));
   // Savings uses the unrounded amounts, identical to renderSchedule().
-  const standard=cart.reduce((sum,item)=>sum+(Number(item.plan.monthly)||0)*item.qty*item.plan.years*12,0);
+  const standard=cart.reduce((sum,item)=>sum+(Number(item.plan.monthly)||0)*item.qty*planMonths(item.plan),0);
   let charged=0;
   for(let month=1;month<=maxMonths;month++)
-    charged+=cart.reduce((sum,item)=>sum+(month<=item.plan.years*12?monthlyFor(item,month):0),0);
+    charged+=cart.reduce((sum,item)=>sum+(month<=planMonths(item.plan)?monthlyFor(item,month):0),0);
   lines.push('',tr('packageMsgSavings')+': *'+money(Math.max(0,standard-charged))+'*');
   return lines.join('\n');
 }
