@@ -338,21 +338,24 @@ function renderCats(){const cats=['All',...new Set(CATALOG.map(x=>x.category))];
 function malaysiaToday(){return new Date(Date.now()+8*60*60*1000).toISOString().slice(0,10);}
 function isUpcoming(p){return Boolean(p.availableFrom && malaysiaToday()<p.availableFrom);}
 function orderNotice(p){if(!p?.availableForOrder)return '';return tr(p.restockNoteUntil&&malaysiaToday()<=p.restockNoteUntil?'orderRestocking':'orderConfirm');}
-function visibleProducts(){const q=($('search')?.value||'').trim().toLowerCase(),sort=$('sort')?.value||'featured';let rows=CATALOG.filter(p=>!stopSubmission(p)&&(activeCat==='All'||p.category===activeCat)&&(!q||((p.code+' '+p.name+' '+p.category).toLowerCase().includes(q))));if(sort==='price')rows.sort((a,b)=>minPrice(a)-minPrice(b));else if(sort==='model')rows.sort((a,b)=>a.code.localeCompare(b.code));else rows.sort((a,b)=>a.order-b.order);rows.sort((a,b)=>Number(isUpcoming(a))-Number(isUpcoming(b)));return rows;}
+function visibleProducts(){const q=($('search')?.value||'').trim().toLowerCase(),sort=$('sort')?.value||'featured';let rows=CATALOG.filter(p=>(!stopSubmission(p)||baseCode(p.code)==='AS30GGW10')&&(activeCat==='All'||p.category===activeCat)&&(!q||((p.code+' '+p.name+' '+p.category).toLowerCase().includes(q))));if(sort==='price')rows.sort((a,b)=>minPrice(a)-minPrice(b));else if(sort==='model')rows.sort((a,b)=>a.code.localeCompare(b.code));else rows.sort((a,b)=>a.order-b.order);rows.sort((a,b)=>Number(isUpcoming(a))-Number(isUpcoming(b)));return rows;}
 function renderProducts(){
  const rows=visibleProducts();
  $('catalogCount').textContent=rows.length+' '+tr('model');
  $('products').innerHTML=rows.map(p=>{
    const pending=!Array.isArray(p.plans)||!p.plans.length;
+   const blocked=stopSubmission(p);
+   const paused=currentLang==='zh'?'暂停接受订单':currentLang==='en'?'Orders temporarily paused':'Tempahan dihentikan sementara';
+   const outrightButton=p.outrightOptions.length?'<button class="addbtn outright-btn" data-id="'+p.id+'" '+(blocked?'disabled':'')+'>'+esc(tr('outright'))+' · '+money(Math.min(...p.outrightOptions.map(o=>o.upfront)))+' · '+esc(tr('oneTime'))+'</button>':'';
    const priceHtml=pending
      ?'<div class="price pending-price"><div><small>'+esc(tr('pricePending'))+'</small></div></div>'
      :'<div class="price"><div><small>'+esc(tr('from'))+'</small><strong>'+money(minPrice(p))+'</strong><em>/'+esc(tr('month'))+'</em></div></div>';
-   return '<article class="product '+(pending?'pricing-pending':'')+'"><div class="pvisual">'+visual(p)+'</div><div class="pbody"><div class="pcat">'+esc(categoryLabel(p.category))+'</div><h3>'+esc(p.code)+'</h3><div class="psub">'+esc(p.name)+'</div><span class="lifecycle current">'+esc(orderNotice(p)||tr(isUpcoming(p)?'availableLateNov':'currentSelection'))+'</span>'+priceHtml+'<button class="addbtn" data-id="'+p.id+'" '+(pending?'disabled':'')+'>'+esc(pending?tr('planPending'):tr('viewPlans'))+'</button></div></article>';
+   return '<article class="product '+(pending?'pricing-pending':'')+'"><div class="pvisual">'+visual(p)+'</div><div class="pbody"><div class="pcat">'+esc(categoryLabel(p.category))+'</div><h3>'+esc(p.code)+'</h3><div class="psub">'+esc(p.name)+'</div><span class="lifecycle current">'+esc(blocked?paused:orderNotice(p)||tr(isUpcoming(p)?'availableLateNov':'currentSelection'))+'</span>'+priceHtml+'<button class="addbtn" data-id="'+p.id+'" '+(pending||blocked?'disabled':'')+'>'+esc(blocked?paused:pending?tr('planPending'):tr('viewPlans'))+'</button>'+outrightButton+'</div></article>';
  }).join('');
- $('products').querySelectorAll('.addbtn:not(:disabled)').forEach(b=>b.onclick=()=>openProduct(b.dataset.id));
+ $('products').querySelectorAll('.addbtn:not(:disabled)').forEach(b=>b.onclick=()=>openProduct(b.dataset.id,b.classList.contains('outright-btn')));
 }
 function allPlans(product){return [...(product?.plans||[]),...(product?.outrightOptions||[])];}
-function openProduct(id){activeProduct=CATALOG.find(x=>x.id===id);const plans=allPlans(activeProduct);if(!activeProduct||!plans.length)return;chosenPlan=plans[0];chosenPromo='standard';$('qtyInput').value=1;$('modalModel').textContent=activeProduct.code;$('modalSub').textContent=activeProduct.name+(orderNotice(activeProduct)?' · '+orderNotice(activeProduct):'');renderPlans();renderPromos();$('modal').showModal();}
+function openProduct(id,outright=false){activeProduct=CATALOG.find(x=>x.id===id);const plans=allPlans(activeProduct);if(!activeProduct||!plans.length||stopSubmission(activeProduct))return;chosenPlan=(outright?plans.find(p=>p.outright):null)||plans[0];chosenPromo='standard';$('qtyInput').value=1;$('modalModel').textContent=activeProduct.code;$('modalSub').textContent=activeProduct.name+(orderNotice(activeProduct)?' · '+orderNotice(activeProduct):'');renderPlans();renderPromos();$('modal').showModal();}
 window.closeModal=()=>$('modal').close();
 window.stepQty=d=>{const q=$('qtyInput');q.value=Math.max(1,Math.min(9,(Number(q.value)||1)+d));};
 function renderPlans(){
