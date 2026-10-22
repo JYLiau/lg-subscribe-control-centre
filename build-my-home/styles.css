@@ -257,3 +257,19 @@ a{color:inherit}
 .fridge-view{display:flex;align-items:center;justify-content:center;min-width:0;height:100%}
 .pvisual .fridge-view img{display:block;width:100%;height:190px;max-width:100%;max-height:190px;object-fit:contain;border-radius:0}
 @media(max-width:680px){.product:has(.fridge-views){grid-column:1/-1}.pvisual:has(.fridge-views){height:230px}.pvisual .fridge-view img{height:210px;max-height:210px}}
+
+/* Align visible fridge outlines, compensating for each photo’s whitespace. */
+.fridge-view{position:relative;overflow:hidden;container-type:size}
+.pvisual .fridge-view img{position:absolute;max-width:none;max-height:none;border-radius:0;--size:min(100cqw,180px);width:calc(var(--size)*var(--iw));height:calc(var(--size)*var(--ih));left:calc(50% - var(--size)*var(--cx));top:calc(50% - var(--size)*var(--cy));object-fit:fill}
+.fridge-views[data-model="GN-F452PQAK"] .fridge-view:nth-child(1) img{--iw:1.746725;--ih:1.310044;--cx:0.868996;--cy:0.650655}
+.fridge-views[data-model="GN-F452PQAK"] .fridge-view:nth-child(2) img{--iw:1.541426;--ih:1.023121;--cx:0.770713;--cy:0.507707}
+.fridge-views[data-model="GC-B257KLJR"] .fridge-view:nth-child(1) img{--iw:1.680672;--ih:1.260504;--cx:0.820378;--cy:0.642857}
+.fridge-views[data-model="GC-B257KLJR"] .fridge-view:nth-child(2) img{--iw:1.120066;--ih:1.133224;--cx:0.561678;--cy:0.587993}
+.fridge-views[data-model="GC-J257SQNW"] .fridge-view:nth-child(1) img{--iw:1.415929;--ih:1.061947;--cx:0.707965;--cy:0.531858}
+.fridge-views[data-model="GC-J257SQNW"] .fridge-view:nth-child(2) img{--iw:1.742919;--ih:1.156863;--cx:0.871460;--cy:0.576253}
+.fridge-views[data-model="GV-K25FFGER"] .fridge-view:nth-child(1) img{--iw:1.449275;--ih:1.086957;--cx:0.734601;--cy:0.543478}
+.fridge-views[data-model="GV-K25FFGER"] .fridge-view:nth-child(2) img{--iw:1.642710;--ih:1.090349;--cx:0.806982;--cy:0.545175}
+.fridge-views[data-model="GC-G22FFQAB"] .fridge-view:nth-child(1) img{--iw:1.716738;--ih:1.287554;--cx:0.856223;--cy:0.628755}
+.fridge-views[data-model="GC-G22FFQAB"] .fridge-view:nth-child(2) img{--iw:1.694915;--ih:1.125000;--cx:0.847458;--cy:0.563559}
+.fridge-views[data-model="GXJB18JBQRC"] .fridge-view:nth-child(1) img{--iw:0.740741;--ih:1.111111;--cx:0.372685;--cy:0.557870}
+.fridge-views[data-model="GXJB18JBQRC"] .fridge-view:nth-child(2) img{--iw:1.023454;--ih:1.216773;--cx:0.490760;--cy:0.583156}
