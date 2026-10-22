@@ -234,7 +234,7 @@ function fridgeVisual(p){
   const models = ['GN-F452PQAK','GC-B257KLJR','GC-J257SQNW','GV-K25FFGER','GC-G22FFQAB','GXJB18JBQRC'];
   const code = (p.code || '').split('.')[0];
   if(p.category !== 'Fridge' || !models.includes(code)) return visual(p);
-  return '<div class="fridge-views"><div class="fridge-view">'+visual(p)+'</div><div class="fridge-view"><img loading="lazy" decoding="async" src="./images/'+code.toLowerCase()+'-open.svg" alt="'+esc(p.code)+' — open-door interior"></div></div>';
+  return '<div class="fridge-views" data-model="'+code+'"><div class="fridge-view">'+visual(p)+'</div><div class="fridge-view"><img loading="lazy" decoding="async" src="./images/'+code.toLowerCase()+'-open.svg" alt="'+esc(p.code)+' — open-door interior"></div></div>';
 }
 function visual(p){
   const src=p.imageData||p.imageUrl||'',fallback=p.fallbackImageUrl||'';
