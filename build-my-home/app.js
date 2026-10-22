@@ -230,6 +230,12 @@ function stopSubmission(product){
  return matched.every(x=>/stop|pause/i.test(String(x.submission_status||'')));
 }
 const icon=p=>icons[p.category]||'LG';
+function fridgeVisual(p){
+  const models = ['GN-F452PQAK','GC-B257KLJR','GC-J257SQNW','GV-K25FFGER','GC-G22FFQAB','GXJB18JBQRC'];
+  const code = (p.code || '').split('.')[0];
+  if(p.category !== 'Fridge' || !models.includes(code)) return visual(p);
+  return '<div class="fridge-views"><div class="fridge-view">'+visual(p)+'</div><div class="fridge-view"><img loading="lazy" decoding="async" src="./images/'+code.toLowerCase()+'-open.svg" alt="'+esc(p.code)+' — open-door interior"></div></div>';
+}
 function visual(p){
   const src=p.imageData||p.imageUrl||'',fallback=p.fallbackImageUrl||'';
   if(!src)return '<div class="generic-icon">'+icon(p)+'</div>';
@@ -353,7 +359,7 @@ function renderProducts(){
    const priceHtml=pending
      ?'<div class="price pending-price"><div><small>'+esc(tr('pricePending'))+'</small></div></div>'
      :'<div class="price"><div><small>'+esc(tr('from'))+'</small><strong>'+money(minPrice(p))+'</strong><em>/'+esc(tr('month'))+'</em></div></div>';
-   return '<article class="product '+(pending?'pricing-pending':'')+'"><div class="pvisual">'+visual(p)+'</div><div class="pbody"><div class="pcat">'+esc(categoryLabel(p.category))+'</div><h3>'+esc(p.code)+'</h3><div class="psub">'+esc(p.name)+'</div><span class="lifecycle current">'+esc(blocked?paused:orderNotice(p)||tr(isUpcoming(p)?'availableLateNov':'currentSelection'))+'</span>'+priceHtml+'<button class="addbtn" data-id="'+p.id+'" '+(pending||blocked?'disabled':'')+'>'+esc(blocked?paused:pending?tr('planPending'):tr('viewPlans'))+'</button>'+outrightButton+'</div></article>';
+   return '<article class="product '+(pending?'pricing-pending':'')+'"><div class="pvisual">'+fridgeVisual(p)+'</div><div class="pbody"><div class="pcat">'+esc(categoryLabel(p.category))+'</div><h3>'+esc(p.code)+'</h3><div class="psub">'+esc(p.name)+'</div><span class="lifecycle current">'+esc(blocked?paused:orderNotice(p)||tr(isUpcoming(p)?'availableLateNov':'currentSelection'))+'</span>'+priceHtml+'<button class="addbtn" data-id="'+p.id+'" '+(pending||blocked?'disabled':'')+'>'+esc(blocked?paused:pending?tr('planPending'):tr('viewPlans'))+'</button>'+outrightButton+'</div></article>';
  }).join('');
  $('products').querySelectorAll('.addbtn:not(:disabled)').forEach(b=>b.onclick=()=>openProduct(b.dataset.id,b.classList.contains('outright-btn')));
 }
