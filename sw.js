@@ -1,4 +1,4 @@
-const CACHE='lg-control-github-v17';
+const CACHE='lg-control-github-v18';
 const ASSETS=['./','./index.html','./manifest.webmanifest','./icon.svg'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)))});
 self.addEventListener('activate',e=>{e.waitUntil(Promise.all([clients.claim(),caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))]))});
@@ -6,6 +6,23 @@ self.addEventListener('fetch',e=>{
   if(e.request.method!=='GET')return;
   const u=new URL(e.request.url);
   if(u.origin!==self.location.origin)return;
+  // Keep customer catalogue, photos and page current; cache is an offline fallback.
+  const showroomPath=new URL('./build-my-home/',self.registration.scope).pathname;
+  if(u.pathname.startsWith(showroomPath)){
+    e.respondWith((async()=>{
+      const cache=await caches.open(CACHE);
+      try{
+        const response=await fetch(e.request,{cache:'no-cache'});
+        if(response.ok)await cache.put(e.request,response.clone());
+        return response;
+      }catch(error){
+        const cached=await cache.match(e.request);
+        if(cached)return cached;
+        throw error;
+      }
+    })());
+    return;
+  }
   if(e.request.mode==='navigate'){
     e.respondWith(fetch(e.request).then(r=>{const copy=r.clone();caches.open(CACHE).then(c=>c.put('./index.html',copy));return r}).catch(()=>caches.match('./index.html')));
     return;
