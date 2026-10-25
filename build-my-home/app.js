@@ -10,8 +10,8 @@ const CATALOG=(window.LG_CATALOG||[]).map((p,i)=>{
   // Universal customer-site rule: every subscription product has 50% OFF for 9 months,
   // except models with a 50% OFF 12-month offer, where 9-month is excluded.
   if(hasHalf12)promos=promos.filter(x=>x.id!=='half9');
-  else if(!promos.some(x=>x.id==='half9'))promos.splice(Math.min(1,promos.length),0,{...DEFAULT_HALF9_PROMO});
-  if(!promos.some(x=>x.id==='combo10'))promos.push({...DEFAULT_COMBO10_PROMO});
+  else if(!p.explicitPromosOnly&&!promos.some(x=>x.id==='half9'))promos.splice(Math.min(1,promos.length),0,{...DEFAULT_HALF9_PROMO});
+  if(!p.explicitPromosOnly&&!promos.some(x=>x.id==='combo10'))promos.push({...DEFAULT_COMBO10_PROMO});
   const outrightOptions=Array.isArray(p.outrightOptions)?p.outrightOptions.map(o=>({years:0,service:o.service||'Outright (No Service)',monthly:0,upfront:Number(o.price)||0,outright:true})):[];
   return {...p,promos,outrightOptions,order:i};
 });
