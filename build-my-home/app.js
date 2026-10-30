@@ -30,7 +30,7 @@ ms:{
   agentNote:'Harga pelan ialah anggaran. Jason akan sahkan promosi dan kelayakan sebelum permohonan.',
   popularTitle:'PAKEJ POPULAR',popularIntro:'Pilih pakej cadangan sebagai titik mula, kemudian tambah atau buang produk mengikut keperluan.',popularTiny:'Pilih pakej → ubah tempoh, servis & promosi',popularNote:'Pakej cadangan ialah titik mula. Sebelum tambah ke pakej, anda boleh pilih tempoh 5/7 tahun, servis dan promosi bagi setiap produk.',
   homeTitle:'PAKEJ RUMAH ANDA',homeIntro:'Susunan responsif — produk ke-3 dan seterusnya kekal sejajar.',
-  catalogTitle:'Pilih perkakas anda',catalogIntro:'Harga kad ialah harga pelan standard terendah. Promosi dipilih semasa tambah produk.',priceRef:'Harga rujukan · Oktober 2026',
+  catalogTitle:'Pilih perkakas anda',catalogIntro:'Harga kad ialah harga pelan standard terendah. Promosi dipilih semasa tambah produk.',priceRef:'Promosi November 2026 · bermula 1 Nov',
   searchPH:'Cari model atau produk…',sortFeatured:'Susun: Disyorkan',sortPrice:'Harga terendah',sortModel:'Model A–Z',
   shareTitle:'Pakej khas untuk anda',shareText:'Produk, tempoh, servis dan promosi di bawah telah dipilih berdasarkan permintaan anda.',editChoice:'Ubah pilihan',
   packageTitle:'PAKEJ PILIHAN ANDA',packageIntro:'Bayaran berubah ikut promosi & tempoh.',selectedProducts:'Produk dipilih',paymentNow:'Bayaran sekarang',budget:'Bajet bulanan',
@@ -66,7 +66,7 @@ en:{
   agentNote:'Plan prices are estimates. Jason will confirm promotions and eligibility before application.',
   popularTitle:'POPULAR PACKAGES',popularIntro:'Choose a suggested package as a starting point, then add or remove products to suit your needs.',popularTiny:'Choose a package → adjust term, service & promotion',popularNote:'A suggested package is only a starting point. Before adding it, you can choose the 5/7-year term, service and promotion for each product.',
   homeTitle:'YOUR HOME PACKAGE',homeIntro:'Responsive layout — the 3rd product and beyond stay aligned.',
-  catalogTitle:'Choose your appliances',catalogIntro:'Card price shows the lowest standard plan. Choose the promotion when adding a product.',priceRef:'Reference pricing · October 2026',
+  catalogTitle:'Choose your appliances',catalogIntro:'Card price shows the lowest standard plan. Choose the promotion when adding a product.',priceRef:'November 2026 offers · start 1 Nov',
   searchPH:'Search model or product…',sortFeatured:'Sort: Recommended',sortPrice:'Lowest price',sortModel:'Model A–Z',
   shareTitle:'A package selected for you',shareText:'The products, term, service and promotion below were selected based on your request.',editChoice:'Change selection',
   packageTitle:'YOUR SELECTED PACKAGE',packageIntro:'Payment changes with promotion & term.',selectedProducts:'Selected products',paymentNow:'Payment now',budget:'Monthly budget',
@@ -102,7 +102,7 @@ zh:{
   agentNote:'方案价格仅供参考。申请前，Jason 会确认优惠与申请资格。',
   popularTitle:'热门配套',popularIntro:'先选择推荐组合，再按需要增加或删除产品。',popularTiny:'选择配套 → 调整年限、服务与优惠',popularNote:'推荐配套只是起点。加入前，你可为每件产品选择 5/7 年、服务方案与优惠。',
   homeTitle:'你的家电配套',homeIntro:'响应式排列 — 第 3 件及之后的产品会保持整齐对齐。',
-  catalogTitle:'选择你的家电',catalogIntro:'产品卡显示最低标准月费。加入产品时再选择优惠。',priceRef:'参考价格 · 2026 年 10 月',
+  catalogTitle:'选择你的家电',catalogIntro:'产品卡显示最低标准月费。加入产品时再选择优惠。',priceRef:'2026年11月优惠 · 11月1日开始',
   searchPH:'搜索型号或产品…',sortFeatured:'排序：推荐',sortPrice:'最低价格',sortModel:'型号 A–Z',
   shareTitle:'为你挑选的配套',shareText:'以下产品、年限、服务和优惠是根据你的需求预先选择。',editChoice:'修改选择',
   packageTitle:'你选择的配套',packageIntro:'月费会根据优惠与年限变化。',selectedProducts:'已选产品',paymentNow:'目前月费',budget:'每月预算',
@@ -163,7 +163,7 @@ function livePromos(product){
   const live=(product?.promos||[]).filter(p=>promoIsLive(p));
   const hasLiveHalf12=live.some(p=>p.type==='percent'&&Number(p.value)===50&&Number(p.months)===12);
   let out=live.filter(p=>!(hasLiveHalf12&&p.type==='percent'&&Number(p.value)===50&&Number(p.months)===9));
-  if(!hasLiveHalf12&&!out.some(p=>p.type==='percent'&&Number(p.value)===50&&Number(p.months)===9)){
+  if(!product.explicitPromosOnly&&!hasLiveHalf12&&!out.some(p=>p.type==='percent'&&Number(p.value)===50&&Number(p.months)===9)){
     const stdIndex=out.findIndex(p=>p.id==='standard');
     const half9={...DEFAULT_HALF9_PROMO};
     if(stdIndex>=0)out.splice(stdIndex+1,0,half9);else out.unshift(half9);
@@ -171,11 +171,12 @@ function livePromos(product){
   return out;
 }
 function promoObj(product,id){return livePromos(product).find(p=>p.id===id)||{id:'standard',type:'none'};}
-function promoPrice(product,plan,promoId,month,{comboActive=true,pairActive=true}={}){
+function promoPrice(product,plan,promoId,month,{comboActive=true,pairActive=true,specialComboActive=false}={}){
   let m=Number(plan?.monthly)||0;const p=promoObj(product,promoId);
   const within=!p.months||month<=Number(p.months);
-  if(p.type==='percent'&&within)m*=1-(Number(p.value)||0)/100;
+  if(p.type==='percent'&&within){m*=1-(Number(p.value)||0)/100;if(p.roundUp)m=Math.ceil(m);}
   if(p.type==='fixed'&&within){
+    if(['tv15nov','rac15nov'].includes(p.id)&&!specialComboActive)return m;
     if(p.id==='combo10'&&!comboActive)return m;
     if(p.id==='airpair15'&&!pairActive)return m;
     m=Math.max(0,m-(Number(p.value)||0));
@@ -185,7 +186,10 @@ function promoPrice(product,plan,promoId,month,{comboActive=true,pairActive=true
 }
 function comboName(p){const k='combo_'+p.id+'_name';return I18N[currentLang]?.[k]??I18N.en?.[k]??p.name;}
 function comboDesc(p){const k='combo_'+p.id+'_desc';return I18N[currentLang]?.[k]??I18N.en?.[k]??p.desc;}
+const novemberOverview={"ms": "Promosi November · 1–30 Nov 2026. 50% OFF 12 bulan: WD516 (Navy/Silver), WD518 (Beige/Gray/Pink/Blue) dan F2515RNTKAR. Tawaran 50% OFF 12 bulan hingga 31 Dis: GXJB18JBQRC, GC-B257KLJR, TX2522AT9GR dan FX1411R5WR. RM20 OFF/bulan hingga tamat kontrak: FV1450S2W dan F2520SNEKR. RM5 OFF/bulan: TV 55/65QNED87BSA dan ARTCOOL S3-Q24K2RPA; combo 2 unit layak kategori sama: RM15 OFF setiap unit/bulan. Promosi November tersedia untuk dipilih mulai 1 Nov. Tawaran tertakluk kelayakan dan stok.", "en": "November offers · 1–30 Nov 2026. 50% OFF for 12 months: WD516 (Navy/Silver), WD518 (Beige/Gray/Pink/Blue) and F2515RNTKAR. 50% OFF for 12 months through 31 Dec: GXJB18JBQRC, GC-B257KLJR, TX2522AT9GR and FX1411R5WR. RM20 OFF/month until contract end: FV1450S2W and F2520SNEKR. RM5 OFF/month: 55/65QNED87BSA TVs and ARTCOOL S3-Q24K2RPA; eligible same-category 2-unit combo: RM15 OFF per unit/month. November offers become selectable on 1 Nov. Subject to eligibility and stock.", "zh": "11月优惠 · 2026年11月1–30日。首12个月半价：WD516（Navy/Silver）、WD518（Beige/Gray/Pink/Blue）及F2515RNTKAR。延续至12月31日的首12个月半价：GXJB18JBQRC、GC-B257KLJR、TX2522AT9GR及FX1411R5WR。FV1450S2W及F2520SNEKR每月减RM20至合约结束。55/65QNED87BSA电视及ARTCOOL S3-Q24K2RPA每月减RM5；同类别2台符合条件的组合每台每月减RM15。11月新优惠于11月1日开放选择，以资格及库存为准。"};
 function applyI18n(){
+  if($('novemberOverview')){$('novemberOverview').textContent=novemberOverview[currentLang]||novemberOverview.en;$('novemberGift').textContent=novemberGiftText();}
+
   document.documentElement.lang=currentLang==='zh'?'zh-CN':currentLang;
   document.querySelectorAll('[data-i18n]').forEach(e=>{e.textContent=tr(e.dataset.i18n);});
   document.querySelectorAll('[data-i18n-html]').forEach(e=>{e.innerHTML=tr(e.dataset.i18nHtml);});
@@ -283,7 +287,7 @@ function comboDraftPairEligible(item){
 }
 function comboDraftMonthly(item,month=1){
   const plan=comboPlanFor(item);
-  return promoPrice(item.product,plan,item.promo,month,{comboActive:comboEligibleDraft(),pairActive:comboDraftPairEligible(item)});
+  return promoPrice(item.product,plan,item.promo,month,{comboActive:comboEligibleDraft(),pairActive:comboDraftPairEligible(item),specialComboActive:specialComboEligible(item,[...cart,...comboDraft])});
 }
 function openComboRefine(id){
   const preset=COMBO_PRESETS.find(x=>x.id===id);if(!preset)return;
@@ -375,6 +379,7 @@ function renderPlans(){
   }).join('');
   $('planGrid').querySelectorAll('.plan-card').forEach(b=>b.onclick=()=>{chosenPlan=plans[Number(b.dataset.i)];if(chosenPlan.outright)chosenPromo='standard';renderPlans();renderPromos();});
 }
+function novemberGiftText(){const texts={"ms": "🎁 Double Match + TV 65″ percuma: minimum 2 unit baharu daripada F2520SNEKR, TX2522AT9GR atau S3-Q24K2RPA (2 washer, 2 aircond atau 1+1). Mohon 1–30 Nov 2026; pemasangan 1 Nov–15 Dis 2026. Hadiah dijadual dihantar akhir Jan 2027. Satu hadiah bagi setiap ID pelanggan; tertakluk stok semasa pemasangan, siapa cepat dia dapat. Tiada penggantian jika habis stok. Jason akan sahkan kelayakan.", "en": "🎁 Double Match + free 65″ LG UHD AI TV: minimum 2 new units from F2520SNEKR, TX2522AT9GR or S3-Q24K2RPA (2 washers, 2 air conditioners or 1+1). Apply 1–30 Nov 2026; install 1 Nov–15 Dec 2026. Gift delivery scheduled for end-Jan 2027. One gift per Customer ID; first come, first served subject to stock at installation. No replacement if unavailable. Jason will confirm eligibility.", "zh": "🎁 Double Match赠送65英寸LG UHD AI电视：选购至少2台全新F2520SNEKR、TX2522AT9GR或S3-Q24K2RPA（2台洗衣机、2台冷气或各1台）。2026年11月1–30日申请，11月1日至12月15日完成安装。赠品预计2027年1月底送达。每个客户ID限一份，以安装时库存为准，先到先得，送完无替代。资格由Jason确认。"};return texts[currentLang]||texts.en;}
 function renderPromos(){
   const promos=chosenPlan?.outright?[promoObj(activeProduct,'standard')]:livePromos(activeProduct);
   if(!promos.some(p=>p.id===chosenPromo))chosenPromo=promos[0]?.id||'standard';
@@ -382,16 +387,16 @@ function renderPromos(){
   if(activeProduct?.doubleMatchEligible){
     const p={validFrom:activeProduct.doubleMatchValidFrom,validTo:activeProduct.doubleMatchValidTo};
     if(promoIsLive(p)){
-      const msg=currentLang==='zh'
-        ?'🎁 Double Match：任选 2 件符合条件的前置式洗衣机 / 顶开式洗衣机 / 烘干机，可获赠 65" LG UHD 4K AI TV（65UA7350PSB）。活动至 2026年10月15日，须于10月完成安装，送完即止。'
-        :currentLang==='en'
-        ?'🎁 Double Match: choose any 2 eligible Front Load Washer / Top Load Washer / Dryer products and get a FREE 65" LG UHD 4K AI TV (65UA7350PSB). Valid until 15 Oct 2026; installation must be within October, while stocks last.'
-        :'🎁 Double Match: pilih mana-mana 2 produk layak Front Load Washer / Top Load Washer / Dryer dan dapatkan TV LG UHD 4K AI 65" PERCUMA (65UA7350PSB). Sah hingga 15 Okt 2026; pemasangan mesti dalam Oktober, sementara stok masih ada.';
+      const msg=novemberGiftText();
       info='<div style="grid-column:1/-1;border:1px solid #f1b5be;background:#fff5f6;border-radius:18px;padding:14px 16px;font-weight:700;line-height:1.4">'+esc(msg)+'</div>';
     }
   }
   $('promoGrid').innerHTML=info+promos.map(p=>'<button class="promo-card '+(p.id===chosenPromo?'active':'')+'" data-id="'+p.id+'"><b>'+esc(promoLabel(p))+'</b><span>'+esc(promoDescription(p))+'</span></button>').join('');
   $('promoGrid').querySelectorAll('.promo-card').forEach(b=>b.onclick=()=>{chosenPromo=b.dataset.id;renderPromos();});
+}
+function specialComboEligible(item,items){
+  if(!['tv15nov','rac15nov'].includes(item.promo))return true;
+  return items.reduce((n,x)=>n+(x.promo===item.promo&&!x.plan?.outright&&promoObj(x.product,x.promo).id===item.promo?Number(x.qty)||1:0),0)>=2;
 }
 function comboUnitCount(items){return items.reduce((total,item)=>total+(item.promo==='combo10'&&!item.plan?.outright?Math.max(1,Math.floor(Number(item.qty)||1)):0),0);}
 function comboCartUnitCount(){return comboUnitCount(cart);}
@@ -403,6 +408,7 @@ function pairPromoEligible(item){
 }
 function promoLabelFor(item){
   const p=promoObj(item.product,item.promo);let label=promoLabel(p);
+  if(!specialComboEligible(item,cart))label+=' — '+(currentLang==='zh'?'需2台符合条件的同类产品':currentLang==='en'?'needs 2 eligible units in the same category':'perlu 2 unit layak dalam kategori sama');
   if(item.promo==='combo10'&&!comboEligible())label+=' — '+tr('comboInactive');
   if(item.promo==='airpair15'&&!pairPromoEligible(item)){const target=String(item.product.pairPromoWith||'').split('.')[0].toUpperCase();label+=(currentLang==='zh'?' — 需搭配 '+target:currentLang==='en'?' — pair '+target+' required':' — perlu padan '+target);}
   return label;
@@ -410,7 +416,7 @@ function promoLabelFor(item){
 function planMonths(plan){return plan?.outright?1:Math.max(1,Number(plan?.years)||0)*12;}
 function monthlyFor(item,month){
   if(item.plan?.outright)return month===1?(Number(item.plan.upfront)||0)*item.qty:0;
-  return promoPrice(item.product,item.plan,item.promo,month,{comboActive:comboEligible(),pairActive:pairPromoEligible(item)})*item.qty;
+  return promoPrice(item.product,item.plan,item.promo,month,{comboActive:comboEligible(),pairActive:pairPromoEligible(item),specialComboActive:specialComboEligible(item,cart)})*item.qty;
 }
 
 const PRODUCT_FEATURE_GROUPS={
@@ -625,7 +631,7 @@ function selectedCopywriting(){
     return lines.join('\n');
   }
   const normal=Math.round(Number(chosenPlan.monthly)||0),promo=promoObj(activeProduct,chosenPromo),end=Number(chosenPlan.years)*12;
-  const month1=Math.round(promoPrice(activeProduct,chosenPlan,chosenPromo,1,{comboActive:true,pairActive:true}));
+  const month1=Math.round(promoPrice(activeProduct,chosenPlan,chosenPromo,1,{comboActive:true,pairActive:true,specialComboActive:true}));
   let offer;
   if(promo.type==='percent'){
     const n=Number(promo.months)||0,v=Number(promo.value)||0;
@@ -641,6 +647,7 @@ function selectedCopywriting(){
       :currentLang==='en'
       ?('🔥 RM'+v+' OFF/month: '+money(month1)+'/month (Normal '+money(normal)+'/month)')
       :('🔥 RM'+v+' OFF/bulan: '+money(month1)+'/bulan (Harga biasa '+money(normal)+'/bulan)');
+    if(['tv15nov','rac15nov'].includes(promo.id))offer+='\n*'+promoDescription(promo);
     if(promo.id==='combo10')offer+='\n'+(currentLang==='zh'?'*至少 2 台产品（相同或不同型号）都选择 RM10 OFF combo 后才生效。':currentLang==='en'?'*Active when at least 2 units (same or different models) select the RM10 OFF combo package.':'*Aktif apabila sekurang-kurangnya 2 unit (model sama atau berlainan) memilih pakej RM10 OFF combo.');
     if(promo.id==='airpair15')offer+='\n'+(currentLang==='zh'?'*需与 AS30GGW10 配套。':currentLang==='en'?'*Requires pairing with AS30GGW10.':'*Perlu dipasangkan dengan AS30GGW10.');
   }else if(promo.type==='fixedMonthly'){
@@ -893,3 +900,4 @@ window.scrollToCatalog=()=>$('catalogSection').scrollIntoView({behavior:'smooth'
 window.scrollToPackage=()=>$('packageSide').scrollIntoView({behavior:'smooth',block:'start'});
 document.addEventListener('DOMContentLoaded',async()=>{applyI18n();await loadFromUrl();renderCats();renderComboMenu();renderProducts();renderCart();loadSubmissionStatuses();$('langSelect').addEventListener('change',e=>setLanguage(e.target.value));$('search').addEventListener('input',renderProducts);$('sort').addEventListener('change',renderProducts);$('budget').addEventListener('input',budgetCheck);$('modalAdd').onclick=addActive;$('copyCopyBtn').onclick=copySelectedCopywriting;$('comboAddBtn').onclick=addRefinedCombo;$('shareBtn').onclick=sharePackage;$('copyPackageBtn').onclick=copyPackageCopywriting;$('waBtn').onclick=wa;$('editSharedBtn').onclick=editSharedPackage;$('resetBtn').onclick=()=>{cart=[];renderCart();toast(tr('packageCleared'));};$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal();});$('comboModal').addEventListener('click',e=>{if(e.target===$('comboModal'))closeComboModal();});if(document.body.classList.contains('shared-package-view')&&cart.length)setTimeout(()=>scrollToPackage(),80);});
 })();
+
