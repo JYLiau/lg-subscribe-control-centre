@@ -30,7 +30,7 @@ ms:{
   agentNote:'Harga pelan ialah anggaran. Jason akan sahkan promosi dan kelayakan sebelum permohonan.',
   popularTitle:'PAKEJ POPULAR',popularIntro:'Pilih pakej cadangan sebagai titik mula, kemudian tambah atau buang produk mengikut keperluan.',popularTiny:'Pilih pakej → ubah tempoh, servis & promosi',popularNote:'Pakej cadangan ialah titik mula. Sebelum tambah ke pakej, anda boleh pilih tempoh 5/7 tahun, servis dan promosi bagi setiap produk.',
   homeTitle:'PAKEJ RUMAH ANDA',homeIntro:'Susunan responsif — produk ke-3 dan seterusnya kekal sejajar.',
-  catalogTitle:'Pilih perkakas anda',catalogIntro:'Harga kad ialah harga pelan standard terendah. Promosi dipilih semasa tambah produk.',priceRef:'Promosi November 2026 · bermula 1 Nov',
+  catalogTitle:'Pilih perkakas anda',catalogIntro:'Harga kad termasuk promosi November yang berkenaan. Pilih pelan untuk lihat jadual bayaran penuh.',priceRef:'Promosi November 2026 · bermula 1 Nov',
   searchPH:'Cari model atau produk…',sortFeatured:'Susun: Disyorkan',sortPrice:'Harga terendah',sortModel:'Model A–Z',
   shareTitle:'Pakej khas untuk anda',shareText:'Produk, tempoh, servis dan promosi di bawah telah dipilih berdasarkan permintaan anda.',editChoice:'Ubah pilihan',
   packageTitle:'PAKEJ PILIHAN ANDA',packageIntro:'Bayaran berubah ikut promosi & tempoh.',selectedProducts:'Produk dipilih',paymentNow:'Bayaran sekarang',budget:'Bajet bulanan',
@@ -66,7 +66,7 @@ en:{
   agentNote:'Plan prices are estimates. Jason will confirm promotions and eligibility before application.',
   popularTitle:'POPULAR PACKAGES',popularIntro:'Choose a suggested package as a starting point, then add or remove products to suit your needs.',popularTiny:'Choose a package → adjust term, service & promotion',popularNote:'A suggested package is only a starting point. Before adding it, you can choose the 5/7-year term, service and promotion for each product.',
   homeTitle:'YOUR HOME PACKAGE',homeIntro:'Responsive layout — the 3rd product and beyond stay aligned.',
-  catalogTitle:'Choose your appliances',catalogIntro:'Card price shows the lowest standard plan. Choose the promotion when adding a product.',priceRef:'November 2026 offers · start 1 Nov',
+  catalogTitle:'Choose your appliances',catalogIntro:'Card prices include applicable November offers. Choose a plan to see the full payment schedule.',priceRef:'November 2026 offers · start 1 Nov',
   searchPH:'Search model or product…',sortFeatured:'Sort: Recommended',sortPrice:'Lowest price',sortModel:'Model A–Z',
   shareTitle:'A package selected for you',shareText:'The products, term, service and promotion below were selected based on your request.',editChoice:'Change selection',
   packageTitle:'YOUR SELECTED PACKAGE',packageIntro:'Payment changes with promotion & term.',selectedProducts:'Selected products',paymentNow:'Payment now',budget:'Monthly budget',
@@ -102,7 +102,7 @@ zh:{
   agentNote:'方案价格仅供参考。申请前，Jason 会确认优惠与申请资格。',
   popularTitle:'热门配套',popularIntro:'先选择推荐组合，再按需要增加或删除产品。',popularTiny:'选择配套 → 调整年限、服务与优惠',popularNote:'推荐配套只是起点。加入前，你可为每件产品选择 5/7 年、服务方案与优惠。',
   homeTitle:'你的家电配套',homeIntro:'响应式排列 — 第 3 件及之后的产品会保持整齐对齐。',
-  catalogTitle:'选择你的家电',catalogIntro:'产品卡显示最低标准月费。加入产品时再选择优惠。',priceRef:'2026年11月优惠 · 11月1日开始',
+  catalogTitle:'选择你的家电',catalogIntro:'产品卡已包含适用的11月优惠。选择配套查看完整付款时间表。',priceRef:'2026年11月优惠 · 11月1日开始',
   searchPH:'搜索型号或产品…',sortFeatured:'排序：推荐',sortPrice:'最低价格',sortModel:'型号 A–Z',
   shareTitle:'为你挑选的配套',shareText:'以下产品、年限、服务和优惠是根据你的需求预先选择。',editChoice:'修改选择',
   packageTitle:'你选择的配套',packageIntro:'月费会根据优惠与年限变化。',selectedProducts:'已选产品',paymentNow:'目前月费',budget:'每月预算',
@@ -154,7 +154,8 @@ function promoLabel(p){return promoLabelById(p?.id||'',promoLocalized(p,'label')
 function promoDescription(p){return promoDescById(p?.id||'',promoLocalized(p,'description'));}
 function promoIsLive(p){
   if(!p||p.id==='standard')return true;
-  const now=Date.now();
+  // Quote upcoming November offers now; application validity remains on each offer.
+  const now=Math.max(Date.now(),new Date('2026-11-01T00:00:00+08:00').getTime());
   if(p.validFrom&&now<new Date(p.validFrom+'T00:00:00+08:00').getTime())return false;
   if(p.validTo&&now>new Date(p.validTo+'T23:59:59+08:00').getTime())return false;
   return true;
@@ -169,6 +170,12 @@ function livePromos(product){
     if(stdIndex>=0)out.splice(stdIndex+1,0,half9);else out.unshift(half9);
   }
   return out;
+}
+function defaultQuotePromo(product){
+  const offers=livePromos(product);
+  return offers.find(p=>p.id==='half12')?.id
+    ||offers.find(p=>['rm20nov','rm5nov'].includes(p.id))?.id
+    ||'standard';
 }
 function promoObj(product,id){return livePromos(product).find(p=>p.id===id)||{id:'standard',type:'none'};}
 function promoPrice(product,plan,promoId,month,{comboActive=true,pairActive=true,specialComboActive=false}={}){
@@ -186,9 +193,7 @@ function promoPrice(product,plan,promoId,month,{comboActive=true,pairActive=true
 }
 function comboName(p){const k='combo_'+p.id+'_name';return I18N[currentLang]?.[k]??I18N.en?.[k]??p.name;}
 function comboDesc(p){const k='combo_'+p.id+'_desc';return I18N[currentLang]?.[k]??I18N.en?.[k]??p.desc;}
-const novemberOverview={"ms": "Promosi November · 1–30 Nov 2026. 50% OFF 12 bulan: WD516 (Navy/Silver), WD518 (Beige/Gray/Pink/Blue) dan F2515RNTKAR. Tawaran 50% OFF 12 bulan hingga 31 Dis: GXJB18JBQRC, GC-B257KLJR, TX2522AT9GR dan FX1411R5WR. RM20 OFF/bulan hingga tamat kontrak: FV1450S2W dan F2520SNEKR. RM5 OFF/bulan: TV 55/65QNED87BSA dan ARTCOOL S3-Q24K2RPA; combo 2 unit layak kategori sama: RM15 OFF setiap unit/bulan. Promosi November tersedia untuk dipilih mulai 1 Nov. Tawaran tertakluk kelayakan dan stok.", "en": "November offers · 1–30 Nov 2026. 50% OFF for 12 months: WD516 (Navy/Silver), WD518 (Beige/Gray/Pink/Blue) and F2515RNTKAR. 50% OFF for 12 months through 31 Dec: GXJB18JBQRC, GC-B257KLJR, TX2522AT9GR and FX1411R5WR. RM20 OFF/month until contract end: FV1450S2W and F2520SNEKR. RM5 OFF/month: 55/65QNED87BSA TVs and ARTCOOL S3-Q24K2RPA; eligible same-category 2-unit combo: RM15 OFF per unit/month. November offers become selectable on 1 Nov. Subject to eligibility and stock.", "zh": "11月优惠 · 2026年11月1–30日。首12个月半价：WD516（Navy/Silver）、WD518（Beige/Gray/Pink/Blue）及F2515RNTKAR。延续至12月31日的首12个月半价：GXJB18JBQRC、GC-B257KLJR、TX2522AT9GR及FX1411R5WR。FV1450S2W及F2520SNEKR每月减RM20至合约结束。55/65QNED87BSA电视及ARTCOOL S3-Q24K2RPA每月减RM5；同类别2台符合条件的组合每台每月减RM15。11月新优惠于11月1日开放选择，以资格及库存为准。"};
 function applyI18n(){
-  if($('novemberOverview')){$('novemberOverview').textContent=novemberOverview[currentLang]||novemberOverview.en;$('novemberGift').textContent=novemberGiftText();}
 
   document.documentElement.lang=currentLang==='zh'?'zh-CN':currentLang;
   document.querySelectorAll('[data-i18n]').forEach(e=>{e.textContent=tr(e.dataset.i18n);});
@@ -294,7 +299,7 @@ function openComboRefine(id){
   const d=comboPresetData(preset);
   if(d.blocked)return toast(tr('notAvailable'));
   activeComboPreset=preset;
-  comboDraft=d.items.map(x=>({product:x.product,years:Number(x.plan.years),service:x.plan.service,promo:'standard'}));
+  comboDraft=d.items.map(x=>({product:x.product,years:Number(x.plan.years),service:x.plan.service,promo:defaultQuotePromo(x.product)}));
   $('comboModalTag').textContent=preset.tag;
   $('comboModalTitle').textContent=comboName(preset);
   $('comboModalSub').textContent=comboDesc(preset);
@@ -360,15 +365,18 @@ function renderProducts(){
    const blocked=stopSubmission(p);
    const paused=currentLang==='zh'?'暂停接受订单':currentLang==='en'?'Orders temporarily paused':'Tempahan dihentikan sementara';
    const outrightButton=p.outrightOptions.length?'<button class="addbtn outright-btn" data-id="'+p.id+'" '+(blocked?'disabled':'')+'>'+esc(tr('outright'))+' · '+money(Math.min(...p.outrightOptions.map(o=>o.upfront)))+' · '+esc(tr('oneTime'))+'</button>':'';
+   const quotePromo=defaultQuotePromo(p);
+   const quoteFrom=pending?0:Math.min(...p.plans.map(plan=>promoPrice(p,plan,quotePromo,1)));
+   const offerCaption=quotePromo==='standard'?'':'<small>'+esc(promoLabel(promoObj(p,quotePromo)))+'</small>';
    const priceHtml=pending
      ?'<div class="price pending-price"><div><small>'+esc(tr('pricePending'))+'</small></div></div>'
-     :'<div class="price"><div><small>'+esc(tr('from'))+'</small><strong>'+money(minPrice(p))+'</strong><em>/'+esc(tr('month'))+'</em></div></div>';
+     :'<div class="price"><div><small>'+esc(tr('from'))+'</small><strong>'+money(quoteFrom)+'</strong><em>/'+esc(tr('month'))+'</em>'+offerCaption+'</div></div>';
    return '<article class="product '+(pending?'pricing-pending':'')+'"><div class="pvisual">'+fridgeVisual(p)+'</div><div class="pbody"><div class="pcat">'+esc(categoryLabel(p.category))+'</div><h3>'+esc(p.code)+'</h3><div class="psub">'+esc(p.name)+'</div><span class="lifecycle current">'+esc(blocked?paused:orderNotice(p)||tr(isUpcoming(p)?'availableLateNov':'currentSelection'))+'</span>'+priceHtml+'<button class="addbtn" data-id="'+p.id+'" '+(pending||blocked?'disabled':'')+'>'+esc(blocked?paused:pending?tr('planPending'):tr('viewPlans'))+'</button>'+outrightButton+'</div></article>';
  }).join('');
  $('products').querySelectorAll('.addbtn:not(:disabled)').forEach(b=>b.onclick=()=>openProduct(b.dataset.id,b.classList.contains('outright-btn')));
 }
 function allPlans(product){return [...(product?.plans||[]),...(product?.outrightOptions||[])];}
-function openProduct(id,outright=false){activeProduct=CATALOG.find(x=>x.id===id);const plans=allPlans(activeProduct);if(!activeProduct||!plans.length||stopSubmission(activeProduct))return;chosenPlan=(outright?plans.find(p=>p.outright):null)||plans[0];chosenPromo='standard';$('qtyInput').value=1;$('modalModel').textContent=activeProduct.code;$('modalSub').textContent=activeProduct.name+(orderNotice(activeProduct)?' · '+orderNotice(activeProduct):'');renderPlans();renderPromos();$('modal').showModal();}
+function openProduct(id,outright=false){activeProduct=CATALOG.find(x=>x.id===id);const plans=allPlans(activeProduct);if(!activeProduct||!plans.length||stopSubmission(activeProduct))return;chosenPlan=(outright?plans.find(p=>p.outright):null)||plans[0];chosenPromo=outright?'standard':defaultQuotePromo(activeProduct);$('qtyInput').value=1;$('modalModel').textContent=activeProduct.code;$('modalSub').textContent=activeProduct.name+(orderNotice(activeProduct)?' · '+orderNotice(activeProduct):'');renderPlans();renderPromos();$('modal').showModal();}
 window.closeModal=()=>$('modal').close();
 window.stepQty=d=>{const q=$('qtyInput');q.value=Math.max(1,Math.min(9,(Number(q.value)||1)+d));};
 function renderPlans(){
