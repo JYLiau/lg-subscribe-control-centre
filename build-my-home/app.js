@@ -848,8 +848,40 @@ function packagePricePeriods(monthlyValue,maxMonths){
 function packagePeriodText(p){
   return paymentMonthRange(p.start,p.end)+': '+p.price+'/'+tr('month');
 }
+function chinesePackageCopywriting(){
+  const lines=[];
+  const periodLine=p=>paymentMonthRange(p.start,p.end)+': *'+p.price+'/月*';
+  cart.forEach((item,index)=>{
+    lines.push('*'+(index+1)+'. '+item.product.name+(item.qty>1?' ×'+item.qty:'')+'*');
+    lines.push(tr('copyModel',{code:item.product.code}));
+    if(orderNotice(item.product))lines.push('📦 '+orderNotice(item.product));
+    const features=productFeatureLines(item.product);
+    if(features.length)lines.push(featureHeading(),...features.map(feature=>'✓ '+feature));
+    lines.push('');
+    if(item.plan.outright){
+      lines.push('*'+tr('outright')+'*');
+      lines.push(tr('packageMsgItemPay')+': *'+money((Number(item.plan.upfront)||0)*item.qty)+'* · '+tr('oneTime'));
+    }else{
+      if(item.product.category!=='TV'){
+        const detail=serviceDetail(item.product,item.plan)||serviceLabel(item.plan.service);
+        if(detail)lines.push('👨🏻‍🔧'+detail);
+      }
+      const promotion=promoLabelFor(item).replace(/首12个月\s*50% OFF/g,'首12个月享有50%折扣');
+      lines.push('🔥*'+promotion+'*');
+      packagePricePeriods(month=>monthlyFor(item,month),planMonths(item.plan))
+        .forEach(period=>lines.push(periodLine(period)));
+    }
+    lines.push('');
+  });
+  lines.push('💳 *配套每月付款详情：*');
+  const maxMonths=Math.max(...cart.map(item=>planMonths(item.plan)));
+  packagePricePeriods(month=>cart.reduce((sum,item)=>sum+(month<=planMonths(item.plan)?monthlyFor(item,month):0),0),maxMonths)
+    .forEach(period=>lines.push('• '+periodLine(period)));
+  return lines.join('\n');
+}
 function packageCopywriting(){
   if(!cart.length)return '';
+  if(currentLang==='zh')return chinesePackageCopywriting();
   const lines=[tr('packageMsgTitle'),''];
   cart.forEach((item,index)=>{
     lines.push('*'+(index+1)+'. '+item.product.name+'*'+(item.qty>1?' ×'+item.qty:''));
