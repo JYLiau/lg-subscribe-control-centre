@@ -852,7 +852,7 @@ function chinesePackageCopywriting(){
   const lines=[];
   const periodLine=p=>paymentMonthRange(p.start,p.end)+': *'+p.price+'/月*';
   cart.forEach((item,index)=>{
-    lines.push('*'+(index+1)+'. '+item.product.name+(item.qty>1?' ×'+item.qty:'')+'*');
+    lines.push('*'+(index+1)+'.) '+item.product.name+(item.qty>1?' ×'+item.qty:'')+'*');
     lines.push(tr('copyModel',{code:item.product.code}));
     if(orderNotice(item.product))lines.push('📦 '+orderNotice(item.product));
     const features=productFeatureLines(item.product);
@@ -871,7 +871,8 @@ function chinesePackageCopywriting(){
       packagePricePeriods(month=>monthlyFor(item,month),planMonths(item.plan))
         .forEach(period=>lines.push(periodLine(period)));
     }
-    lines.push('');
+    lines.push('','••••••••••••••••••••••••••••••••');
+    if(index<cart.length-1)lines.push('');
   });
   lines.push('💳 *配套每月付款详情：*');
   const maxMonths=Math.max(...cart.map(item=>planMonths(item.plan)));
