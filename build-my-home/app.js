@@ -124,12 +124,12 @@ zh:{
   addFirst:'请先加入产品再生成客户链接。',linkCopied:'客户链接已复制',linkCopiedFallback:'短链接服务暂不可用，已复制完整链接',shortLinkUnavailable:'此配套链接暂不可用，请向 Jason 索取新链接。',copyLinkPrompt:'复制此客户链接',packageCleared:'配套已清空',
   copyDone:'文案已复制',copyFail:'复制此文案',packageMsgTitle:'✨ *您的 LG Subscribe 精选配套*',packageMsgItemPay:'月费',packageMsgSchedule:'💳 *每月付款安排：*',packageMsgSavings:'🎉 *总共节省*',packageMsgLink:'🔗 *查看产品图片与配套详情：*',packageMsgCTA:'有兴趣？欢迎 WhatsApp Jason：011-5972 6619 😊',packageMsgNote:'价格与促销资格以最终确认为准。须符合条款与条件。',packageMsgCopied:'配套文案已复制',packageMsgCopyPrompt:'复制此配套文案',waIntro:'Hi Jason，我对以下 LG Subscribe 配套有兴趣：',estimateNow:'目前预计',
   catAircond:'空调',catLaundry:'洗衣家电',catFridge:'冰箱',catAP:'空气净化器',catWP:'净水器',catTV:'电视',catDishwasher:'洗碗机',
-  svcLaundryRV6:'每6个月上门服务一次',svcLaundryRegularDetail:'LG技师每6个月上门服务一次（每年2次）',svcLaundryCombinedDetail:'每6个月寄送自助保养套件 + 每12个月由LG技师上门服务',svcRV:'定期上门服务',svcRV1:'每12个月上门服务一次',svcRV2:'每6个月上门服务一次',svcRV2Y:'每24个月上门服务一次',svcSS:'自行保养',svcCM:'组合保养',svcSub:'订阅方案',
+  svcLaundryRV6:'每6个月上门服务一次',svcLaundryRegularDetail:'每6个月上门服务一次（每年2次）',svcLaundryCombinedDetail:'每6个月寄送自助保养套件 + 每12个月上门服务',svcRV:'定期上门服务',svcRV1:'每12个月上门服务一次',svcRV2:'每6个月上门服务一次',svcRV2Y:'每24个月上门服务一次',svcSS:'自行保养',svcCM:'组合保养',svcSub:'订阅方案',
   copyHeadline:'✨ LG Subscribe — {name}',copyModel:'型号：{code}',copyPlan:'{years} 年方案 · {service}',copyNormal:'原价：{price}/月',
   copyHalf9:'🔥 首9个月享有50%折扣：{promo}/月\n第 10–{end} 个月：{normal}/月',
   copyCombo:'🎁 RM10 OFF 组合优惠：{promo}/月\n*至少 2 台产品（相同或不同型号）都选择 RM10 OFF combo 后才生效。',
   copyStandard:'💳 月费：{normal}/月',copyOctober:'🎉 可享 10 月 / Evergreen 优惠。当前优惠价格由 Jason 确认。',
-  copyPackageIncludes:'配套包括：',copyDelivery:'🚚 免费送货及基本安装',copyServiceLine:'🛠️ 服务：{service}',copyCmKit:'✅️ 每6个月免费配送自助保养套件',copyCmVisit:'✅️ LG技师每12个月上门服务一次',copyWpFilter:'✅️ 每6个月配送更换滤芯',svcWaterRegularDetail:'LG技师每6个月上门服务一次',svcWaterSelfDetail:'每6个月配送滤芯供客户自行更换',svcWaterCombinedDetail:'每6个月配送更换滤芯 + LG技师每12个月上门服务一次',svcAirRegularDetail:'LG技师每12个月上门服务一次',svcAirSelfDetail:'每12个月配送滤网供客户自行更换',copyCTA:'要我帮你选择适合的配套吗？😊\nWhatsApp Jason：011-5972 6619',
+  copyPackageIncludes:'配套包括：',copyDelivery:'🚚 免费送货及基本安装',copyServiceLine:'🛠️ 服务：{service}',copyCmKit:'✅️ 每6个月免费配送自助保养套件',copyCmVisit:'✅️ 每12个月上门服务一次',copyWpFilter:'✅️ 每6个月配送更换滤芯',svcWaterRegularDetail:'每6个月上门服务一次',svcWaterSelfDetail:'每6个月配送滤芯供客户自行更换',svcWaterCombinedDetail:'每6个月配送更换滤芯 + 每12个月上门服务一次',svcAirRegularDetail:'每12个月上门服务一次',svcAirSelfDetail:'每12个月配送滤网供客户自行更换',copyCTA:'要我帮你选择适合的配套吗？😊\nWhatsApp Jason：011-5972 6619',
   combo_setA_name:'凉爽 + 保鲜',combo_setA_desc:'1.0HP 空调 + 493L 冰箱',combo_setB_name:'保鲜 + 洗衣',combo_setB_desc:'493L 冰箱 + 12kg 洗衣机',combo_setC_name:'凉爽 + 洗衣',combo_setC_desc:'1.0HP 空调 + 12kg 洗衣机',combo_setD_name:'全屋三件套',combo_setD_desc:'空调 + 冰箱 + 洗衣机',combo_setE_name:'洗衣双组合',combo_setE_desc:'12kg 洗衣机 + 10kg 烘干机'
 }};
 let currentLang=(()=>{const q=new URL(location.href).searchParams.get('lang');const s=q||localStorage.getItem('lg-bmh-lang')||'ms';return ['ms','en','zh'].includes(s)?s:'ms';})();
