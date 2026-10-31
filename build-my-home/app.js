@@ -617,7 +617,7 @@ const PRODUCT_FEATURE_GROUP_BY_CODE={
   'GN-F452':'gnf452','GN-F452PQAK':'gnf452','GC-B257KLJR':'gcb257','GC-J257SQNW':'gcj257','GV-K25FFGER':'gvk25','GC-G22FFQAB':'gcg22','GXJB18JBQRC':'gxjb18',
   'AS10GDBY0':'as10','AS65GDBY0':'as65','AS30GGW10':'aeromini','AS60GHBT0':'as60hit','AS55GGSY0':'as55','AS25GCBZ0':'as25','AS60GLSG0':'wallfit',
   'WU525BS':'wu525','WD518AN':'wd518','WD516AN':'wd516',
-  'DFC335HM':'dishwasher335','DFC533FV':'dishwasher533','55QNED87BSA':'qned55','65QNED87BSA':'qned55','75QNED87BSA':'qned55','50NU865BPSA':'nanoTV','55NU865BPSA':'nanoTV','65NU865BPSA':'nanoTV'
+  'OLED65B6SSA':'oledb6','DFC335HM':'dishwasher335','DFC533FV':'dishwasher533','55QNED87BSA':'qned55','65QNED87BSA':'qned55','75QNED87BSA':'qned55','50NU865BPSA':'nanoTV','55NU865BPSA':'nanoTV','65NU865BPSA':'nanoTV'
 };
 function productFeatureLines(product){
   const base=String(product?.code||'').split('.')[0].toUpperCase();
