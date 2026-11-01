@@ -50,14 +50,14 @@ ms:{
   comboInactive:'belum aktif (perlu 2 item combo)',monthWord:'Bulan',notActiveAdd:'Belum aktif — tambah 1 lagi item menggunakan RM10 OFF combo',
   withinBudget:'Dalam bajet sebanyak {amount}/bulan',overBudget:'Melebihi bajet sebanyak {amount}/bulan',buildToCompare:'Bina pakej untuk banding dengan bajet.',
   addFirst:'Tambah produk dahulu sebelum jana link customer.',linkCopied:'Link customer disalin',linkCopiedFallback:'Link penuh disalin kerana servis link pendek tidak tersedia',shortLinkUnavailable:'Link pakej ini tidak tersedia. Sila minta link baharu daripada Jason.',copyLinkPrompt:'Salin link customer ini',packageCleared:'Pakej dikosongkan',
-  copyDone:'Copywriting disalin',copyFail:'Salin copywriting ini',packageMsgTitle:'✨ *PAKEJ LG SUBSCRIBE PILIHAN ANDA*',packageMsgItemPay:'Bayaran',packageMsgSchedule:'💳 *Jadual bayaran bulanan:*',packageMsgSavings:'🎉 *Jumlah penjimatan*',packageMsgLink:'🔗 *Lihat gambar & butiran pakej:*',packageMsgCTA:'Berminat? Boleh terus WhatsApp Jason di 011-5972 6619 😊',packageMsgNote:'Harga dan kelayakan promosi tertakluk kepada pengesahan akhir. T&C apply.',packageMsgCopied:'Ayat pakej berjaya disalin',packageMsgCopyPrompt:'Salin ayat pakej ini',waIntro:'Hi Jason, saya berminat dengan pakej LG Subscribe ini:',estimateNow:'Anggaran sekarang',
+  copyDone:'Copywriting disalin',copyFail:'Salin copywriting ini',packageMsgTitle:'✨ *PAKEJ LG SUBSCRIBE PILIHAN ANDA*',packageMsgItemPay:'Bayaran',packageMsgSchedule:'💳 *Butiran bayaran bulanan pakej:*',packageMsgSavings:'🎉 *Jumlah penjimatan*',packageMsgLink:'🔗 *Lihat gambar & butiran pakej:*',packageMsgCTA:'Berminat? Boleh terus WhatsApp Jason di 011-5972 6619 😊',packageMsgNote:'Harga dan kelayakan promosi tertakluk kepada pengesahan akhir. T&C apply.',packageMsgCopied:'Ayat pakej berjaya disalin',packageMsgCopyPrompt:'Salin ayat pakej ini',waIntro:'Hi Jason, saya berminat dengan pakej LG Subscribe ini:',estimateNow:'Anggaran sekarang',
   catAircond:'Penyaman Udara',catLaundry:'Dobi',catFridge:'Peti Sejuk',catAP:'Penapis Udara',catWP:'Penapis Air',catTV:'TV',catDishwasher:'Mesin Basuh Pinggan',
-  svcLaundryRV6:'Regular Visit (servis setiap 6 bulan)',svcLaundryRegularDetail:'Servis oleh juruteknik LG setiap 6 bulan (2 kali setahun)',svcLaundryCombinedDetail:'Kit servis sendiri dihantar setiap 6 bulan + servis oleh juruteknik LG setiap 12 bulan',svcRV:'Regular Visit (lawatan servis)',svcRV1:'Regular Visit (servis setiap 12 bulan)',svcRV2:'Regular Visit (servis setiap 6 bulan)',svcRV2Y:'Regular Visit (servis setiap 24 bulan)',svcSS:'Self-Service (servis sendiri)',svcCM:'Combine Maintenance (servis gabungan)',svcSub:'Langganan',
+  svcLaundryRV6:'Regular Visit (servis setiap 6 bulan)',svcLaundryRegularDetail:'Servis setiap 6 bulan (2 kali setahun)',svcLaundryCombinedDetail:'Kit servis sendiri dihantar setiap 6 bulan + servis setiap 12 bulan',svcRV:'Regular Visit (lawatan servis)',svcRV1:'Regular Visit (servis setiap 12 bulan)',svcRV2:'Regular Visit (servis setiap 6 bulan)',svcRV2Y:'Regular Visit (servis setiap 24 bulan)',svcSS:'Self-Service (servis sendiri)',svcCM:'Combine Maintenance (servis gabungan)',svcSub:'Langganan',
   copyHeadline:'✨ LG Subscribe — {name}',copyModel:'Model: {code}',copyPlan:'Pelan {years} Tahun · {service}',copyNormal:'Harga biasa: {price}/bulan',
   copyHalf9:'🔥 50% OFF untuk 9 bulan pertama: {promo}/bulan\nBulan 10–{end}: {normal}/bulan',
   copyCombo:'🎁 RM10 OFF Combo: {promo}/bulan\n*Aktif apabila sekurang-kurangnya 2 unit (model sama atau berlainan) memilih pakej RM10 OFF combo.',
   copyStandard:'💳 Bayaran bulanan: {normal}/bulan',copyOctober:'🎉 Promosi Oktober / Evergreen tersedia. Kadar promosi semasa akan disahkan oleh Jason.',
-  copyPackageIncludes:'Pakej termasuk:',copyDelivery:'🚚 Penghantaran & pemasangan asas percuma',copyServiceLine:'🛠️ Servis: {service}',copyCmKit:'✅️ Kit servis sendiri dihantar percuma setiap 6 bulan',copyCmVisit:'✅️ Servis oleh juruteknik LG setiap 12 bulan',copyWpFilter:'✅️ Penapis gantian dihantar setiap 6 bulan',svcWaterRegularDetail:'Juruteknik LG datang servis setiap 6 bulan',svcWaterSelfDetail:'Penapis gantian dihantar setiap 6 bulan untuk ditukar sendiri',svcWaterCombinedDetail:'Penapis gantian dihantar setiap 6 bulan + servis oleh juruteknik LG setiap 12 bulan',svcAirRegularDetail:'Juruteknik LG datang servis setiap 12 bulan',svcAirSelfDetail:'Penapis gantian dihantar setiap 12 bulan untuk ditukar sendiri',copyCTA:'Nak saya bantu pilih pakej yang sesuai untuk anda? 😊\nWhatsApp Jason: 011-5972 6619',
+  copyPackageIncludes:'Pakej termasuk:',copyDelivery:'🚚 Penghantaran & pemasangan asas percuma',copyServiceLine:'🛠️ Servis: {service}',copyCmKit:'✅️ Kit servis sendiri dihantar percuma setiap 6 bulan',copyCmVisit:'✅️ Servis setiap 12 bulan',copyWpFilter:'✅️ Penapis gantian dihantar setiap 6 bulan',svcWaterRegularDetail:'Servis setiap 6 bulan',svcWaterSelfDetail:'Penapis gantian dihantar setiap 6 bulan untuk ditukar sendiri',svcWaterCombinedDetail:'Penapis gantian dihantar setiap 6 bulan + servis setiap 12 bulan',svcAirRegularDetail:'Servis setiap 12 bulan',svcAirSelfDetail:'Penapis gantian dihantar setiap 12 bulan untuk ditukar sendiri',copyCTA:'Nak saya bantu pilih pakej yang sesuai untuk anda? 😊\nWhatsApp Jason: 011-5972 6619',
   combo_setA_name:'Sejuk + Segar',combo_setA_desc:'Aircond 1.0HP + Peti Sejuk 493L',combo_setB_name:'Segar + Dobi',combo_setB_desc:'Peti Sejuk 493L + Mesin Basuh 12kg',combo_setC_name:'Sejuk + Dobi',combo_setC_desc:'Aircond 1.0HP + Mesin Basuh 12kg',combo_setD_name:'Trio Lengkap Rumah',combo_setD_desc:'Aircond + Peti Sejuk + Mesin Basuh',combo_setE_name:'Duo Dobi',combo_setE_desc:'Mesin Basuh 12kg + Pengering 10kg'
 },
 en:{
@@ -86,14 +86,14 @@ en:{
   comboInactive:'not active (need 2 combo items)',monthWord:'Month',notActiveAdd:'Not active — add 1 more item using RM10 OFF combo',
   withinBudget:'Within budget by {amount}/month',overBudget:'Over budget by {amount}/month',buildToCompare:'Build your package to compare with budget.',
   addFirst:'Add a product before generating a customer link.',linkCopied:'Customer link copied',linkCopiedFallback:'Full link copied because short-link service is unavailable',shortLinkUnavailable:'This package link is unavailable. Please ask Jason for a new link.',copyLinkPrompt:'Copy this customer link',packageCleared:'Package cleared',
-  copyDone:'Message copied',copyFail:'Copy this message',packageMsgTitle:'✨ *YOUR LG SUBSCRIBE PACKAGE*',packageMsgItemPay:'Payment',packageMsgSchedule:'💳 *Monthly payment schedule:*',packageMsgSavings:'🎉 *Total savings*',packageMsgLink:'🔗 *View package photos & details:*',packageMsgCTA:'Interested? WhatsApp Jason at 011-5972 6619 😊',packageMsgNote:'Prices and promotion eligibility are subject to final confirmation. T&Cs apply.',packageMsgCopied:'Package message copied',packageMsgCopyPrompt:'Copy this package message',waIntro:'Hi Jason, I am interested in this LG Subscribe package:',estimateNow:'Estimated now',
+  copyDone:'Message copied',copyFail:'Copy this message',packageMsgTitle:'✨ *YOUR LG SUBSCRIBE PACKAGE*',packageMsgItemPay:'Payment',packageMsgSchedule:'💳 *Package monthly payment details:*',packageMsgSavings:'🎉 *Total savings*',packageMsgLink:'🔗 *View package photos & details:*',packageMsgCTA:'Interested? WhatsApp Jason at 011-5972 6619 😊',packageMsgNote:'Prices and promotion eligibility are subject to final confirmation. T&Cs apply.',packageMsgCopied:'Package message copied',packageMsgCopyPrompt:'Copy this package message',waIntro:'Hi Jason, I am interested in this LG Subscribe package:',estimateNow:'Estimated now',
   catAircond:'Air Conditioner',catLaundry:'Laundry',catFridge:'Refrigerator',catAP:'Air Purifier',catWP:'Water Purifier',catTV:'TV',catDishwasher:'Dishwasher',
-  svcLaundryRV6:'Regular Visit every 6 months',svcLaundryRegularDetail:'LG technician service every 6 months (twice yearly)',svcLaundryCombinedDetail:'Self-care kit every 6 months + LG technician service every 12 months',svcRV:'Regular Visit',svcRV1:'Regular Visit 1x/year',svcRV2:'Regular Visit 2x/year',svcRV2Y:'Regular Visit every 2 years',svcSS:'Self-Service',svcCM:'Combined Maintenance',svcSub:'Subscription',
+  svcLaundryRV6:'Regular Visit every 6 months',svcLaundryRegularDetail:'Service every 6 months (twice yearly)',svcLaundryCombinedDetail:'Self-care kit every 6 months + Service every 12 months',svcRV:'Regular Visit',svcRV1:'Service every 12 months',svcRV2:'Service every 6 months',svcRV2Y:'Service every 24 months',svcSS:'Self-Service',svcCM:'Combined Maintenance',svcSub:'Subscription',
   copyHeadline:'✨ LG Subscribe — {name}',copyModel:'Model: {code}',copyPlan:'{years}-Year Plan · {service}',copyNormal:'Normal price: {price}/month',
   copyHalf9:'🔥 50% OFF for the first 9 months: {promo}/month\nMonth 10–{end}: {normal}/month',
   copyCombo:'🎁 RM10 OFF Combo: {promo}/month\n*Active when at least 2 units (same or different models) select the RM10 OFF combo package.',
   copyStandard:'💳 Monthly payment: {normal}/month',copyOctober:'🎉 October / Evergreen promotion is available. Jason will confirm the current promotional rate.',
-  copyPackageIncludes:'Package includes:',copyDelivery:'🚚 Free delivery & basic installation',copyServiceLine:'🛠️ Service: {service}',copyCmKit:'✅️ Complimentary self-service kit delivered every 6 months',copyCmVisit:'✅️ LG technician service every 12 months',copyWpFilter:'✅️ Replacement filters delivered every 6 months',svcWaterRegularDetail:'LG technician service every 6 months',svcWaterSelfDetail:'Replacement filters delivered every 6 months for self-replacement',svcWaterCombinedDetail:'Replacement filters delivered every 6 months + LG technician service every 12 months',svcAirRegularDetail:'LG technician service every 12 months',svcAirSelfDetail:'Replacement filters delivered every 12 months for self-replacement',copyCTA:'Want me to help choose the most suitable package for you? 😊\nWhatsApp Jason: 011-5972 6619',
+  copyPackageIncludes:'Package includes:',copyDelivery:'🚚 Free delivery & basic installation',copyServiceLine:'🛠️ Service: {service}',copyCmKit:'✅️ Complimentary self-service kit delivered every 6 months',copyCmVisit:'✅️ Service every 12 months',copyWpFilter:'✅️ Replacement filters delivered every 6 months',svcWaterRegularDetail:'Service every 6 months',svcWaterSelfDetail:'Replacement filters delivered every 6 months for self-replacement',svcWaterCombinedDetail:'Replacement filters delivered every 6 months + Service every 12 months',svcAirRegularDetail:'Service every 12 months',svcAirSelfDetail:'Replacement filters delivered every 12 months for self-replacement',copyCTA:'Want me to help choose the most suitable package for you? 😊\nWhatsApp Jason: 011-5972 6619',
   combo_setA_name:'Cool + Fresh',combo_setA_desc:'1.0HP Air Conditioner + 493L Refrigerator',combo_setB_name:'Fresh + Laundry',combo_setB_desc:'493L Refrigerator + 12kg Washer',combo_setC_name:'Cool + Laundry',combo_setC_desc:'1.0HP Air Conditioner + 12kg Washer',combo_setD_name:'Whole Home Trio',combo_setD_desc:'Air Conditioner + Refrigerator + Washer',combo_setE_name:'Laundry Duo',combo_setE_desc:'12kg Washer + 10kg Dryer'
 },
 zh:{
@@ -122,7 +122,7 @@ zh:{
   comboInactive:'尚未生效（需 2 件 combo 产品）',monthWord:'第',notActiveAdd:'尚未生效 — 再加入 1 件使用 RM10 OFF combo 的产品',
   withinBudget:'每月比预算少 {amount}',overBudget:'每月超出预算 {amount}',buildToCompare:'先建立配套以比较预算。',
   addFirst:'请先加入产品再生成客户链接。',linkCopied:'客户链接已复制',linkCopiedFallback:'短链接服务暂不可用，已复制完整链接',shortLinkUnavailable:'此配套链接暂不可用，请向 Jason 索取新链接。',copyLinkPrompt:'复制此客户链接',packageCleared:'配套已清空',
-  copyDone:'文案已复制',copyFail:'复制此文案',packageMsgTitle:'✨ *您的 LG Subscribe 精选配套*',packageMsgItemPay:'月费',packageMsgSchedule:'💳 *每月付款安排：*',packageMsgSavings:'🎉 *总共节省*',packageMsgLink:'🔗 *查看产品图片与配套详情：*',packageMsgCTA:'有兴趣？欢迎 WhatsApp Jason：011-5972 6619 😊',packageMsgNote:'价格与促销资格以最终确认为准。须符合条款与条件。',packageMsgCopied:'配套文案已复制',packageMsgCopyPrompt:'复制此配套文案',waIntro:'Hi Jason，我对以下 LG Subscribe 配套有兴趣：',estimateNow:'目前预计',
+  copyDone:'文案已复制',copyFail:'复制此文案',packageMsgTitle:'✨ *您的 LG Subscribe 精选配套*',packageMsgItemPay:'月费',packageMsgSchedule:'💳 *配套每月付款详情：*',packageMsgSavings:'🎉 *总共节省*',packageMsgLink:'🔗 *查看产品图片与配套详情：*',packageMsgCTA:'有兴趣？欢迎 WhatsApp Jason：011-5972 6619 😊',packageMsgNote:'价格与促销资格以最终确认为准。须符合条款与条件。',packageMsgCopied:'配套文案已复制',packageMsgCopyPrompt:'复制此配套文案',waIntro:'Hi Jason，我对以下 LG Subscribe 配套有兴趣：',estimateNow:'目前预计',
   catAircond:'空调',catLaundry:'洗衣家电',catFridge:'冰箱',catAP:'空气净化器',catWP:'净水器',catTV:'电视',catDishwasher:'洗碗机',
   svcLaundryRV6:'每6个月上门服务一次',svcLaundryRegularDetail:'每6个月上门服务一次（每年2次）',svcLaundryCombinedDetail:'每6个月寄送自助保养套件 + 每12个月上门服务',svcRV:'定期上门服务',svcRV1:'每12个月上门服务一次',svcRV2:'每6个月上门服务一次',svcRV2Y:'每24个月上门服务一次',svcSS:'自行保养',svcCM:'组合保养',svcSub:'订阅方案',
   copyHeadline:'✨ LG Subscribe — {name}',copyModel:'型号：{code}',copyPlan:'{years} 年方案 · {service}',copyNormal:'原价：{price}/月',
@@ -848,9 +848,10 @@ function packagePricePeriods(monthlyValue,maxMonths){
 function packagePeriodText(p){
   return paymentMonthRange(p.start,p.end)+': '+p.price+'/'+tr('month');
 }
-function chinesePackageCopywriting(){
+function packageCopywriting(){
+  if(!cart.length)return '';
   const lines=[];
-  const periodLine=p=>paymentMonthRange(p.start,p.end)+': *'+p.price+'/月*';
+  const periodLine=p=>paymentMonthRange(p.start,p.end)+': *'+p.price+'/'+tr('month')+'*';
   cart.forEach((item,index)=>{
     lines.push('*'+(index+1)+'.) '+item.product.name+(item.qty>1?' ×'+item.qty:'')+'*');
     lines.push(tr('copyModel',{code:item.product.code}));
@@ -874,44 +875,10 @@ function chinesePackageCopywriting(){
     lines.push('','••••••••••••••••••••••••••••••••');
     if(index<cart.length-1)lines.push('');
   });
-  lines.push('💳 *配套每月付款详情：*');
+  lines.push(tr('packageMsgSchedule'));
   const maxMonths=Math.max(...cart.map(item=>planMonths(item.plan)));
   packagePricePeriods(month=>cart.reduce((sum,item)=>sum+(month<=planMonths(item.plan)?monthlyFor(item,month):0),0),maxMonths)
     .forEach(period=>lines.push('• '+periodLine(period)));
-  return lines.join('\n');
-}
-function packageCopywriting(){
-  if(!cart.length)return '';
-  if(currentLang==='zh')return chinesePackageCopywriting();
-  const lines=[tr('packageMsgTitle'),''];
-  cart.forEach((item,index)=>{
-    lines.push('*'+(index+1)+'. '+item.product.name+'*'+(item.qty>1?' ×'+item.qty:''));
-    lines.push(tr('copyModel',{code:item.product.code}));
-    if(orderNotice(item.product))lines.push('📦 '+orderNotice(item.product));
-    const features=productFeatureLines(item.product);
-    if(features.length)lines.push(featureHeading(),...features.map(feature=>'✓ '+feature),'');
-    if(item.plan.outright){
-      lines.push(tr('period')+': '+tr('outright'));
-      lines.push(tr('packageMsgItemPay')+': '+money((Number(item.plan.upfront)||0)*item.qty)+' · '+tr('oneTime'));
-    }else{
-      lines.push(tr('period')+': '+item.plan.years+' '+tr('years')+(item.product.category==='TV'?'':' · '+tr('service')+': '+serviceLabel(item.plan.service)));
-      if(item.product.category!=='TV'&&serviceDetail(item.product,item.plan))lines.push('🛠️ '+serviceDetail(item.product,item.plan));
-      lines.push(tr('promotion')+': '+promoLabelFor(item));
-      const itemPeriods=packagePricePeriods(month=>monthlyFor(item,month),planMonths(item.plan));
-      lines.push(tr('packageMsgItemPay')+': '+itemPeriods.map(packagePeriodText).join(' | '));
-    }
-    lines.push('');
-  });
-  lines.push(tr('packageMsgSchedule'));
-  const maxMonths=Math.max(...cart.map(item=>planMonths(item.plan)));
-  const periods=packagePricePeriods(month=>cart.reduce((sum,item)=>sum+(month<=planMonths(item.plan)?monthlyFor(item,month):0),0),maxMonths);
-  periods.forEach(period=>lines.push('• '+packagePeriodText(period)));
-  // Savings uses the unrounded amounts, identical to renderSchedule().
-  const standard=cart.reduce((sum,item)=>sum+(Number(item.plan.monthly)||0)*item.qty*planMonths(item.plan),0);
-  let charged=0;
-  for(let month=1;month<=maxMonths;month++)
-    charged+=cart.reduce((sum,item)=>sum+(month<=planMonths(item.plan)?monthlyFor(item,month):0),0);
-  lines.push('',tr('packageMsgSavings')+': *'+money(Math.max(0,standard-charged))+'*');
   return lines.join('\n');
 }
 function copyPackageCopywriting(){
