@@ -34,7 +34,7 @@ ms:{
   searchPH:'Cari model atau produk…',sortFeatured:'Susun: Disyorkan',sortPrice:'Harga terendah',sortModel:'Model A–Z',
   shareTitle:'Pakej khas untuk anda',shareText:'Produk, tempoh, servis dan promosi di bawah telah dipilih berdasarkan permintaan anda.',editChoice:'Ubah pilihan',
   packageTitle:'PAKEJ PILIHAN ANDA',packageIntro:'Butiran Promosi & Bayaran',selectedProducts:'Produk dipilih',paymentNow:'Bayaran sekarang',budget:'Bajet bulanan',
-  schedule:'Jadual bayaran',savings:'Jumlah penjimatan',contract:'Jumlah kontrak',askWa:'Tanya Jason di WhatsApp',copyLink:'Salin link untuk customer',copyPackage:'📋 Salin ayat pakej',clearPackage:'Kosongkan pakej',removeItem:'Buang',itemRemoved:'Produk dibuang daripada pakej',
+  schedule:'Jadual bayaran',savings:'Jumlah penjimatan',contract:'Jumlah kontrak',askWa:'Tanya Jason di WhatsApp',copyLink:'🔗 Buka pautan pelanggan',copyPackage:'📋 Salin ayat pakej',clearPackage:'Kosongkan pakej',removeItem:'Buang',itemRemoved:'Produk dibuang daripada pakej',
   disclaimer:'Promosi 50% dan RM10 combo ialah pilihan berasingan dan tidak digabungkan. RM10 combo hanya aktif apabila sekurang-kurangnya 2 unit (model sama atau berlainan) kedua-duanya memilih pakej RM10 combo. Sila sahkan butiran tawaran sebelum permohonan.',
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Imej produk daripada bahan rujukan yang dibekalkan. T&C apply.',
   comboHelp:'Pilih tempoh, servis dan promosi untuk setiap produk. Harga pakej akan dikira semula sebelum ditambah.',comboEstimate:'Anggaran bayaran bulan pertama',comboAdd:'Tambah set ke pakej',
@@ -70,7 +70,7 @@ en:{
   searchPH:'Search model or product…',sortFeatured:'Sort: Recommended',sortPrice:'Lowest price',sortModel:'Model A–Z',
   shareTitle:'A package selected for you',shareText:'The products, term, service and promotion below were selected based on your request.',editChoice:'Change selection',
   packageTitle:'YOUR SELECTED PACKAGE',packageIntro:'Promotion & Payment Details',selectedProducts:'Selected products',paymentNow:'Payment now',budget:'Monthly budget',
-  schedule:'Payment schedule',savings:'Total savings',contract:'Contract total',askWa:'Ask Jason on WhatsApp',copyLink:'Copy customer link',copyPackage:'📋 Copy package message',clearPackage:'Clear package',removeItem:'Remove',itemRemoved:'Product removed from package',
+  schedule:'Payment schedule',savings:'Total savings',contract:'Contract total',askWa:'Ask Jason on WhatsApp',copyLink:'🔗 Open customer link',copyPackage:'📋 Copy package message',clearPackage:'Clear package',removeItem:'Remove',itemRemoved:'Product removed from package',
   disclaimer:'50% promotion and RM10 combo are separate choices and cannot be combined. RM10 combo is active only when at least 2 units (same or different models) both use the RM10 combo package. Please confirm offer details before applying.',
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Product images are from supplied reference materials. T&C apply.',
   comboHelp:'Choose the term, service and promotion for each product. The package price will be recalculated before adding.',comboEstimate:'Estimated first-month payment',comboAdd:'Add set to package',
@@ -106,7 +106,7 @@ zh:{
   searchPH:'搜索型号或产品…',sortFeatured:'排序：推荐',sortPrice:'最低价格',sortModel:'型号 A–Z',
   shareTitle:'为你挑选的配套',shareText:'以下产品、年限、服务和优惠是根据你的需求预先选择。',editChoice:'修改选择',
   packageTitle:'选择的配套',packageIntro:'配套优惠与付款详情',selectedProducts:'已选产品',paymentNow:'目前月费',budget:'每月预算',
-  schedule:'每月付款详情',savings:'总共可省下',contract:'合约总额',askWa:'WhatsApp 咨询 Jason',copyLink:'复制客户链接',copyPackage:'📋 复制配套文案',clearPackage:'清空配套',removeItem:'移除',itemRemoved:'已从配套移除产品',
+  schedule:'每月付款详情',savings:'总共可省下',contract:'合约总额',askWa:'WhatsApp 咨询 Jason',copyLink:'🔗 打开客户链接',copyPackage:'📋 复制配套文案',clearPackage:'清空配套',removeItem:'移除',itemRemoved:'已从配套移除产品',
   disclaimer:'50% 优惠与 RM10 组合优惠为不同方案，不可叠加。RM10 组合优惠只有在至少 2 台产品（相同或不同型号）都选择 RM10 combo 时才生效。申请前请确认优惠详情。',
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>产品图片来自所提供的参考资料。须符合条款与条件。',
   comboHelp:'为每件产品选择年限、服务和优惠。加入前会重新计算配套价格。',comboEstimate:'首月预计月费',comboAdd:'加入整套配套',
@@ -825,12 +825,14 @@ async function loadFromUrl(){
 }
 async function sharePackage(){
   if(!cart.length)return toast(tr('addFirst'));
-  const {url,short}=await customerShareUrl();
+  const button=$('shareBtn');
+  if(button)button.disabled=true;
   try{
-    if(!navigator.clipboard?.writeText)throw new Error('Clipboard not available');
-    await navigator.clipboard.writeText(url);
-    toast(tr(short?'linkCopied':'linkCopiedFallback'));
-  }catch(e){prompt(tr('copyLinkPrompt'),url);}
+    const {url}=await customerShareUrl();
+    location.assign(url);
+  }finally{
+    if(button)button.disabled=false;
+  }
 }
 // Build the copyable customer message from the same live cart and pricing rules as the page.
 function packagePricePeriods(monthlyValue,maxMonths){
