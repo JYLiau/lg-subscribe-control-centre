@@ -178,7 +178,7 @@ function defaultQuotePromo(product){
     ||'standard';
 }
 function promoObj(product,id){return livePromos(product).find(p=>p.id===id)||{id:'standard',type:'none'};}
-function promoPrice(product,plan,promoId,month,{comboActive=true,pairActive=true,specialComboActive=false}={}){
+function promoPrice(product,plan,promoId,month,{comboActive=true,pairActive=true,specialComboActive=false,artcoolWasherBonus=false}={}){
   let m=Number(plan?.monthly)||0;const p=promoObj(product,promoId);
   const within=!p.months||month<=Number(p.months);
   if(p.type==='percent'&&within){m*=1-(Number(p.value)||0)/100;if(p.roundUp)m=Math.ceil(m);}
@@ -187,6 +187,9 @@ function promoPrice(product,plan,promoId,month,{comboActive=true,pairActive=true
     if(p.id==='combo10'&&!comboActive)return m;
     if(p.id==='airpair15'&&!pairActive)return m;
     m=Math.max(0,m-(Number(p.value)||0));
+    // November Double Match: extra RM5 applies only to the ARTCOOL when
+    // both it and a selected 20kg/22kg washer use RM10 OFF combo.
+    if(p.id==='combo10'&&comboActive&&artcoolWasherBonus&&product?.id==='ac6')m=Math.max(0,m-5);
   }
   if(p.type==='fixedMonthly'&&within)m=Number(p.value)||m;
   return m;
@@ -290,9 +293,24 @@ function comboDraftPairEligible(item){
   return comboDraft.some(x=>String(x.product?.code||'').split('.')[0].toUpperCase()===target)
     || cart.some(x=>String(x.product?.code||'').split('.')[0].toUpperCase()===target);
 }
+function isArtcoolWasherCombo(item,items){
+  if(item?.product?.id!=='ac6'||item.promo!=='combo10'||item.plan?.outright)return false;
+  if(!promoIsLive({validFrom:'2026-11-01',validTo:'2026-11-30'}))return false;
+  return items.some(x=>
+    ['lau3','lau4'].includes(x.product?.id)&&x.promo==='combo10'&&!x.plan?.outright&&
+    (Number(x.qty)||1)>=1
+  );
+}
+function artcoolBonusText(){
+  return currentLang==='zh'
+    ?'与指定20kg或22kg洗衣机一起选择 RM10 OFF combo，ARTCOOL自动额外减RM5/月（合计RM15/月）。不可与50%优惠叠加。'
+    :currentLang==='en'
+    ?'Choose RM10 OFF combo on both this ARTCOOL and an eligible 20kg/22kg washer for an automatic extra RM5/month OFF ARTCOOL (RM15 total). Cannot stack with 50% OFF.'
+    :'Pilih RM10 OFF combo pada ARTCOOL dan mesin basuh 20kg/22kg yang layak untuk tambahan RM5 OFF/bulan secara automatik pada ARTCOOL (jumlah RM15 OFF). Tidak digabungkan dengan 50% OFF.';
+}
 function comboDraftMonthly(item,month=1){
   const plan=comboPlanFor(item);
-  return promoPrice(item.product,plan,item.promo,month,{comboActive:comboEligibleDraft(),pairActive:comboDraftPairEligible(item),specialComboActive:specialComboEligible(item,[...cart,...comboDraft])});
+  return promoPrice(item.product,plan,item.promo,month,{comboActive:comboEligibleDraft(),pairActive:comboDraftPairEligible(item),specialComboActive:specialComboEligible(item,[...cart,...comboDraft]),artcoolWasherBonus:isArtcoolWasherCombo(item,[...cart,...comboDraft])});
 }
 function openComboRefine(id){
   const preset=COMBO_PRESETS.find(x=>x.id===id);if(!preset)return;
@@ -413,7 +431,7 @@ function renderPromos(){
       info='<div style="grid-column:1/-1;border:1px solid #f1b5be;background:#fff5f6;border-radius:18px;padding:14px 16px;font-weight:700;line-height:1.4">'+esc(msg)+'</div>';
     }
   }
-  $('promoGrid').innerHTML=info+promos.map(p=>'<button class="promo-card '+(p.id===chosenPromo?'active':'')+'" data-id="'+p.id+'"><b>'+esc(promoLabel(p))+'</b><span>'+esc(promoDescription(p))+'</span></button>').join('');
+  $('promoGrid').innerHTML=info+promos.map(p=>'<button class="promo-card '+(p.id===chosenPromo?'active':'')+'" data-id="'+p.id+'"><b>'+esc(promoLabel(p))+'</b><span>'+esc(promoDescription(p)+(activeProduct?.id==='ac6'&&p.id==='combo10'?' '+artcoolBonusText():''))+'</span></button>').join('');
   $('promoGrid').querySelectorAll('.promo-card').forEach(b=>b.onclick=()=>{chosenPromo=b.dataset.id;renderPromos();});
 }
 function specialComboEligible(item,items){
@@ -432,13 +450,14 @@ function promoLabelFor(item){
   const p=promoObj(item.product,item.promo);let label=promoLabel(p);
   if(!specialComboEligible(item,cart))label+=' — '+(currentLang==='zh'?'需2台符合条件的同类产品':currentLang==='en'?'needs 2 eligible units in the same category':'perlu 2 unit layak dalam kategori sama');
   if(item.promo==='combo10'&&!comboEligible())label+=' — '+tr('comboInactive');
+  if(comboEligible()&&isArtcoolWasherCombo(item,cart))label+=(currentLang==='zh'?' + 自动减RM5':currentLang==='en'?' + RM5 automatic ARTCOOL bonus':' + tambahan RM5 automatik');
   if(item.promo==='airpair15'&&!pairPromoEligible(item)){const target=String(item.product.pairPromoWith||'').split('.')[0].toUpperCase();label+=(currentLang==='zh'?' — 需搭配 '+target:currentLang==='en'?' — pair '+target+' required':' — perlu padan '+target);}
   return label;
 }
 function planMonths(plan){return plan?.outright?1:Math.max(1,Number(plan?.years)||0)*12;}
 function monthlyFor(item,month){
   if(item.plan?.outright)return month===1?(Number(item.plan.upfront)||0)*item.qty:0;
-  return promoPrice(item.product,item.plan,item.promo,month,{comboActive:comboEligible(),pairActive:pairPromoEligible(item),specialComboActive:specialComboEligible(item,cart)})*item.qty;
+  return promoPrice(item.product,item.plan,item.promo,month,{comboActive:comboEligible(),pairActive:pairPromoEligible(item),specialComboActive:specialComboEligible(item,cart),artcoolWasherBonus:isArtcoolWasherCombo(item,cart)})*item.qty;
 }
 
 const PRODUCT_FEATURE_GROUPS={
@@ -653,7 +672,8 @@ function selectedCopywriting(){
     return lines.join('\n');
   }
   const normal=Math.round(Number(chosenPlan.monthly)||0),promo=promoObj(activeProduct,chosenPromo),end=Number(chosenPlan.years)*12;
-  const month1=Math.round(promoPrice(activeProduct,chosenPlan,chosenPromo,1,{comboActive:true,pairActive:true,specialComboActive:true}));
+  const selectedBonus=isArtcoolWasherCombo({product:activeProduct,plan:chosenPlan,promo:chosenPromo},[...cart,{product:activeProduct,plan:chosenPlan,promo:chosenPromo}]);
+  const month1=Math.round(promoPrice(activeProduct,chosenPlan,chosenPromo,1,{comboActive:true,pairActive:true,specialComboActive:true,artcoolWasherBonus:selectedBonus}));
   let offer;
   if(promo.type==='percent'){
     const n=Number(promo.months)||0,v=Number(promo.value)||0;
@@ -663,13 +683,14 @@ function selectedCopywriting(){
       ?('🔥 '+v+'% OFF for the first '+n+' months: '+money(month1)+'/month\nMonth '+(n+1)+'–'+end+': '+money(normal)+'/month')
       :('🔥 '+v+'% OFF untuk '+n+' bulan pertama: '+money(month1)+'/bulan\nBulan '+(n+1)+'–'+end+': '+money(normal)+'/bulan');
   }else if(promo.type==='fixed'){
-    const v=Number(promo.value)||0;
+    const v=(Number(promo.value)||0)+(selectedBonus?5:0);
     offer=currentLang==='zh'
       ?('🔥 每月 RM'+v+' OFF：'+money(month1)+'/月（原价 '+money(normal)+'/月）')
       :currentLang==='en'
       ?('🔥 RM'+v+' OFF/month: '+money(month1)+'/month (Normal '+money(normal)+'/month)')
       :('🔥 RM'+v+' OFF/bulan: '+money(month1)+'/bulan (Harga biasa '+money(normal)+'/bulan)');
     if(['tv15nov','rac15nov'].includes(promo.id))offer+='\n*'+promoDescription(promo);
+    if(selectedBonus)offer+='\n'+artcoolBonusText();
     if(promo.id==='combo10')offer+='\n'+(currentLang==='zh'?'*至少 2 台产品（相同或不同型号）都选择 RM10 OFF combo 后才生效。':currentLang==='en'?'*Active when at least 2 units (same or different models) select the RM10 OFF combo package.':'*Aktif apabila sekurang-kurangnya 2 unit (model sama atau berlainan) memilih pakej RM10 OFF combo.');
     if(promo.id==='airpair15')offer+='\n'+(currentLang==='zh'?'*需与 AS30GGW10 配套。':currentLang==='en'?'*Requires pairing with AS30GGW10.':'*Perlu dipasangkan dengan AS30GGW10.');
   }else if(promo.type==='fixedMonthly'){
@@ -832,7 +853,7 @@ async function loadFromUrl(){
       const p=CATALOG.find(y=>y.id===x.id);if(!p)return null;
       const plans=allPlans(p);const exact=plans.find(pl=>Number(pl.years)===Number(x.years)&&pl.service===x.service&&Number(pl.monthly||0)===Number(x.monthly||0)&&Number(pl.upfront||0)===Number(x.upfront||0));
       const plan=exact||plans[x.plan]||plans[0];if(!plan)return null;
-      const requestedPromo=p.id==='ac6'&&x.promo==='rac15nov'?'combo10':x.promo;
+      const requestedPromo=x.promo;
       return {key:Date.now()+Math.random(),product:p,plan:{...plan},promo:requestedPromo==='half9'&&livePromos(p).some(z=>z.id==='half12')?'half12':p.promos.some(z=>z.id===requestedPromo)?requestedPromo:'standard',qty:Math.max(1,Math.min(9,Number(x.qty)||1))};
     }).filter(Boolean);
   }catch(e){
