@@ -388,6 +388,20 @@ function renderPlans(){
   $('planGrid').querySelectorAll('.plan-card').forEach(b=>b.onclick=()=>{chosenPlan=plans[Number(b.dataset.i)];if(chosenPlan.outright)chosenPromo='standard';renderPlans();renderPromos();});
 }
 function novemberGiftText(){const texts={"ms": "🎁 Double Match + TV 65″ percuma: minimum 2 unit baharu daripada F2520SNEKR, TX2522AT9GR atau S3-Q24K2RPA (2 washer, 2 aircond atau 1+1). Mohon 1–30 Nov 2026; pemasangan 1 Nov–15 Dis 2026. Hadiah dijadual dihantar akhir Jan 2027. Satu hadiah bagi setiap ID pelanggan; tertakluk stok semasa pemasangan, siapa cepat dia dapat. Tiada penggantian jika habis stok. Jason akan sahkan kelayakan.", "en": "🎁 Double Match + free 65″ LG UHD AI TV: minimum 2 new units from F2520SNEKR, TX2522AT9GR or S3-Q24K2RPA (2 washers, 2 air conditioners or 1+1). Apply 1–30 Nov 2026; install 1 Nov–15 Dec 2026. Gift delivery scheduled for end-Jan 2027. One gift per Customer ID; first come, first served subject to stock at installation. No replacement if unavailable. Jason will confirm eligibility.", "zh": "🎁 Double Match赠送65英寸LG UHD AI电视：选购至少2台全新F2520SNEKR、TX2522AT9GR或S3-Q24K2RPA（2台洗衣机、2台冷气或各1台）。2026年11月1–30日申请，11月1日至12月15日完成安装。赠品预计2027年1月底送达。每个客户ID限一份，以安装时库存为准，先到先得，送完无替代。资格由Jason确认。"};return texts[currentLang]||texts.en;}
+function doubleMatchCartEligible(){
+  return cart.reduce((count,item)=>count+(
+    !item.plan?.outright&&item.product?.doubleMatchEligible&&
+    promoIsLive({validFrom:item.product.doubleMatchValidFrom,validTo:item.product.doubleMatchValidTo})
+      ?Math.max(1,Math.floor(Number(item.qty)||1)):0),0)>=2;
+}
+function novemberGiftCartText(){
+  const texts={
+    ms:'🎁 Pakej ini mengandungi 2 unit model yang layak untuk kempen Double Match + TV LG 65″ percuma. Hadiah tertakluk pada syarat kempen, stok semasa pemasangan dan pengesahan Jason.',
+    en:'🎁 This package contains 2 eligible Double Match models for the free LG 65″ TV promotion. Gift is subject to campaign terms, stock at installation and Jason’s confirmation.',
+    zh:'🎁 此配套包含 2 台 Double Match 活动指定型号，可申请赠送 LG 65 英寸电视。须符合活动条款、安装时库存及 Jason 确认。'
+  };
+  return texts[currentLang]||texts.en;
+}
 function renderPromos(){
   const promos=chosenPlan?.outright?[promoObj(activeProduct,'standard')]:livePromos(activeProduct);
   if(!promos.some(p=>p.id===chosenPromo))chosenPromo=promos[0]?.id||'standard';
@@ -688,6 +702,8 @@ function sharedItemPricing(item){
   return '<div class="shared-item-pricing"><del class="shared-original">'+money(original)+perMonth+'</del><strong class="shared-price">'+money(discounted)+perMonth+'</strong><span class="shared-discount">'+esc(badge)+'</span></div>';
 }
 function renderCart(){
+  const giftNotice=$('doubleMatchNotice');
+  if(giftNotice){const eligible=doubleMatchCartEligible();giftNotice.hidden=!eligible;giftNotice.textContent=eligible?novemberGiftCartText():'';}
   const units=totalUnits();
   $('cartUnits').textContent=units+' '+tr('unit');
   $('selectedCount').textContent=units+' '+tr('productSelected');
@@ -816,7 +832,8 @@ async function loadFromUrl(){
       const p=CATALOG.find(y=>y.id===x.id);if(!p)return null;
       const plans=allPlans(p);const exact=plans.find(pl=>Number(pl.years)===Number(x.years)&&pl.service===x.service&&Number(pl.monthly||0)===Number(x.monthly||0)&&Number(pl.upfront||0)===Number(x.upfront||0));
       const plan=exact||plans[x.plan]||plans[0];if(!plan)return null;
-      return {key:Date.now()+Math.random(),product:p,plan:{...plan},promo:x.promo==='half9'&&livePromos(p).some(z=>z.id==='half12')?'half12':p.promos.some(z=>z.id===x.promo)?x.promo:'standard',qty:Math.max(1,Math.min(9,Number(x.qty)||1))};
+      const requestedPromo=p.id==='ac6'&&x.promo==='rac15nov'?'combo10':x.promo;
+      return {key:Date.now()+Math.random(),product:p,plan:{...plan},promo:requestedPromo==='half9'&&livePromos(p).some(z=>z.id==='half12')?'half12':p.promos.some(z=>z.id===requestedPromo)?requestedPromo:'standard',qty:Math.max(1,Math.min(9,Number(x.qty)||1))};
     }).filter(Boolean);
   }catch(e){
     console.warn('Unable to load customer quotation link',e);
@@ -877,6 +894,7 @@ function packageCopywriting(){
     lines.push('','••••••••••••••••••••••••••••••••');
     if(index<cart.length-1)lines.push('');
   });
+  if(doubleMatchCartEligible())lines.push('',novemberGiftCartText(),'');
   lines.push(tr('packageMsgSchedule'));
   const maxMonths=Math.max(...cart.map(item=>planMonths(item.plan)));
   packagePricePeriods(month=>cart.reduce((sum,item)=>sum+(month<=planMonths(item.plan)?monthlyFor(item,month):0),0),maxMonths)
