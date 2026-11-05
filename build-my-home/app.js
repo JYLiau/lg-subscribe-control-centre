@@ -895,7 +895,6 @@ function packageCopywriting(){
   cart.forEach((item,index)=>{
     lines.push('*'+(index+1)+'.) '+item.product.name+(item.qty>1?' ×'+item.qty:'')+'*');
     lines.push(tr('copyModel',{code:item.product.code}));
-    if(orderNotice(item.product))lines.push('📦 '+orderNotice(item.product));
     const features=productFeatureLines(item.product);
     if(features.length)lines.push(featureHeading(),...features.map(feature=>'✓ '+feature));
     lines.push('');
@@ -908,7 +907,7 @@ function packageCopywriting(){
         if(detail)lines.push('👨🏻‍🔧'+detail);
       }
       const promotion=promoLabelFor(item).replace(/首12个月\s*50% OFF/g,'首12个月享有50%折扣');
-      lines.push('🔥*'+promotion+'*');
+      lines.push('🔥 *'+promotion+'*');
       packagePricePeriods(month=>monthlyFor(item,month),planMonths(item.plan))
         .forEach(period=>lines.push(periodLine(period)));
     }
