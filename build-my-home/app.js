@@ -866,7 +866,10 @@ function packageCopywriting(items=cart,priceFor=monthlyFor,labelFor=promoLabelFo
   items.forEach((item,index)=>{
     if(index)lines.push('','••••••••••••••••••••••••••••••••','');
     lines.push('*'+(index+1)+'.) '+item.product.name+(item.qty>1?' ×'+item.qty:'')+'*');
-    lines.push(tr('copyModel',{code:item.product.code}),'');
+    lines.push(tr('copyModel',{code:item.product.code}));
+    const features=productFeatureLines(item.product);
+    if(features.length)lines.push('',featureHeading(),...features.map(feature=>'✓ '+feature));
+    lines.push('');
     if(item.plan.outright){
       lines.push('*'+tr('outright')+'*');
       lines.push(tr('packageMsgItemPay')+': '+money((Number(item.plan.upfront)||0)*item.qty)+' · '+tr('oneTime'));
