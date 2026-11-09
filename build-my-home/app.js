@@ -890,35 +890,50 @@ function packagePeriodText(p){
 }
 function packageCopywriting(){
   if(!cart.length)return '';
+  const pick=(ms,en,zh)=>currentLang==='zh'?zh:currentLang==='en'?en:ms;
   const lines=[];
-  const periodLine=p=>paymentMonthRange(p.start,p.end)+': *'+p.price+'/'+tr('month')+'*';
+  const periodLine=p=>paymentMonthRange(p.start,p.end)+': '+p.price+'/'+tr('month');
   cart.forEach((item,index)=>{
+    if(index)lines.push('','••••••••••••••••••••••••••••••••','');
     lines.push('*'+(index+1)+'.) '+item.product.name+(item.qty>1?' ×'+item.qty:'')+'*');
-    lines.push(tr('copyModel',{code:item.product.code}));
-    const features=productFeatureLines(item.product);
-    if(features.length)lines.push(featureHeading(),...features.map(feature=>'✓ '+feature));
-    lines.push('');
+    lines.push(tr('copyModel',{code:item.product.code}),'');
     if(item.plan.outright){
       lines.push('*'+tr('outright')+'*');
-      lines.push(tr('packageMsgItemPay')+': *'+money((Number(item.plan.upfront)||0)*item.qty)+'* · '+tr('oneTime'));
+      lines.push(tr('packageMsgItemPay')+': '+money((Number(item.plan.upfront)||0)*item.qty)+' · '+tr('oneTime'));
     }else{
-      if(item.product.category!=='TV'){
-        const detail=serviceDetail(item.product,item.plan)||serviceLabel(item.plan.service);
-        if(detail)lines.push('👨🏻‍🔧'+detail);
+      const years=item.plan.years;
+      lines.push('*'+pick('Pelan '+years+' Tahun • Bayaran Bulanan:',''+years+'-Year Plan • Monthly Payment:',years+'年配套 • 每月付款详情：')+'*');
+      let promotion=promoLabelFor(item).replace(/首12个月\s*50% OFF/g,'首12个月享有50%折扣');
+      if(currentLang==='ms'&&/^half(9|12)$/.test(item.promo)){
+        const months=item.promo==='half12'?12:9;
+        promotion='Diskaun 50% untuk '+months+' bulan pertama!';
       }
-      const promotion=promoLabelFor(item).replace(/首12个月\s*50% OFF/g,'首12个月享有50%折扣');
       lines.push('🔥 *'+promotion+'*');
       packagePricePeriods(month=>monthlyFor(item,month),planMonths(item.plan))
         .forEach(period=>lines.push(periodLine(period)));
+      if(item.product.category!=='TV'){
+        const service=item.plan.service;
+        const name=service==='Combine Maintenance'?pick('Combined Maintenance','Combined Maintenance','组合服务'):
+          service==='Self-Service'?pick('Self-Service','Self-Service','自行服务'):
+          service.startsWith('Regular Visit')?pick('Regular Visit','Regular Visit','定期上门服务'):serviceLabel(service);
+        lines.push('','*'+pick('Pakej Termasuk','Package Includes','配套包括')+' ('+name+'):*');
+        if(service==='Combine Maintenance'&&item.product.category==='Laundry'){
+          lines.push(pick('📦 Self-Service Kit dihantar setiap 6 bulan','📦 Self-Service Kit delivered every 6 months','📦 每6个月寄送自助保养套件'));
+          lines.push(pick('👨🏻‍🔧 Servis oleh juruteknik setiap 12 bulan','👨🏻‍🔧 Technician service every 12 months','👨🏻‍🔧 每12个月上门服务一次'));
+        }else{
+          const detail=serviceDetail(item.product,item.plan)||serviceLabel(service);
+          detail.split(' + ').forEach(part=>lines.push((/kit|filter|penapis|配送|寄送/i.test(part)?'📦 ':'👨🏻‍🔧 ')+part));
+        }
+      }
     }
-    lines.push('','••••••••••••••••••••••••••••••••');
-    if(index<cart.length-1)lines.push('');
   });
-  if(doubleMatchCartEligible())lines.push('',novemberGiftCartText(),'');
-  lines.push(tr('packageMsgSchedule'));
-  const maxMonths=Math.max(...cart.map(item=>planMonths(item.plan)));
-  packagePricePeriods(month=>cart.reduce((sum,item)=>sum+(month<=planMonths(item.plan)?monthlyFor(item,month):0),0),maxMonths)
-    .forEach(period=>lines.push('• '+periodLine(period)));
+  if(doubleMatchCartEligible())lines.push('',novemberGiftCartText());
+  if(cart.length>1){
+    lines.push('','••••••••••••••••••••••••••••••••',tr('packageMsgSchedule'));
+    const maxMonths=Math.max(...cart.map(item=>planMonths(item.plan)));
+    packagePricePeriods(month=>cart.reduce((sum,item)=>sum+(month<=planMonths(item.plan)?monthlyFor(item,month):0),0),maxMonths)
+      .forEach(period=>lines.push('• '+periodLine(period)));
+  }
   return lines.join('\n');
 }
 function copyPackageCopywriting(){
