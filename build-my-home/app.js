@@ -400,7 +400,8 @@ window.stepQty=d=>{const q=$('qtyInput');q.value=Math.max(1,Math.min(9,(Number(q
 function renderPlans(){
   const plans=allPlans(activeProduct);
   $('planGrid').innerHTML=plans.map((p,i)=>{
-    const selectionIcon='<svg class="plan-selection-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="m7 12 3 3 7-7"/></svg>';
+    const badge=p.outright?'cash.png':Number(p.years)===7?'seven-year.jpg':Number(p.years)===5?'five-year.jpg':null;
+    const selectionIcon=badge?'<img class="plan-type-icon" src="./assets/plan-icons/'+badge+'" alt="" aria-hidden="true" width="44" height="44">':'';
     if(p.outright)return '<button class="plan-card '+(p===chosenPlan?'active':'')+'" aria-pressed="'+(p===chosenPlan)+'" data-i="'+i+'">'+selectionIcon+'<b>'+esc(tr('outright'))+'</b><span>'+esc(serviceLabel(p.service))+'</span><strong>'+money(p.upfront)+' · '+esc(tr('oneTime'))+'</strong></button>';
     return '<button class="plan-card '+(p===chosenPlan?'active':'')+'" aria-pressed="'+(p===chosenPlan)+'" data-i="'+i+'">'+selectionIcon+'<b>'+p.years+' '+esc(tr('years'))+'</b><span>'+esc(serviceLabel(p.service))+'</span>'+(serviceDetail(activeProduct,p)?'<small class="service-cadence">'+esc(serviceDetail(activeProduct,p))+'</small>':'')+'<strong>'+money(p.monthly)+'/'+esc(tr('month'))+'</strong></button>';
   }).join('');
