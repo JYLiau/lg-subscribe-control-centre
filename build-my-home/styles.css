@@ -273,3 +273,11 @@ a{color:inherit}
 .fridge-views[data-model="GC-G22FFQAB"] .fridge-view:nth-child(2) img{--iw:1.694915;--ih:1.125000;--cx:0.847458;--cy:0.563559}
 .fridge-views[data-model="GXJB18JBQRC"] .fridge-view:nth-child(1) img{--iw:0.740741;--ih:1.111111;--cx:0.372685;--cy:0.557870}
 .fridge-views[data-model="GXJB18JBQRC"] .fridge-view:nth-child(2) img{--iw:1.023454;--ih:1.216773;--cx:0.490760;--cy:0.583156}
+
+/* Keep the selected plan visible at a glance, including on mobile. */
+.plan-card{position:relative}
+.plan-card>b{padding-right:34px}
+.plan-card .plan-selection-icon{position:absolute;top:12px;right:12px;width:24px;height:24px;pointer-events:none;fill:none;stroke:#b8b2aa;stroke-width:1.7}
+.plan-card .plan-selection-icon path{visibility:hidden;stroke-linecap:round;stroke-linejoin:round}
+.plan-card.active .plan-selection-icon circle{fill:#111;stroke:#111}
+.plan-card.active .plan-selection-icon path{visibility:visible;stroke:#fff;stroke-width:2}

@@ -400,8 +400,9 @@ window.stepQty=d=>{const q=$('qtyInput');q.value=Math.max(1,Math.min(9,(Number(q
 function renderPlans(){
   const plans=allPlans(activeProduct);
   $('planGrid').innerHTML=plans.map((p,i)=>{
-    if(p.outright)return '<button class="plan-card '+(p===chosenPlan?'active':'')+'" data-i="'+i+'"><b>'+esc(tr('outright'))+'</b><span>'+esc(serviceLabel(p.service))+'</span><strong>'+money(p.upfront)+' · '+esc(tr('oneTime'))+'</strong></button>';
-    return '<button class="plan-card '+(p===chosenPlan?'active':'')+'" data-i="'+i+'"><b>'+p.years+' '+esc(tr('years'))+'</b><span>'+esc(serviceLabel(p.service))+'</span>'+(serviceDetail(activeProduct,p)?'<small class="service-cadence">'+esc(serviceDetail(activeProduct,p))+'</small>':'')+'<strong>'+money(p.monthly)+'/'+esc(tr('month'))+'</strong></button>';
+    const selectionIcon='<svg class="plan-selection-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="m7 12 3 3 7-7"/></svg>';
+    if(p.outright)return '<button class="plan-card '+(p===chosenPlan?'active':'')+'" aria-pressed="'+(p===chosenPlan)+'" data-i="'+i+'">'+selectionIcon+'<b>'+esc(tr('outright'))+'</b><span>'+esc(serviceLabel(p.service))+'</span><strong>'+money(p.upfront)+' · '+esc(tr('oneTime'))+'</strong></button>';
+    return '<button class="plan-card '+(p===chosenPlan?'active':'')+'" aria-pressed="'+(p===chosenPlan)+'" data-i="'+i+'">'+selectionIcon+'<b>'+p.years+' '+esc(tr('years'))+'</b><span>'+esc(serviceLabel(p.service))+'</span>'+(serviceDetail(activeProduct,p)?'<small class="service-cadence">'+esc(serviceDetail(activeProduct,p))+'</small>':'')+'<strong>'+money(p.monthly)+'/'+esc(tr('month'))+'</strong></button>';
   }).join('');
   $('planGrid').querySelectorAll('.plan-card').forEach(b=>b.onclick=()=>{chosenPlan=plans[Number(b.dataset.i)];if(chosenPlan.outright)chosenPromo='standard';renderPlans();renderPromos();});
 }
