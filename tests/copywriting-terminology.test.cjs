@@ -32,6 +32,15 @@ assert.ok(app.includes("activeProduct.category==='Water Purifier'?tr('copyWpFilt
 assert.ok(!app.includes('控制空气'));
 assert.ok(!app.toLowerCase().includes('kit penjagaan diri'));
 assert.ok(!app.includes('pack[currentLang]'));
+const packageStart=app.indexOf('function packageCopywriting(');
+const packageEnd=app.indexOf('function copyPackageCopywriting()',packageStart);
+assert.ok(packageStart>0&&packageEnd>packageStart,'Package copy generator exists');
+const packageCode=app.slice(packageStart,packageEnd);
+assert.ok(packageCode.includes('productFeatureLines(item.product)'),'Package copy must include model features');
+assert.ok(packageCode.includes('featureHeading()'),'Package copy must include localized feature heading');
+assert.ok(packageCode.includes("...features.map(feature=>'✓ '+feature)"),'Feature bullets must be copied');
+assert.ok(app.includes('packageCopywriting([item]'),'Selected product copy must reuse package generator');
+assert.ok(app.includes('const txt=packageCopywriting();'),'Cart copy must reuse package generator');
 assert.ok(html.includes('tv2517-v1'));
 assert.ok(app.includes('TV2517DV3B'));
 console.log('PASS: Malay/Chinese copywriting, filter-vs-kit service terms and language selection.');
