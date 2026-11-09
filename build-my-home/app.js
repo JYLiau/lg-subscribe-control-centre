@@ -887,6 +887,12 @@ function packageCopywriting(items=cart,priceFor=monthlyFor,labelFor=promoLabelFo
         if(service==='Combine Maintenance'&&item.product.category==='Laundry'){
           lines.push(pick('📦 Self-Service Kit dihantar setiap 6 bulan','📦 Self-Service Kit delivered every 6 months','📦 每6个月寄送自助保养套件'));
           lines.push(pick('👨🏻‍🔧 Servis oleh juruteknik setiap 12 bulan','👨🏻‍🔧 Technician service every 12 months','👨🏻‍🔧 每12个月上门服务一次'));
+        }else if(service.startsWith('Regular Visit')){
+          const interval={'Regular Visit 1x/year':12,'Regular Visit 2x/year':6,'Regular Visit every 2 years':24,'Regular Visit 6M':6}[service]
+            ||(service==='Regular Visit'?(item.product.category==='Water Purifier'?6:item.product.category==='Air Purifier'?12:null):null);
+          lines.push('👨🏻‍🔧 '+(interval
+            ?pick('Servis oleh juruteknik setiap '+interval+' bulan','Technician service every '+interval+' months','每'+interval+'个月上门服务一次')
+            :pick('Servis oleh juruteknik','Technician service','上门服务')));
         }else{
           const detail=serviceDetail(item.product,item.plan)||serviceLabel(service);
           detail.split(' + ').forEach(part=>lines.push((/kit|filter|penapis|配送|寄送/i.test(part)?'📦 ':'👨🏻‍🔧 ')+part));
