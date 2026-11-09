@@ -662,49 +662,16 @@ function featureHeading(){return currentLang==='zh'?'✨ 主要特点：':curren
 function warrantyLine(years){return currentLang==='zh'?('🛡️ '+years+'年保修'):currentLang==='en'?('🛡️ '+years+'-year warranty'):('🛡️ Waranti '+years+' tahun');}
 
 function selectedCopywriting(){
-  if(!activeProduct||!chosenPlan)return'';
-  const features=productFeatureLines(activeProduct);
-  const lines=[tr('copyHeadline',{name:activeProduct.name}),tr('copyModel',{code:activeProduct.code})];
-  if(features.length)lines.push('',featureHeading(),...features.map(x=>'✔️ '+x));
-  if(chosenPlan.outright){
-    lines.push('',currentLang==='zh'?'💳 直接购买':'💳 '+tr('outright'),'*'+money(chosenPlan.upfront)+'* · '+tr('oneTime'));
-    if(chosenPlan.service&&chosenPlan.service!=='Outright (No Service)')lines.push('🛠️ '+serviceLabel(chosenPlan.service));
-    return lines.join('\n');
-  }
-  const normal=Math.round(Number(chosenPlan.monthly)||0),promo=promoObj(activeProduct,chosenPromo),end=Number(chosenPlan.years)*12;
-  const selectedBonus=isArtcoolWasherCombo({product:activeProduct,plan:chosenPlan,promo:chosenPromo},[...cart,{product:activeProduct,plan:chosenPlan,promo:chosenPromo}]);
-  const month1=Math.round(promoPrice(activeProduct,chosenPlan,chosenPromo,1,{comboActive:true,pairActive:true,specialComboActive:true,artcoolWasherBonus:selectedBonus}));
-  let offer;
-  if(promo.type==='percent'){
-    const n=Number(promo.months)||0,v=Number(promo.value)||0;
-    offer=currentLang==='zh'
-      ?('🔥 首 '+n+' 个月 '+v+'% OFF：'+money(month1)+'/月\n第 '+(n+1)+'–'+end+' 个月：'+money(normal)+'/月')
-      :currentLang==='en'
-      ?('🔥 '+v+'% OFF for the first '+n+' months: '+money(month1)+'/month\nMonth '+(n+1)+'–'+end+': '+money(normal)+'/month')
-      :('🔥 '+v+'% OFF untuk '+n+' bulan pertama: '+money(month1)+'/bulan\nBulan '+(n+1)+'–'+end+': '+money(normal)+'/bulan');
-  }else if(promo.type==='fixed'){
-    const v=(Number(promo.value)||0)+(selectedBonus?5:0);
-    offer=currentLang==='zh'
-      ?('🔥 每月 RM'+v+' OFF：'+money(month1)+'/月（原价 '+money(normal)+'/月）')
-      :currentLang==='en'
-      ?('🔥 RM'+v+' OFF/month: '+money(month1)+'/month (Normal '+money(normal)+'/month)')
-      :('🔥 RM'+v+' OFF/bulan: '+money(month1)+'/bulan (Harga biasa '+money(normal)+'/bulan)');
-    if(['tv15nov','rac15nov'].includes(promo.id))offer+='\n*'+promoDescription(promo);
-    if(selectedBonus)offer+='\n'+artcoolBonusText();
-    if(promo.id==='combo10')offer+='\n'+(currentLang==='zh'?'*至少 2 台产品（相同或不同型号）都选择 RM10 OFF combo 后才生效。':currentLang==='en'?'*Active when at least 2 units (same or different models) select the RM10 OFF combo package.':'*Aktif apabila sekurang-kurangnya 2 unit (model sama atau berlainan) memilih pakej RM10 OFF combo.');
-    if(promo.id==='airpair15')offer+='\n'+(currentLang==='zh'?'*需与 AS30GGW10 配套。':currentLang==='en'?'*Requires pairing with AS30GGW10.':'*Perlu dipasangkan dengan AS30GGW10.');
-  }else if(promo.type==='fixedMonthly'){
-    offer=currentLang==='zh'
-      ?('🔥 特价：'+money(month1)+'/月（原价 '+money(normal)+'/月）')
-      :currentLang==='en'
-      ?('🔥 Special: '+money(month1)+'/month (Normal '+money(normal)+'/month)')
-      :('🔥 Promosi khas: '+money(month1)+'/bulan (Harga biasa '+money(normal)+'/bulan)');
-  }else offer=tr('copyStandard',{normal:money(normal)});
-  lines.push('',tr('copyPlan',{years:chosenPlan.years,service:serviceLabel(chosenPlan.service)}),offer,'',tr('copyPackageIncludes'),tr('copyDelivery'),warrantyLine(chosenPlan.years));
-  // TV copywriting intentionally ends without the service bullet.
-  if(activeProduct.category!=='TV')lines.push(tr('copyServiceLine',{service:serviceLabel(chosenPlan.service)}));
-  if(chosenPlan.service==='Combine Maintenance')lines.push(tr('copyCmKit'),tr('copyCmVisit'));
-  return lines.join('\n');
+  if(!activeProduct||!chosenPlan)return '';
+  const item={product:activeProduct,plan:chosenPlan,promo:chosenPromo,qty:Math.max(1,Math.min(9,Number($('qtyInput').value)||1))};
+  const context=[...cart,item];
+  const price=(x,month)=>x.plan.outright?(month===1?(Number(x.plan.upfront)||0)*x.qty:0):
+    promoPrice(x.product,x.plan,x.promo,month,{comboActive:true,pairActive:true,specialComboActive:true,artcoolWasherBonus:isArtcoolWasherCombo(x,context)})*x.qty;
+  const promo=promoObj(activeProduct,chosenPromo);
+  let text=packageCopywriting([item],price,x=>promoLabel(promoObj(x.product,x.promo)),false);
+  if(['combo10','airpair15','tv15nov','rac15nov'].includes(promo.id))text+='\n\n'+promoDescription(promo);
+  if(isArtcoolWasherCombo(item,context))text+='\n'+artcoolBonusText();
+  return text;
 }
 function copySelectedCopywriting(){
   const txt=selectedCopywriting();if(!txt)return;
@@ -888,12 +855,12 @@ function packagePricePeriods(monthlyValue,maxMonths){
 function packagePeriodText(p){
   return paymentMonthRange(p.start,p.end)+': '+p.price+'/'+tr('month');
 }
-function packageCopywriting(){
-  if(!cart.length)return '';
+function packageCopywriting(items=cart,priceFor=monthlyFor,labelFor=promoLabelFor,includeGift=true){
+  if(!items.length)return '';
   const pick=(ms,en,zh)=>currentLang==='zh'?zh:currentLang==='en'?en:ms;
   const lines=[];
   const periodLine=p=>paymentMonthRange(p.start,p.end)+': '+p.price+'/'+tr('month');
-  cart.forEach((item,index)=>{
+  items.forEach((item,index)=>{
     if(index)lines.push('','••••••••••••••••••••••••••••••••','');
     lines.push('*'+(index+1)+'.) '+item.product.name+(item.qty>1?' ×'+item.qty:'')+'*');
     lines.push(tr('copyModel',{code:item.product.code}),'');
@@ -903,13 +870,13 @@ function packageCopywriting(){
     }else{
       const years=item.plan.years;
       lines.push('*'+pick('Pelan '+years+' Tahun • Bayaran Bulanan:',''+years+'-Year Plan • Monthly Payment:',years+'年配套 • 每月付款详情：')+'*');
-      let promotion=promoLabelFor(item).replace(/首12个月\s*50% OFF/g,'首12个月享有50%折扣');
+      let promotion=labelFor(item).replace(/首12个月\s*50% OFF/g,'首12个月享有50%折扣');
       if(currentLang==='ms'&&/^half(9|12)$/.test(item.promo)){
         const months=item.promo==='half12'?12:9;
         promotion='Diskaun 50% untuk '+months+' bulan pertama!';
       }
       lines.push('🔥 *'+promotion+'*');
-      packagePricePeriods(month=>monthlyFor(item,month),planMonths(item.plan))
+      packagePricePeriods(month=>priceFor(item,month),planMonths(item.plan))
         .forEach(period=>lines.push(periodLine(period)));
       if(item.product.category!=='TV'){
         const service=item.plan.service;
@@ -927,11 +894,11 @@ function packageCopywriting(){
       }
     }
   });
-  if(doubleMatchCartEligible())lines.push('',novemberGiftCartText());
-  if(cart.length>1){
+  if(includeGift&&doubleMatchCartEligible())lines.push('',novemberGiftCartText());
+  if(items.length>1){
     lines.push('','••••••••••••••••••••••••••••••••',tr('packageMsgSchedule'));
-    const maxMonths=Math.max(...cart.map(item=>planMonths(item.plan)));
-    packagePricePeriods(month=>cart.reduce((sum,item)=>sum+(month<=planMonths(item.plan)?monthlyFor(item,month):0),0),maxMonths)
+    const maxMonths=Math.max(...items.map(item=>planMonths(item.plan)));
+    packagePricePeriods(month=>items.reduce((sum,item)=>sum+(month<=planMonths(item.plan)?priceFor(item,month):0),0),maxMonths)
       .forEach(period=>lines.push('• '+periodLine(period)));
   }
   return lines.join('\n');
