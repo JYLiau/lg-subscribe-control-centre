@@ -6,6 +6,7 @@ const DEFAULT_HALF9_PROMO={id:'half9',label:'50% OFF 9 bulan',type:'percent',val
  const DEFAULT_COMBO10_PROMO={id:'combo10',label:'RM10 OFF combo',type:'fixed',value:10,months:null};
 const CATALOG=(window.LG_CATALOG||[]).map((p,i)=>{
   let promos=Array.isArray(p.promos)?p.promos.map(x=>x.id==='half9'?{...x,...DEFAULT_HALF9_PROMO,validFrom:null,validTo:null}:x):[];
+  promos=promos.filter(x=>x.id!=='octevergreen');
   const hasHalf12=promos.some(x=>x.id==='half12');
   // Universal customer-site rule: every subscription product has 50% OFF for 9 months,
   // except models with a 50% OFF 12-month offer, where 9-month is excluded.
