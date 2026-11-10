@@ -865,7 +865,7 @@ function packageCopywriting(items=cart,priceFor=monthlyFor,labelFor=promoLabelFo
   const periodLine=p=>paymentMonthRange(p.start,p.end)+': '+p.price+'/'+tr('month');
   items.forEach((item,index)=>{
     if(index)lines.push('','••••••••••••••••••••••••••••••••','');
-    lines.push('*'+(index+1)+'.) '+item.product.name+(item.qty>1?' ×'+item.qty:'')+'*');
+    lines.push('*'+(items.length>1?(index+1)+'.) ':'')+item.product.name+(item.qty>1?' ×'+item.qty:'')+'*');
     lines.push(tr('copyModel',{code:item.product.code}));
     const features=productFeatureLines(item.product);
     if(features.length)lines.push('',featureHeading(),...features.map(feature=>'✓ '+feature));
