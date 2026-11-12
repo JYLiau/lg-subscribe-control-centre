@@ -36,6 +36,11 @@ a{color:inherit}
 .tools{display:grid;grid-template-columns:minmax(200px,1fr) 230px;gap:10px;margin-bottom:12px}
 .input,.select{width:100%;border:1px solid #dcd6ce;background:#fff;border-radius:13px;padding:11px 12px;outline:none}.input:focus,.select:focus{border-color:#9a7a49;box-shadow:0 0 0 3px rgba(180,139,74,.12)}
 .catrow{display:flex;gap:8px;overflow-x:auto;padding:3px 0 14px;scrollbar-width:none}.catrow::-webkit-scrollbar{display:none}.cat{white-space:nowrap;border:1px solid #ddd7cf;background:#fff;border-radius:99px;padding:8px 11px;font-size:11px;font-weight:750;color:#5e5953}.cat.active{background:#111;color:#fff;border-color:#111}
+.year-filter{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin:-2px 0 15px}
+.year-filter-btn{font:inherit;font-size:12px;font-weight:700;color:#77706b;border:1px solid transparent;background:transparent;border-radius:99px;padding:8px 15px;cursor:pointer;transition:background .15s,color .15s}
+.year-filter-btn:hover{background:#f4f1ed;color:#292522}
+.year-filter-btn.active{background:#f3f1ee;color:#171717}
+.year-filter-btn:focus-visible{outline:2px solid #9a7a49;outline-offset:2px}
 .catalog-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px;color:var(--muted);font-size:11px}
 .products{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
 .product{border:1px solid #e4ddd5;border-radius:19px;background:linear-gradient(155deg,#fff,#f7f3ee);overflow:hidden;display:flex;flex-direction:column;min-height:330px;transition:.18s ease;box-shadow:0 8px 22px rgba(30,20,10,.04)}.product:hover{transform:translateY(-2px);box-shadow:0 16px 36px rgba(30,20,10,.09);border-color:#d3c8bb}.product.unavailable{opacity:1}
