@@ -22,7 +22,6 @@ const COMBO_PRESETS=[
   {id:'setB',tag:'SET B',name:'Segar + Laundry',desc:'493L Fridge + 12kg Washer',items:[{id:'ref1',plan:0},{id:'lau1',plan:0}]},
   {id:'setC',tag:'SET C',name:'Sejuk + Laundry',desc:'1.0HP Aircond + 12kg Washer',items:[{id:'ac1',plan:0},{id:'lau1',plan:0}]},
   {id:'setD',tag:'SET D',name:'Whole Home Trio',desc:'Aircond + Fridge + Washer',items:[{id:'ac1',plan:0},{id:'ref1',plan:0},{id:'lau1',plan:0}]},
-  {id:'setF',tag:'RM150 COMBO',name:'FV1450S2W + VD-H9066WSR',desc:'10.5kg Washer + 9kg Dryer · 5Y Combine Maintenance',items:[{id:'lau-fv1450-vdh9066-combo',plan:0}]},
   {id:'setE',tag:'SET E',name:'Laundry Duo',desc:'12kg Washer + 10kg Dryer',items:[{id:'lau1',plan:0},{id:'lau2',plan:0}]}
 ];
 const I18N={
@@ -175,7 +174,7 @@ function livePromos(product){
 }
 function defaultQuotePromo(product){
   const offers=livePromos(product);
-  return offers.find(p=>p.id==='laundry150')?.id
+  return offers.find(p=>p.id==='laundry150'&&!p.bundleProductId)?.id
     ||offers.find(p=>p.id==='half12')?.id
     ||offers.find(p=>['rm20nov','rm5nov'].includes(p.id))?.id
     ||'standard';
@@ -386,7 +385,7 @@ function renderCats(){const cats=['All',...new Set(CATALOG.map(x=>x.category))];
 function malaysiaToday(){return new Date(Date.now()+8*60*60*1000).toISOString().slice(0,10);}
 function isUpcoming(p){return Boolean(p.availableFrom && malaysiaToday()<p.availableFrom);}
 function orderNotice(p){if(!p?.availableForOrder)return '';return tr(p.restockNoteUntil&&malaysiaToday()<=p.restockNoteUntil?'orderRestocking':'orderConfirm');}
-function visibleProducts(){const q=($('search')?.value||'').trim().toLowerCase(),sort=$('sort')?.value||'featured';let rows=CATALOG.filter(p=>(!stopSubmission(p)||baseCode(p.code)==='AS30GGW10')&&(activeCat==='All'||p.category===activeCat)&&(activeYears==='All'||plansForYears(p).length>0)&&(!q||((p.code+' '+p.name+' '+p.category).toLowerCase().includes(q))));if(sort==='price')rows.sort((a,b)=>minPrice(a)-minPrice(b));else if(sort==='model')rows.sort((a,b)=>a.code.localeCompare(b.code));else rows.sort((a,b)=>a.order-b.order);rows.sort((a,b)=>Number(isUpcoming(a))-Number(isUpcoming(b)));return rows;}
+function visibleProducts(){const q=($('search')?.value||'').trim().toLowerCase(),sort=$('sort')?.value||'featured';let rows=CATALOG.filter(p=>!p.hiddenFromCatalog&&(!stopSubmission(p)||baseCode(p.code)==='AS30GGW10')&&(activeCat==='All'||p.category===activeCat)&&(activeYears==='All'||plansForYears(p).length>0)&&(!q||((p.code+' '+p.name+' '+p.category).toLowerCase().includes(q))));if(sort==='price')rows.sort((a,b)=>minPrice(a)-minPrice(b));else if(sort==='model')rows.sort((a,b)=>a.code.localeCompare(b.code));else rows.sort((a,b)=>a.order-b.order);rows.sort((a,b)=>Number(isUpcoming(a))-Number(isUpcoming(b)));return rows;}
 function renderProducts(){
  const rows=visibleProducts();
  $('catalogCount').textContent=rows.length+' '+tr('model');
@@ -417,7 +416,7 @@ function renderPlans(){
     if(p.outright)return '<button class="plan-card '+(p===chosenPlan?'active':'')+'" aria-pressed="'+(p===chosenPlan)+'" data-i="'+i+'">'+selectionIcon+'<b>'+esc(tr('outright'))+'</b><span>'+esc(serviceLabel(p.service))+'</span><strong>'+money(p.upfront)+' · '+esc(tr('oneTime'))+'</strong></button>';
     return '<button class="plan-card '+(p===chosenPlan?'active':'')+'" aria-pressed="'+(p===chosenPlan)+'" data-i="'+i+'">'+selectionIcon+'<b>'+p.years+' '+esc(tr('years'))+'</b><span>'+esc(serviceLabel(p.service))+'</span>'+(serviceDetail(activeProduct,p)?'<small class="service-cadence">'+esc(serviceDetail(activeProduct,p))+'</small>':'')+'<strong>'+money(p.monthly)+'/'+esc(tr('month'))+'</strong></button>';
   }).join('');
-  $('planGrid').querySelectorAll('.plan-card').forEach(b=>b.onclick=()=>{chosenPlan=plans[Number(b.dataset.i)];if(chosenPlan.outright)chosenPromo='standard';renderPlans();renderPromos();});
+  $('planGrid').querySelectorAll('.plan-card').forEach(b=>b.onclick=()=>{chosenPlan=plans[Number(b.dataset.i)];if(chosenPlan.outright||(chosenPromo==='laundry150'&&chosenPlan.service!=='Combine Maintenance'))chosenPromo='standard';renderPlans();renderPromos();});
 }
 function novemberGiftText(){const texts={"ms": "🎁 Double Match + TV 65″ percuma: minimum 2 unit baharu daripada F2520SNEKR, TX2522AT9GR atau S3-Q24K2RPA (2 washer, 2 aircond atau 1+1). Mohon 1–30 Nov 2026; pemasangan 1 Nov–15 Dis 2026. Hadiah dijadual dihantar akhir Jan 2027. Satu hadiah bagi setiap ID pelanggan; tertakluk stok semasa pemasangan, siapa cepat dia dapat. Tiada penggantian jika habis stok. Jason akan sahkan kelayakan.", "en": "🎁 Double Match + free 65″ LG UHD AI TV: minimum 2 new units from F2520SNEKR, TX2522AT9GR or S3-Q24K2RPA (2 washers, 2 air conditioners or 1+1). Apply 1–30 Nov 2026; install 1 Nov–15 Dec 2026. Gift delivery scheduled for end-Jan 2027. One gift per Customer ID; first come, first served subject to stock at installation. No replacement if unavailable. Jason will confirm eligibility.", "zh": "🎁 Double Match赠送65英寸LG UHD AI电视：选购至少2台全新F2520SNEKR、TX2522AT9GR或S3-Q24K2RPA（2台洗衣机、2台冷气或各1台）。2026年11月1–30日申请，11月1日至12月15日完成安装。赠品预计2027年1月底送达。每个客户ID限一份，以安装时库存为准，先到先得，送完无替代。资格由Jason确认。"};return texts[currentLang]||texts.en;}
 function doubleMatchCartEligible(){
@@ -446,7 +445,7 @@ function renderPromos(){
     }
   }
   $('promoGrid').innerHTML=info+promos.map(p=>'<button class="promo-card '+(p.id===chosenPromo?'active':'')+'" data-id="'+p.id+'"><b>'+esc(promoLabel(p))+'</b><span>'+esc(promoDescription(p)+(activeProduct?.id==='ac6'&&p.id==='combo10'?' '+artcoolBonusText():''))+'</span></button>').join('');
-  $('promoGrid').querySelectorAll('.promo-card').forEach(b=>b.onclick=()=>{chosenPromo=b.dataset.id;renderPromos();});
+  $('promoGrid').querySelectorAll('.promo-card').forEach(b=>b.onclick=()=>{chosenPromo=b.dataset.id;if(promoObj(activeProduct,chosenPromo).bundleProductId){chosenPlan=activeProduct.plans.find(p=>p.years===5&&p.service==='Combine Maintenance');renderPlans();}renderPromos();});
 }
 function specialComboEligible(item,items){
   if(!['tv15nov','rac15nov'].includes(item.promo))return true;
@@ -675,9 +674,17 @@ function productFeatureLines(product){
 function featureHeading(){return currentLang==='zh'?'✨ 主要特点：':currentLang==='en'?'✨ Key features:':'✨ Ciri-ciri utama:';}
 function warrantyLine(years){return currentLang==='zh'?('🛡️ '+years+'年保修'):currentLang==='en'?('🛡️ '+years+'-year warranty'):('🛡️ Waranti '+years+' tahun');}
 
+function selectedPackageItem(product,plan,promo,qty){
+  const offer=promoObj(product,promo);
+  if(offer.bundleProductId){
+    const bundle=CATALOG.find(p=>p.id===offer.bundleProductId);
+    if(bundle)return {product:bundle,plan:{...bundle.plans[0]},promo,qty};
+  }
+  return {product,plan:{...plan},promo,qty};
+}
 function selectedCopywriting(){
   if(!activeProduct||!chosenPlan)return '';
-  const item={product:activeProduct,plan:chosenPlan,promo:chosenPromo,qty:Math.max(1,Math.min(9,Number($('qtyInput').value)||1))};
+  const item=selectedPackageItem(activeProduct,chosenPlan,chosenPromo,Math.max(1,Math.min(9,Number($('qtyInput').value)||1)));
   const context=[...cart,item];
   const price=(x,month)=>x.plan.outright?(month===1?(Number(x.plan.upfront)||0)*x.qty:0):
     promoPrice(x.product,x.plan,x.promo,month,{comboActive:true,pairActive:true,specialComboActive:true,artcoolWasherBonus:isArtcoolWasherCombo(x,context)})*x.qty;
@@ -692,7 +699,7 @@ function copySelectedCopywriting(){
   navigator.clipboard?.writeText(txt).then(()=>toast(tr('copyDone'))).catch(()=>prompt(tr('copyFail'),txt));
 }
 window.copySelectedCopywriting=copySelectedCopywriting;
-function addActive(){if(!activeProduct||!chosenPlan)return;const qty=Math.max(1,Math.min(9,Number($('qtyInput').value)||1));cart.push({key:Date.now()+Math.random(),product:activeProduct,plan:{...chosenPlan},promo:chosenPromo,qty});closeModal();renderCart();toast(chosenPromo==='combo10'&&!comboEligible()?tr('comboNeedAnother'):tr('addedPackage'));}
+function addActive(){if(!activeProduct||!chosenPlan)return;const qty=Math.max(1,Math.min(9,Number($('qtyInput').value)||1));cart.push({key:Date.now()+Math.random(),...selectedPackageItem(activeProduct,chosenPlan,chosenPromo,qty)});closeModal();renderCart();toast(chosenPromo==='combo10'&&!comboEligible()?tr('comboNeedAnother'):tr('addedPackage'));}
 function totalUnits(){return cart.reduce((a,x)=>a+x.qty,0);}
 function sharedItemPricing(item){
   if(item.plan?.outright)return '<div class="shared-item-pricing"><strong class="shared-price standard">'+money((Number(item.plan.upfront)||0)*item.qty)+' · '+esc(tr('oneTime'))+'</strong></div>';
