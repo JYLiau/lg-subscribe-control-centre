@@ -40,7 +40,7 @@ ms:{
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Imej produk daripada bahan rujukan yang dibekalkan. T&C apply.',
   comboHelp:'Pilih tempoh, servis dan promosi untuk setiap produk. Harga pakej akan dikira semula sebelum ditambah.',comboEstimate:'Anggaran bayaran bulan pertama',comboAdd:'Tambah set ke pakej',
   choosePlan:'1. Pilih pelan',choosePromo:'2. Pilih promosi',outright:'Outright',oneTime:'sekali bayar',noService:'Tanpa servis',qty:'Kuantiti',copy:'Salin ayat',copyTitle:'Salin ayat jualan untuk pelan dan promosi dipilih',addPackage:'Tambah ke pakej',
-  all:'Semua',years:'tahun',month:'bulan',months:'bulan',from:'Dari',viewPlans:'Lihat pelan',pricePending:'Harga akan dikemas kini',planPending:'Pelan belum tersedia',currentSelection:'Lihat pilihan',availableLateNov:'Jangkaan pelancaran akhir Nov 2026',orderRestocking:'Tempahan dibuka · Stok dijangka minggu depan',orderConfirm:'Tempahan dibuka · Tarikh penghantaran akan disahkan',
+  all:'Semua',allPlans:'Semua pelan',years:'tahun',month:'bulan',months:'bulan',from:'Dari',viewPlans:'Lihat pelan',pricePending:'Harga akan dikemas kini',planPending:'Pelan belum tersedia',currentSelection:'Lihat pilihan',availableLateNov:'Jangkaan pelancaran akhir Nov 2026',orderRestocking:'Tempahan dibuka · Stok dijangka minggu depan',orderConfirm:'Tempahan dibuka · Tarikh penghantaran akan disahkan',
   noProducts:'Belum ada produk.',startAppliance:'Mulakan dengan satu perkakas',startAppliance2:'Pilih produk di bawah untuk bina pakej rumah anda.',
   productSelected:'produk dipilih',unit:'unit',model:'model',standard:'standard',period:'Tempoh',service:'Servis',promotion:'Promosi',
   notAvailable:'Tidak tersedia',chooseCustomize:'Pilih & ubah suai',standardPlanFrom:'Dari pelan standard',canCustomize:'boleh ubah tempoh/servis/promosi',
@@ -76,7 +76,7 @@ en:{
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Product images are from supplied reference materials. T&C apply.',
   comboHelp:'Choose the term, service and promotion for each product. The package price will be recalculated before adding.',comboEstimate:'Estimated first-month payment',comboAdd:'Add set to package',
   choosePlan:'1. Choose plan',choosePromo:'2. Choose promotion',outright:'Outright',oneTime:'one-time',noService:'No service',qty:'Quantity',copy:'Copy text',copyTitle:'Copy the selected plan and promotion message',addPackage:'Add to package',
-  all:'All',years:'years',month:'month',months:'months',from:'From',viewPlans:'View plans',pricePending:'Price pending',planPending:'Plan not available yet',currentSelection:'Explore options',availableLateNov:'Expected launch late Nov 2026',orderRestocking:'Orders open · Restocking expected next week',orderConfirm:'Orders open · Delivery timing to be confirmed',
+  all:'All',allPlans:'All plans',years:'years',month:'month',months:'months',from:'From',viewPlans:'View plans',pricePending:'Price pending',planPending:'Plan not available yet',currentSelection:'Explore options',availableLateNov:'Expected launch late Nov 2026',orderRestocking:'Orders open · Restocking expected next week',orderConfirm:'Orders open · Delivery timing to be confirmed',
   noProducts:'No products yet.',startAppliance:'Start with one appliance',startAppliance2:'Choose a product below to build your home package.',
   productSelected:'products selected',unit:'unit',model:'model',standard:'standard',period:'Term',service:'Service',promotion:'Promotion',
   notAvailable:'Unavailable',chooseCustomize:'Choose & customise',standardPlanFrom:'From standard plan',canCustomize:'term/service/promotion can be changed',
@@ -112,7 +112,7 @@ zh:{
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>产品图片来自所提供的参考资料。须符合条款与条件。',
   comboHelp:'为每件产品选择年限、服务和优惠。加入前会重新计算配套价格。',comboEstimate:'首月预计月费',comboAdd:'加入整套配套',
   choosePlan:'1. 选择方案',choosePromo:'2. 选择优惠',outright:'直接购买',oneTime:'一次性付款',noService:'无服务',qty:'数量',copy:'复制文案',copyTitle:'复制所选方案与优惠的文案',addPackage:'加入配套',
-  all:'全部',years:'年',month:'月',months:'个月',from:'每月低至',viewPlans:'查看方案',currentSelection:'查看方案',availableLateNov:'预计2026年11月底推出',orderRestocking:'开放预订 · 预计下周补货',orderConfirm:'开放预订 · 送货时间有待确认',
+  all:'全部',allPlans:'全部方案',years:'年',month:'月',months:'个月',from:'每月低至',viewPlans:'查看方案',currentSelection:'查看方案',availableLateNov:'预计2026年11月底推出',orderRestocking:'开放预订 · 预计下周补货',orderConfirm:'开放预订 · 送货时间有待确认',
   noProducts:'尚未选择产品。',startAppliance:'从一件家电开始',startAppliance2:'从下方选择产品，建立你的家电配套。',
   productSelected:'件产品已选择',unit:'件',model:'型号',standard:'标准价',period:'年限',service:'服务',promotion:'优惠',
   notAvailable:'暂不可用',chooseCustomize:'选择并调整',standardPlanFrom:'标准方案起',canCustomize:'可更改年限/服务/优惠',
@@ -216,7 +216,7 @@ function setLanguage(lang){
 }
 window.LG_I18N_T=(key,vars)=>tr(key,vars);window.LG_CURRENT_LANG=()=>currentLang;
 
-let activeCat='All',cart=[],activeProduct=null,chosenPlan=null,chosenPromo='standard',submissionRows=null,activeComboPreset=null,comboDraft=[];
+let activeCat='All',activeYears='All',cart=[],activeProduct=null,chosenPlan=null,chosenPromo='standard',submissionRows=null,activeComboPreset=null,comboDraft=[];
 const $=id=>document.getElementById(id);
 const money=n=>'RM'+Math.max(0,Math.round(Number(n)||0)).toLocaleString('en-MY');
 const baseCode=s=>{
@@ -225,7 +225,8 @@ const baseCode=s=>{
   return x;
 };
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-const minPrice=p=>Array.isArray(p.plans)&&p.plans.length?Math.min(...p.plans.map(x=>Number(x.monthly)||999999)):Infinity;
+const plansForYears=p=>(p?.plans||[]).filter(plan=>activeYears==='All'||String(plan.years)===activeYears);
+const minPrice=p=>{const plans=plansForYears(p);return plans.length?Math.min(...plans.map(x=>Number(x.monthly)||999999)):Infinity;};
 // Customer catalog does not fetch stock. Submission restriction checks use status-only data.
 const STATIC_BLOCKED_BASES=new Set(['FV1209D4W']);
 // Owner-approved availability overrides for the customer showroom.
@@ -371,11 +372,18 @@ function addRefinedCombo(){
   const name=comboName(activeComboPreset);
   closeComboModal();renderCart();scrollToPackage();toast(name+' '+tr('comboAdded'));
 }
-function renderCats(){const cats=['All',...new Set(CATALOG.map(x=>x.category))];$('catRow').innerHTML=cats.map(c=>'<button class="cat '+(c===activeCat?'active':'')+'" data-cat="'+esc(c)+'">'+esc(c==='All'?tr('all'):categoryLabel(c))+'</button>').join('');$('catRow').querySelectorAll('.cat').forEach(b=>b.onclick=()=>{activeCat=b.dataset.cat;renderCats();renderProducts();});}
+function renderYearFilters(){
+ const container=$('yearFilter');
+ if(!container)return;
+ const options=[{years:'All',label:tr('allPlans')},{years:'5',label:'5 '+tr('years')},{years:'7',label:'7 '+tr('years')}];
+ container.innerHTML=options.map(o=>'<button type="button" class="year-filter-btn '+(activeYears===o.years?'active':'')+'" data-years="'+o.years+'" aria-pressed="'+(activeYears===o.years)+'">'+esc(o.label)+'</button>').join('');
+ container.querySelectorAll('button').forEach(b=>b.onclick=()=>{activeYears=b.dataset.years;renderYearFilters();renderProducts();});
+}
+function renderCats(){const cats=['All',...new Set(CATALOG.map(x=>x.category))];$('catRow').innerHTML=cats.map(c=>'<button class="cat '+(c===activeCat?'active':'')+'" data-cat="'+esc(c)+'">'+esc(c==='All'?tr('all'):categoryLabel(c))+'</button>').join('');$('catRow').querySelectorAll('.cat').forEach(b=>b.onclick=()=>{activeCat=b.dataset.cat;renderCats();renderProducts();});renderYearFilters();}
 function malaysiaToday(){return new Date(Date.now()+8*60*60*1000).toISOString().slice(0,10);}
 function isUpcoming(p){return Boolean(p.availableFrom && malaysiaToday()<p.availableFrom);}
 function orderNotice(p){if(!p?.availableForOrder)return '';return tr(p.restockNoteUntil&&malaysiaToday()<=p.restockNoteUntil?'orderRestocking':'orderConfirm');}
-function visibleProducts(){const q=($('search')?.value||'').trim().toLowerCase(),sort=$('sort')?.value||'featured';let rows=CATALOG.filter(p=>(!stopSubmission(p)||baseCode(p.code)==='AS30GGW10')&&(activeCat==='All'||p.category===activeCat)&&(!q||((p.code+' '+p.name+' '+p.category).toLowerCase().includes(q))));if(sort==='price')rows.sort((a,b)=>minPrice(a)-minPrice(b));else if(sort==='model')rows.sort((a,b)=>a.code.localeCompare(b.code));else rows.sort((a,b)=>a.order-b.order);rows.sort((a,b)=>Number(isUpcoming(a))-Number(isUpcoming(b)));return rows;}
+function visibleProducts(){const q=($('search')?.value||'').trim().toLowerCase(),sort=$('sort')?.value||'featured';let rows=CATALOG.filter(p=>(!stopSubmission(p)||baseCode(p.code)==='AS30GGW10')&&(activeCat==='All'||p.category===activeCat)&&(activeYears==='All'||plansForYears(p).length>0)&&(!q||((p.code+' '+p.name+' '+p.category).toLowerCase().includes(q))));if(sort==='price')rows.sort((a,b)=>minPrice(a)-minPrice(b));else if(sort==='model')rows.sort((a,b)=>a.code.localeCompare(b.code));else rows.sort((a,b)=>a.order-b.order);rows.sort((a,b)=>Number(isUpcoming(a))-Number(isUpcoming(b)));return rows;}
 function renderProducts(){
  const rows=visibleProducts();
  $('catalogCount').textContent=rows.length+' '+tr('model');
@@ -385,7 +393,7 @@ function renderProducts(){
    const paused=currentLang==='zh'?'暂停接受订单':currentLang==='en'?'Orders temporarily paused':'Tempahan dihentikan sementara';
    const outrightButton=p.outrightOptions.length?'<button class="addbtn outright-btn" data-id="'+p.id+'" '+(blocked?'disabled':'')+'>'+esc(tr('outright'))+' · '+money(Math.min(...p.outrightOptions.map(o=>o.upfront)))+' · '+esc(tr('oneTime'))+'</button>':'';
    const quotePromo=defaultQuotePromo(p);
-   const quoteFrom=pending?0:Math.min(...p.plans.map(plan=>promoPrice(p,plan,quotePromo,1)));
+   const quoteFrom=pending?0:Math.min(...plansForYears(p).map(plan=>promoPrice(p,plan,quotePromo,1)));
    const offerCaption=quotePromo==='standard'?'':'<small>'+esc(promoLabel(promoObj(p,quotePromo)))+'</small>';
    const priceHtml=pending
      ?'<div class="price pending-price"><div><small>'+esc(tr('pricePending'))+'</small></div></div>'
@@ -395,7 +403,7 @@ function renderProducts(){
  $('products').querySelectorAll('.addbtn:not(:disabled)').forEach(b=>b.onclick=()=>openProduct(b.dataset.id,b.classList.contains('outright-btn')));
 }
 function allPlans(product){return [...(product?.plans||[]),...(product?.outrightOptions||[])];}
-function openProduct(id,outright=false){activeProduct=CATALOG.find(x=>x.id===id);const plans=allPlans(activeProduct);if(!activeProduct||!plans.length||stopSubmission(activeProduct))return;chosenPlan=(outright?plans.find(p=>p.outright):null)||plans[0];chosenPromo=outright?'standard':defaultQuotePromo(activeProduct);$('qtyInput').value=1;$('modalModel').textContent=activeProduct.code;$('modalSub').textContent=activeProduct.name+(orderNotice(activeProduct)?' · '+orderNotice(activeProduct):'');renderPlans();renderPromos();$('modal').showModal();}
+function openProduct(id,outright=false){activeProduct=CATALOG.find(x=>x.id===id);const plans=allPlans(activeProduct);if(!activeProduct||!plans.length||stopSubmission(activeProduct))return;const matching=plansForYears(activeProduct);const quote=defaultQuotePromo(activeProduct);chosenPlan=(outright?plans.find(p=>p.outright):null)||(activeYears==='All'?plans.find(p=>!p.outright):matching.reduce((best,p)=>!best||promoPrice(activeProduct,p,quote,1)<promoPrice(activeProduct,best,quote,1)?p:best,null))||plans[0];chosenPromo=outright?'standard':quote;$('qtyInput').value=1;$('modalModel').textContent=activeProduct.code;$('modalSub').textContent=activeProduct.name+(orderNotice(activeProduct)?' · '+orderNotice(activeProduct):'');renderPlans();renderPromos();$('modal').showModal();}
 window.closeModal=()=>$('modal').close();
 window.stepQty=d=>{const q=$('qtyInput');q.value=Math.max(1,Math.min(9,(Number(q.value)||1)+d));};
 function renderPlans(){
