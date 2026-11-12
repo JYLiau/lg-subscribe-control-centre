@@ -7,7 +7,7 @@ const app=fs.readFileSync(path.join(__dirname,'../build-my-home/app.js'),'utf8')
 const context={window:{}};
 vm.runInNewContext(code,context);
 const catalog=context.window.LG_CATALOG;
-assert.equal(catalog.length,44);
+assert.equal(catalog.length,46);
 const product=prefix=>{const p=catalog.find(p=>p.code.startsWith(prefix));assert.ok(p,'Missing '+prefix);return p;};
 for(const p of catalog.filter(p=>p.category==='Laundry')){
   for(const plan of p.plans){

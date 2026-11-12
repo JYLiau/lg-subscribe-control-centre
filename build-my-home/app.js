@@ -22,6 +22,7 @@ const COMBO_PRESETS=[
   {id:'setB',tag:'SET B',name:'Segar + Laundry',desc:'493L Fridge + 12kg Washer',items:[{id:'ref1',plan:0},{id:'lau1',plan:0}]},
   {id:'setC',tag:'SET C',name:'Sejuk + Laundry',desc:'1.0HP Aircond + 12kg Washer',items:[{id:'ac1',plan:0},{id:'lau1',plan:0}]},
   {id:'setD',tag:'SET D',name:'Whole Home Trio',desc:'Aircond + Fridge + Washer',items:[{id:'ac1',plan:0},{id:'ref1',plan:0},{id:'lau1',plan:0}]},
+  {id:'setF',tag:'RM150 COMBO',name:'FV1450S2W + VD-H9066WSR',desc:'10.5kg Washer + 9kg Dryer · 5Y Combine Maintenance',items:[{id:'lau-fv1450-vdh9066-combo',plan:0}]},
   {id:'setE',tag:'SET E',name:'Laundry Duo',desc:'12kg Washer + 10kg Dryer',items:[{id:'lau1',plan:0},{id:'lau2',plan:0}]}
 ];
 const I18N={
@@ -174,7 +175,8 @@ function livePromos(product){
 }
 function defaultQuotePromo(product){
   const offers=livePromos(product);
-  return offers.find(p=>p.id==='half12')?.id
+  return offers.find(p=>p.id==='laundry150')?.id
+    ||offers.find(p=>p.id==='half12')?.id
     ||offers.find(p=>['rm20nov','rm5nov'].includes(p.id))?.id
     ||'standard';
 }
@@ -230,7 +232,7 @@ const minPrice=p=>{const plans=plansForYears(p);return plans.length?Math.min(...
 // Customer catalog does not fetch stock. Submission restriction checks use status-only data.
 const STATIC_BLOCKED_BASES=new Set(['FV1209D4W']);
 // Owner-approved availability overrides for the customer showroom.
-const ORDER_ENABLED_BASES=new Set(['AS30GGW10']);
+const ORDER_ENABLED_BASES=new Set(['AS30GGW10','VD-H9066WSR']);
 function stopSubmission(product){
  const code=baseCode(product?.code);
  if(ORDER_ENABLED_BASES.has(code))return false;
@@ -251,6 +253,7 @@ function fridgeVisual(p){
   return '<div class="fridge-views" data-model="'+code+'"><div class="fridge-view">'+visual(p)+'</div><div class="fridge-view"><img loading="lazy" decoding="async" src="./images/'+code.toLowerCase()+'-open.svg" alt="'+esc(p.code)+' — open-door interior"></div></div>';
 }
 function visual(p){
+  if(p.bundleItems)return '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;gap:4px">'+p.bundleItems.map(id=>{const child=CATALOG.find(x=>x.id===id);return child?'<div style="width:48%;height:100%;display:flex;align-items:center;justify-content:center">'+visual(child)+'</div>':'';}).join('')+'</div>';
   const src=p.imageData||p.imageUrl||'',fallback=p.fallbackImageUrl||'';
   if(!src)return '<div class="generic-icon">'+icon(p)+'</div>';
   const onerr=fallback
@@ -260,7 +263,7 @@ function visual(p){
 }
 function comboPresetData(preset){
   const items=preset.items.map(x=>{const product=CATALOG.find(p=>p.id===x.id);if(!product)return null;return{product,plan:product.plans[x.plan]||product.plans[0]};}).filter(Boolean);
-  const monthly=items.reduce((sum,x)=>sum+(Number(x.plan.monthly)||0),0);
+  const monthly=items.reduce((sum,x)=>sum+promoPrice(x.product,x.plan,x.product.bundleItems?'laundry150':'standard',1),0);
   const blocked=items.some(x=>stopSubmission(x.product));
   return{items,monthly,blocked};
 }
@@ -275,7 +278,7 @@ function renderComboMenu(){
       '<h3>'+esc(comboName(p))+'</h3>'+
       '<p>'+esc(comboDesc(p))+'</p>'+
       '<div class="combo-price"><span>RM</span><b>'+Math.round(d.monthly)+'</b><em>/'+esc(tr('month'))+'</em></div>'+
-      '<small>'+esc(tr('standardPlanFrom'))+' · '+d.items.length+' · '+esc(tr('canCustomize'))+'</small>'+
+      '<small>'+esc(p.id==='setF'?'5Y · Combine Maintenance':tr('standardPlanFrom'))+' · '+d.items.reduce((n,x)=>n+(x.product.bundleItems?.length||1),0)+' · '+esc(tr('canCustomize'))+'</small>'+
       '<button class="combo-pick" data-combo="'+p.id+'" '+(d.blocked?'disabled':'')+'>'+esc(d.blocked?tr('notAvailable'):tr('chooseCustomize'))+'</button>'+
     '</article>';
   }).join('');

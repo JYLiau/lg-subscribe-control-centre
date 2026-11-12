@@ -30,6 +30,7 @@ for(let i=0;i<CATALOG.length;i++){
   assert.equal(product.id,original[i].id,'Keep catalog order');
   for(const existing of original[i].promos)
     assert.ok(product.promos.some(p=>p.id===existing.id),'Existing offer lost: '+product.code+' '+existing.id);
+  if(product.explicitPromosOnly)continue; // Offers are explicitly limited for fixed bundles and selected models.
   const combos=livePromos(product).filter(p=>p.id==='combo10');
   assert.equal(combos.length,1,'Exactly one RM10 combo option required for '+product.code);
   assert.equal(combos[0].type,'fixed',product.code);
