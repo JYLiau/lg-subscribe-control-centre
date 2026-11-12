@@ -21,11 +21,15 @@ async function checkShare(){
  const token=Buffer.from(JSON.stringify(data)).toString('base64').replace(/=+$/,'');
  const ctx={window:{},URL,location:{href:'https://example.com/?pkg='+token+'&share=1'},localStorage:{getItem:()=>null},document:{getElementById(){return null},addEventListener(){},body:{classList:{add(){},contains(){return false}}},querySelector(){return null},querySelectorAll(){return []}},console,setTimeout(){},atob:s=>Buffer.from(s,'base64').toString('binary'),btoa:s=>Buffer.from(s,'binary').toString('base64')};
  vm.createContext(ctx);vm.runInContext(fs.readFileSync('build-my-home/catalog.js','utf8'),ctx);
- vm.runInContext(app.replace(/\}\)\(\);\s*$/,'window.test={loadFromUrl,getCart:()=>cart,monthlyFor,payload,packageCopywriting,selectedPackageItem,visibleProducts,COMBO_PRESETS};})();'),ctx);
+ vm.runInContext(app.replace(/\}\)\(\);\s*$/,'window.test={loadFromUrl,getCart:()=>cart,monthlyFor,payload,packageCopywriting,selectedPackageItem,visibleProducts,stopSubmission,setSubmissionRows:rows=>submissionRows=rows,COMBO_PRESETS};})();'),ctx);
  const t=ctx.window.test;await t.loadFromUrl();const item=t.getCart()[0];assert.equal(item.product.id,bundle.id);assert.equal(t.monthlyFor(item,1),150);assert.equal(t.monthlyFor(item,60),150);assert.equal(t.payload()[0].promo,'laundry150');
  const copy=t.packageCopywriting();assert.match(copy,/FV1450S2W \+ VD-H9066WSR/);assert.match(copy,/RM150/);assert.match(copy,/60/);assert.ok(!t.COMBO_PRESETS.some(p=>p.id==='setF'));
  assert.ok(!t.visibleProducts().some(p=>p.id===bundle.id));
  assert.ok(t.visibleProducts().some(p=>p.id===dryer.id));
+ t.setSubmissionRows([{model_code:'VD-H9066WSR.BBWREML',submission_status:'Stopped on 07 Oct'},{model_code:'FV1209D4W.ABWREML',submission_status:'Stopped'}]);
+ assert.equal(t.stopSubmission(dryer),false,'Owner-enabled dryer must survive status refresh');
+ assert.ok(t.visibleProducts().some(p=>p.id===dryer.id),'Dryer stays visible after stopped status loads');
+ assert.equal(t.stopSubmission({code:'FV1209D4W.ABWREML'}),true,'Unrelated blocked models remain blocked');
  const single=t.selectedPackageItem(dryer,dryer.plans[1],'half9',1);
  assert.equal(single.product.id,dryer.id);assert.equal(t.monthlyFor(single,1),50);
  const combo=t.selectedPackageItem(dryer,dryer.plans[0],'laundry150',2);

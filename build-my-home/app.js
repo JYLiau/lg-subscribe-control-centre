@@ -231,7 +231,7 @@ const minPrice=p=>{const plans=plansForYears(p);return plans.length?Math.min(...
 // Customer catalog does not fetch stock. Submission restriction checks use status-only data.
 const STATIC_BLOCKED_BASES=new Set(['FV1209D4W']);
 // Owner-approved availability overrides for the customer showroom.
-const ORDER_ENABLED_BASES=new Set(['AS30GGW10','VD-H9066WSR']);
+const ORDER_ENABLED_BASES=new Set(['AS30GGW10','VD-H9066WSR'].map(baseCode));
 function stopSubmission(product){
  const code=baseCode(product?.code);
  if(ORDER_ENABLED_BASES.has(code))return false;
