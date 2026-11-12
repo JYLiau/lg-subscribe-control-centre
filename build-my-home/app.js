@@ -890,6 +890,7 @@ function packageCopywriting(items=cart,priceFor=monthlyFor,labelFor=promoLabelFo
           service==='Self-Service'?pick('Self-Service','Self-Service','自行服务'):
           service.startsWith('Regular Visit')?pick('Regular Visit','Regular Visit','定期上门服务'):serviceLabel(service);
         lines.push('','*'+pick('Pakej Termasuk','Package Includes','配套包括')+' ('+name+'):*');
+        lines.push(warrantyLine(years));
         if(service==='Combine Maintenance'&&item.product.category==='Laundry'){
           lines.push(pick('📦 Self-Service Kit dihantar setiap 6 bulan','📦 Self-Service Kit delivered every 6 months','📦 每6个月寄送自助保养套件'));
           lines.push(pick('👨🏻‍🔧 Servis oleh juruteknik setiap 12 bulan','👨🏻‍🔧 Technician service every 12 months','👨🏻‍🔧 每12个月上门服务一次'));
@@ -903,6 +904,9 @@ function packageCopywriting(items=cart,priceFor=monthlyFor,labelFor=promoLabelFo
           const detail=serviceDetail(item.product,item.plan)||serviceLabel(service);
           detail.split(' + ').forEach(part=>lines.push((/kit|filter|penapis|配送|寄送/i.test(part)?'📦 ':'👨🏻‍🔧 ')+part));
         }
+      }else{
+        // TVs have no maintenance visit; show only the plan warranty.
+        lines.push('','*'+pick('Pakej Termasuk','Package Includes','配套包括')+':*',warrantyLine(years));
       }
     }
   });
