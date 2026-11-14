@@ -550,9 +550,9 @@ const PRODUCT_FEATURE_GROUPS={
     zh:['11kg洗衣 + 7kg烘干二合一','AI DD™','Steam™ 蒸汽护理','TurboWash™ 360°','洗烘一体']
   },
   gxjb18:{
-    bm:['Kapasiti 580L','Kemasan Black Glass','Linear Cooling™','Door Cooling+™','AI Fresh'],
-    en:['580L capacity','Black Glass finish','Linear Cooling™','Door Cooling+™','AI Fresh'],
-    zh:['580L 大容量','Black Glass 黑色玻璃面板','Linear Cooling™ 线性恒温','Door Cooling+™ 门冷技术','AI Fresh 智能保鲜']
+    bm:['Kapasiti 580L','Kemasan Essence Matte Black','Linear Cooling™','Door Cooling+™','AI Fresh'],
+    en:['580L capacity','Essence Matte Black finish','Linear Cooling™','Door Cooling+™','AI Fresh'],
+    zh:['580L 大容量','Essence Matte Black 哑光黑色面板','Linear Cooling™ 线性恒温','Door Cooling+™ 门冷技术','AI Fresh 智能保鲜']
   },
   gnf452:{
     bm:['Kapasiti besar 493L','LinearCooling™','DoorCooling+™','Dispenser air + Auto Ice Maker','LG ThinQ™'],
