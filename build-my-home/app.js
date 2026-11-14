@@ -248,8 +248,8 @@ const icon=p=>icons[p.category]||'LG';
 function fridgeVisual(p){
   const models = ['GN-F452PQAK','GC-B257KLJR','GC-J257SQNW','GV-K25FFGER','GC-G22FFQAB','GXJB18JBQRC'];
   const code = (p.code || '').split('.')[0];
-  if(p.category !== 'Fridge' || !models.includes(code)) return visual(p);
-  return '<div class="fridge-views" data-model="'+code+'"><div class="fridge-view">'+visual(p)+'</div><div class="fridge-view"><img loading="lazy" decoding="async" src="./images/'+code.toLowerCase()+'-open.svg" alt="'+esc(p.code)+' — open-door interior"></div></div>';
+  if(p.category !== 'Fridge' || (!models.includes(code) && !p.openImageUrl)) return visual(p);
+  return '<div class="fridge-views" data-model="'+code+'"><div class="fridge-view">'+visual(p)+'</div><div class="fridge-view"><img loading="lazy" decoding="async" src="'+esc(p.openImageUrl || './images/'+code.toLowerCase()+'-open.svg')+'" alt="'+esc(p.code)+' — open-door interior"></div></div>';
 }
 function visual(p){
   if(p.bundleItems)return '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;gap:4px">'+p.bundleItems.map(id=>{const child=CATALOG.find(x=>x.id===id);return child?'<div style="width:48%;height:100%;display:flex;align-items:center;justify-content:center">'+visual(child)+'</div>':'';}).join('')+'</div>';
