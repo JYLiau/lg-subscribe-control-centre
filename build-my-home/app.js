@@ -231,7 +231,7 @@ const minPrice=p=>{const plans=plansForYears(p);return plans.length?Math.min(...
 // Customer catalog does not fetch stock. Submission restriction checks use status-only data.
 const STATIC_BLOCKED_BASES=new Set(['FV1209D4W']);
 // Owner-approved availability overrides for the customer showroom.
-const ORDER_ENABLED_BASES=new Set(['AS30GGW10','VD-H9066WSR'].map(baseCode));
+const ORDER_ENABLED_BASES=new Set(['AS30GGW10','VD-H9066WSR','S3-Q12JARPA'].map(baseCode));
 function stopSubmission(product){
  const code=baseCode(product?.code);
  if(ORDER_ENABLED_BASES.has(code))return false;
@@ -389,14 +389,13 @@ function matchesProductSearch(product, query){
   const searchable = [product.code, product.name, product.category].join(' ').toLowerCase().replace(/[^\p{L}\p{N}]/gu,'');
   return query.split(/\s+/).every(word=>searchable.includes(word.replace(/[^\p{L}\p{N}]/gu,'')));
 }
-function visibleProducts(){const q=($('search')?.value||'').trim().toLowerCase(),sort=$('sort')?.value||'featured';let rows=CATALOG.filter(p=>!p.hiddenFromCatalog&&(!stopSubmission(p)||['AS30GGW10','S3Q12JARPA'].includes(baseCode(p.code)))&&(activeCat==='All'||p.category===activeCat)&&(activeYears==='All'||plansForYears(p).length>0)&&matchesProductSearch(p,q));if(sort==='price')rows.sort((a,b)=>minPrice(a)-minPrice(b));else if(sort==='model')rows.sort((a,b)=>a.code.localeCompare(b.code));else rows.sort((a,b)=>a.order-b.order);rows.sort((a,b)=>Number(isUpcoming(a))-Number(isUpcoming(b)));return rows;}
+function visibleProducts(){const q=($('search')?.value||'').trim().toLowerCase(),sort=$('sort')?.value||'featured';let rows=CATALOG.filter(p=>!p.hiddenFromCatalog&&!stopSubmission(p)&&(activeCat==='All'||p.category===activeCat)&&(activeYears==='All'||plansForYears(p).length>0)&&matchesProductSearch(p,q));if(sort==='price')rows.sort((a,b)=>minPrice(a)-minPrice(b));else if(sort==='model')rows.sort((a,b)=>a.code.localeCompare(b.code));else rows.sort((a,b)=>a.order-b.order);rows.sort((a,b)=>Number(isUpcoming(a))-Number(isUpcoming(b)));return rows;}
 function renderProducts(){
  const rows=visibleProducts();
  $('catalogCount').textContent=rows.length+' '+tr('model');
  $('products').innerHTML=rows.map(p=>{
    const pending=!Array.isArray(p.plans)||!p.plans.length;
    const blocked=stopSubmission(p);
-   const planBlocked=blocked&&baseCode(p.code)!=='S3Q12JARPA';
    const paused=currentLang==='zh'?'暂停接受订单':currentLang==='en'?'Orders temporarily paused':'Tempahan dihentikan sementara';
    const outrightButton=p.outrightOptions.length?'<button class="addbtn outright-btn" data-id="'+p.id+'" '+(blocked?'disabled':'')+'>'+esc(tr('outright'))+' · '+money(Math.min(...p.outrightOptions.map(o=>o.upfront)))+' · '+esc(tr('oneTime'))+'</button>':'';
    const quotePromo=defaultQuotePromo(p);
@@ -405,12 +404,12 @@ function renderProducts(){
    const priceHtml=pending
      ?'<div class="price pending-price"><div><small>'+esc(tr('pricePending'))+'</small></div></div>'
      :'<div class="price"><div><small>'+esc(tr('from'))+'</small><strong>'+money(quoteFrom)+'</strong><em>/'+esc(tr('month'))+'</em>'+offerCaption+'</div></div>';
-   return '<article class="product '+(pending?'pricing-pending':'')+'"><div class="pvisual">'+fridgeVisual(p)+'</div><div class="pbody"><div class="pcat">'+esc(categoryLabel(p.category))+'</div><h3>'+esc(p.code)+'</h3><div class="psub">'+esc(p.name)+'</div><span class="lifecycle current">'+esc(blocked?paused:orderNotice(p)||tr(isUpcoming(p)?'availableLateNov':'currentSelection'))+'</span>'+priceHtml+'<button class="addbtn" data-id="'+p.id+'" '+(pending||planBlocked?'disabled':'')+'>'+esc(planBlocked?paused:pending?tr('planPending'):tr('viewPlans'))+'</button>'+outrightButton+'</div></article>';
+   return '<article class="product '+(pending?'pricing-pending':'')+'"><div class="pvisual">'+fridgeVisual(p)+'</div><div class="pbody"><div class="pcat">'+esc(categoryLabel(p.category))+'</div><h3>'+esc(p.code)+'</h3><div class="psub">'+esc(p.name)+'</div><span class="lifecycle current">'+esc(blocked?paused:orderNotice(p)||tr(isUpcoming(p)?'availableLateNov':'currentSelection'))+'</span>'+priceHtml+'<button class="addbtn" data-id="'+p.id+'" '+(pending||blocked?'disabled':'')+'>'+esc(blocked?paused:pending?tr('planPending'):tr('viewPlans'))+'</button>'+outrightButton+'</div></article>';
  }).join('');
  $('products').querySelectorAll('.addbtn:not(:disabled)').forEach(b=>b.onclick=()=>openProduct(b.dataset.id,b.classList.contains('outright-btn')));
 }
 function allPlans(product){return [...(product?.plans||[]),...(product?.outrightOptions||[])];}
-function openProduct(id,outright=false){activeProduct=CATALOG.find(x=>x.id===id);const plans=allPlans(activeProduct);if(!activeProduct||!plans.length||(stopSubmission(activeProduct)&&(outright||baseCode(activeProduct.code)!=='S3Q12JARPA')))return;const matching=plansForYears(activeProduct);const quote=defaultQuotePromo(activeProduct);chosenPlan=(outright?plans.find(p=>p.outright):null)||(activeYears==='All'?plans.find(p=>!p.outright):matching.reduce((best,p)=>!best||promoPrice(activeProduct,p,quote,1)<promoPrice(activeProduct,best,quote,1)?p:best,null))||plans[0];chosenPromo=outright?'standard':quote;$('qtyInput').value=1;$('modalModel').textContent=activeProduct.code;$('modalSub').textContent=activeProduct.name+(orderNotice(activeProduct)?' · '+orderNotice(activeProduct):'');renderPlans();renderPromos();$('modalAdd').disabled=stopSubmission(activeProduct);$('modal').showModal();}
+function openProduct(id,outright=false){activeProduct=CATALOG.find(x=>x.id===id);const plans=allPlans(activeProduct);if(!activeProduct||!plans.length||stopSubmission(activeProduct))return;const matching=plansForYears(activeProduct);const quote=defaultQuotePromo(activeProduct);chosenPlan=(outright?plans.find(p=>p.outright):null)||(activeYears==='All'?plans.find(p=>!p.outright):matching.reduce((best,p)=>!best||promoPrice(activeProduct,p,quote,1)<promoPrice(activeProduct,best,quote,1)?p:best,null))||plans[0];chosenPromo=outright?'standard':quote;$('qtyInput').value=1;$('modalModel').textContent=activeProduct.code;$('modalSub').textContent=activeProduct.name+(orderNotice(activeProduct)?' · '+orderNotice(activeProduct):'');renderPlans();renderPromos();$('modalAdd').disabled=stopSubmission(activeProduct);$('modal').showModal();}
 window.closeModal=()=>$('modal').close();
 window.stepQty=d=>{const q=$('qtyInput');q.value=Math.max(1,Math.min(9,(Number(q.value)||1)+d));};
 function renderPlans(){
