@@ -437,13 +437,11 @@ function novemberGiftCartText(){
   };
   return texts[currentLang]||texts.en;
 }
-function compactPromoDescription(p){
-  const pick=(ms,en,zh)=>currentLang==='zh'?zh:currentLang==='en'?en:ms;
-  if(p.id==='standard')return pick('Bayaran biasa, tanpa diskaun.','Standard price, no discount.','标准月费，无折扣。');
-  if(p.type==='percent'&&Number(p.value)===50)return pick('50% untuk '+p.months+' bulan pertama.','50% off the first '+p.months+' months.','首'+p.months+'个月享50%折扣。');
-  if(p.id==='combo10')return pick('Min. 2 unit, kedua-duanya pilih promo ini.','Min. 2 units, both on this offer.','至少2台，两台均选择此优惠。');
-  if(p.id==='laundry150')return pick('Mesin basuh 10.5kg + pengering 9kg · 5 tahun.','10.5kg washer + 9kg dryer · 5 years.','10.5kg洗衣机 + 9kg烘干机 · 5年。');
-  return promoDescription(p);
+function promoDescriptionPoints(p){
+  const text=promoDescription(p)+(activeProduct?.id==='ac6'&&p.id==='combo10'?' '+artcoolBonusText():'');
+  // Retain the full promotion wording; only separate sentences into bullet points.
+  return text.split(/(?<=[.!?])\s+|(?<=[。！？])\s*/u).map(x=>x.trim()).filter(Boolean)
+    .map(line=>'<span class="promo-description-point">'+esc(line)+'</span>').join('');
 }
 
 function renderPromos(){
@@ -457,7 +455,7 @@ function renderPromos(){
       info='<div style="grid-column:1/-1;border:1px solid #f1b5be;background:#fff5f6;border-radius:18px;padding:14px 16px;font-weight:700;line-height:1.4">'+esc(msg)+'</div>';
     }
   }
-  $('promoGrid').innerHTML=info+promos.map(p=>'<button class="promo-card '+(p.id===chosenPromo?'active':'')+'" data-id="'+p.id+'"><b>'+esc(promoLabel(p))+'</b><span>'+esc(compactPromoDescription(p))+'</span></button>').join('');
+  $('promoGrid').innerHTML=info+promos.map(p=>'<button class="promo-card '+(p.id===chosenPromo?'active':'')+'" data-id="'+p.id+'"><b>'+esc(promoLabel(p))+'</b><span class="promo-description-points">'+promoDescriptionPoints(p)+'</span></button>').join('');
   $('promoGrid').querySelectorAll('.promo-card').forEach(b=>b.onclick=()=>{chosenPromo=b.dataset.id;if(promoObj(activeProduct,chosenPromo).bundleProductId){chosenPlan=activeProduct.plans.find(p=>p.years===5&&p.service==='Combine Maintenance');renderPlans();}renderPromos();});
   renderSelectionPreview();
 }
