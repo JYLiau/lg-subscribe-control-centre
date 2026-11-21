@@ -17,13 +17,11 @@
 </style>
 
 <style id="page-scroll-controls-style">
-/* Reserve a narrow rail so floating controls never cover the product cards. */
-.shell{padding-right:calc(50px + env(safe-area-inset-right,0px))!important}
 .page-scroll-controls{position:fixed;right:calc(6px + env(safe-area-inset-right,0px));bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:90;display:grid;grid-template-rows:32px 32px;gap:12px;pointer-events:none}
-.page-scroll-controls button{width:32px;height:32px;padding:0;border-radius:50%;border:1.5px solid #bca98c;background:#fffaf0;color:#82364b;box-shadow:0 2px 6px rgba(80,59,35,.16);font:500 23px/1 system-ui,sans-serif;display:grid;place-items:center;cursor:pointer;pointer-events:auto;touch-action:manipulation}
+.page-scroll-controls button{width:32px;height:32px;padding:0;border:0;border-radius:0;background:transparent;color:#82364b;box-shadow:none;font:500 25px/1 system-ui,sans-serif;display:grid;place-items:center;cursor:pointer;pointer-events:auto;touch-action:manipulation}
 .page-scroll-controls button[hidden]{display:none}
 .page-scroll-controls button:focus-visible{outline:2px solid #82364b;outline-offset:2px}
-.page-scroll-controls button:active{background:#f3e7d1}
+.page-scroll-controls button:active{color:#572234}
 #pageScrollUp{grid-row:1}
 #pageScrollDown{grid-row:2}
 </style>
