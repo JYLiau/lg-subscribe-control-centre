@@ -414,12 +414,24 @@ window.closeModal=()=>$('modal').close();
 window.stepQty=d=>{const q=$('qtyInput');q.value=Math.max(1,Math.min(9,(Number(q.value)||1)+d));renderSelectionPreview();};
 function renderPlans(){
   const plans=allPlans(activeProduct);
-  $('planGrid').innerHTML=plans.map((p,i)=>{
+  const groups = new Map();
+  plans.forEach((plan, index) => {
+    const term = plan.outright ? 'outright' : Number(plan.years);
+    if (!groups.has(term)) groups.set(term, []);
+    groups.get(term).push([plan, index]);
+  });
+  $('planGrid').innerHTML=[...groups.values()].map(group =>
+    '<div class="plan-row">' + group.map(([p,i])=>{
     const badge=p.outright?'cash.png':Number(p.years)===7?'seven-year.jpg':Number(p.years)===5?'five-year.jpg':null;
     const selectionIcon=badge?'<img class="plan-type-icon" src="./assets/plan-icons/'+badge+'" alt="" aria-hidden="true" width="44" height="44">':'';
     if(p.outright)return '<button class="plan-card '+(p===chosenPlan?'active':'')+'" aria-pressed="'+(p===chosenPlan)+'" data-i="'+i+'">'+selectionIcon+'<b>'+esc(tr('outright'))+'</b><span>'+esc(serviceLabel(p.service))+'</span><strong>'+money(p.upfront)+' · '+esc(tr('oneTime'))+'</strong></button>';
-    return '<button class="plan-card '+(p===chosenPlan?'active':'')+'" aria-pressed="'+(p===chosenPlan)+'" data-i="'+i+'">'+selectionIcon+'<b>'+p.years+' '+esc(tr('years'))+'</b><span>'+esc(serviceLabel(p.service))+'</span>'+(serviceDetail(activeProduct,p)?'<small class="service-cadence">'+esc(serviceDetail(activeProduct,p))+'</small>':'')+'<strong>'+money(p.monthly)+'/'+esc(tr('month'))+'</strong></button>';
-  }).join('');
+    const frequency = {'Regular Visit 1x/year': 12, 'Regular Visit 2x/year': 6,
+      'Regular Visit every 2 years': 24, 'Regular Visit 6M': 6}[p.service];
+    const service = frequency ? pick('Regular Visit', 'Regular Visit', '定期上门服务') : serviceLabel(p.service);
+    const cadence = frequency ? pick('👨🏻‍🔧 Servis Setiap '+frequency+' bulan',
+      '👨🏻‍🔧 Service every '+frequency+' months', '👨🏻‍🔧 每'+frequency+'个月上门服务') : serviceDetail(activeProduct,p);
+    return '<button class="plan-card '+(p===chosenPlan?'active':'')+'" aria-pressed="'+(p===chosenPlan)+'" data-i="'+i+'">'+selectionIcon+'<b>'+p.years+' '+esc(tr('years'))+'</b><span>'+esc(service)+'</span>'+(cadence?'<small class="service-cadence">'+esc(cadence)+'</small>':'')+'<strong>'+money(p.monthly)+'/'+esc(tr('month'))+'</strong></button>';
+  }).join('') + '</div>').join('');
   $('planGrid').querySelectorAll('.plan-card').forEach(b=>b.onclick=()=>{chosenPlan=plans[Number(b.dataset.i)];if(chosenPlan.outright||(chosenPromo==='laundry150'&&chosenPlan.service!=='Combine Maintenance'))chosenPromo='standard';renderPlans();renderPromos();});
 }
 function novemberGiftText(){const texts={"ms": "🎁 Double Match + TV 65″ percuma: minimum 2 unit baharu daripada F2520SNEKR, TX2522AT9GR atau S3-Q24K2RPA (2 washer, 2 aircond atau 1+1). Mohon 1–30 Nov 2026; pemasangan 1 Nov–15 Dis 2026. Hadiah dijadual dihantar akhir Jan 2027. Satu hadiah bagi setiap ID pelanggan; tertakluk stok semasa pemasangan, siapa cepat dia dapat. Tiada penggantian jika habis stok. Jason akan sahkan kelayakan.", "en": "🎁 Double Match + free 65″ LG UHD AI TV: minimum 2 new units from F2520SNEKR, TX2522AT9GR or S3-Q24K2RPA (2 washers, 2 air conditioners or 1+1). Apply 1–30 Nov 2026; install 1 Nov–15 Dec 2026. Gift delivery scheduled for end-Jan 2027. One gift per Customer ID; first come, first served subject to stock at installation. No replacement if unavailable. Jason will confirm eligibility.", "zh": "🎁 Double Match赠送65英寸LG UHD AI电视：选购至少2台全新F2520SNEKR、TX2522AT9GR或S3-Q24K2RPA（2台洗衣机、2台冷气或各1台）。2026年11月1–30日申请，11月1日至12月15日完成安装。赠品预计2027年1月底送达。每个客户ID限一份，以安装时库存为准，先到先得，送完无替代。资格由Jason确认。"};return texts[currentLang]||texts.en;}
