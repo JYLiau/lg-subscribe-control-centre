@@ -15,6 +15,16 @@
 .hero-banner{margin:0;padding:0;background:#e9d4b1}
 .hero-banner img{display:block;width:100%;height:auto;max-width:1905px;margin:0 auto}
 </style>
+
+<style id="page-scroll-controls-style">
+.page-scroll-controls{position:fixed;right:calc(14px + env(safe-area-inset-right,0px));bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:90;display:grid;grid-template-rows:48px 48px;gap:10px;pointer-events:none}
+.page-scroll-controls button{width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.65);background:#43332d;color:#fff;box-shadow:0 3px 12px rgba(0,0,0,.22);font:500 25px/1 system-ui,sans-serif;display:grid;place-items:center;cursor:pointer;pointer-events:auto;touch-action:manipulation}
+.page-scroll-controls button[hidden]{display:none}
+.page-scroll-controls button:focus-visible{outline:3px solid #b42338;outline-offset:3px}
+.page-scroll-controls button:active{background:#241b17}
+#pageScrollUp{grid-row:1}
+#pageScrollDown{grid-row:2}
+</style>
 </head>
 <body>
 <header class="top">
@@ -137,6 +147,54 @@
 <div class="toast" id="toast"></div>
 
 <script src="./catalog.js?v=20261118-artcool"></script><script src="./app.js?v=20261118-artcool-order"></script><script src="./image-lite-v2.js?v=20261009-images1"></script>
+
+<nav class="page-scroll-controls" aria-label="Page navigation">
+  <button id="pageScrollUp" type="button" aria-label="Back to top" title="Back to top" hidden><span aria-hidden="true">↑</span></button>
+  <button id="pageScrollDown" type="button" aria-label="Go to bottom" title="Go to bottom" hidden><span aria-hidden="true">↓</span></button>
+</nav>
+<script>
+(() => {
+  const up=document.getElementById('pageScrollUp');
+  const down=document.getElementById('pageScrollDown');
+  const root=document.documentElement;
+  let queued=false;
+  function bounds(){
+    const page=document.scrollingElement||root;
+    return {top:Math.max(0,page.scrollTop),max:Math.max(0,page.scrollHeight-root.clientHeight)};
+  }
+  function update(){
+    queued=false;
+    const {top,max}=bounds();
+    up.hidden=top<=2;
+    down.hidden=max-top<=2;
+  }
+  function schedule(){
+    if(!queued){queued=true;requestAnimationFrame(update);}
+  }
+  function jump(toBottom){
+    window.scrollTo({top:toBottom?bounds().max:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+  }
+  function labels(){
+    const lang=root.lang;
+    const names=lang.startsWith('zh')?['回到顶部','前往底部']:lang.startsWith('ms')?['Kembali ke atas','Pergi ke bawah']:['Back to top','Go to bottom'];
+    [up,down].forEach((button,index)=>{button.setAttribute('aria-label',names[index]);button.title=names[index];});
+  }
+  up.addEventListener('click',()=>jump(false));
+  down.addEventListener('click',()=>jump(true));
+  window.addEventListener('scroll',schedule,{passive:true});
+  window.addEventListener('resize',schedule,{passive:true});
+  window.addEventListener('pageshow',schedule);
+  window.addEventListener('load',schedule);
+  if(window.visualViewport)window.visualViewport.addEventListener('resize',schedule,{passive:true});
+  if(typeof ResizeObserver!=='undefined'){
+    const observer=new ResizeObserver(schedule);
+    observer.observe(document.body);
+    observer.observe(root);
+  }
+  new MutationObserver(labels).observe(root,{attributes:true,attributeFilter:['lang']});
+  labels();update();
+})();
+</script>
 </body>
 </html>
 
