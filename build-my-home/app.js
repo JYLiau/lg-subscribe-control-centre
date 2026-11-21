@@ -413,6 +413,7 @@ function openProduct(id,outright=false){activeProduct=CATALOG.find(x=>x.id===id)
 window.closeModal=()=>$('modal').close();
 window.stepQty=d=>{const q=$('qtyInput');q.value=Math.max(1,Math.min(9,(Number(q.value)||1)+d));renderSelectionPreview();};
 function renderPlans(){
+  const pick = (ms, en, zh) => ({ms, en, zh})[currentLang] ?? ms;
   const plans=allPlans(activeProduct);
   const groups = new Map();
   plans.forEach((plan, index) => {
