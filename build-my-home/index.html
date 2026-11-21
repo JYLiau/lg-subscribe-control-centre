@@ -25,6 +25,18 @@
 #pageScrollUp{grid-row:1}
 #pageScrollDown{grid-row:2}
 </style>
+<style id="selection-preview-style">
+.selection-preview{grid-column:1/-1;min-width:0;background:#fff4cb;border:1px solid #edd99a;border-radius:15px;padding:16px;color:#4b3827}
+.selection-preview h3{margin:0 0 10px;font-size:16px}
+.selection-product{font-size:15px;font-weight:650;line-height:1.45;overflow-wrap:anywhere}
+.selection-plan,.selection-promo{font-size:14px;line-height:1.5;margin-top:5px}
+.selection-prices{margin-top:12px;border-top:1px solid #e8d69e}
+.selection-price-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px 16px;flex-wrap:wrap;padding:10px 0;border-bottom:1px solid #e8d69e;font-size:14px}
+.selection-price-row:last-child{border-bottom:0;padding-bottom:0}
+.selection-price-row strong{font-size:18px;color:#52351f}
+.selection-warning{font-size:14px;line-height:1.5;margin:12px 0 0;color:#7b481a}
+#modalAdd{grid-column:1/-1}
+</style>
 </head>
 <body>
 <header class="top">
@@ -140,13 +152,14 @@
     <div class="modal-bottom">
       <div class="qtywrap"><label data-i18n="qty">Kuantiti</label><div class="qty"><button onclick="stepQty(-1)">−</button><input id="qtyInput" type="number" min="1" max="9" value="1"><button onclick="stepQty(1)">+</button></div></div>
       <button class="copywriting-btn" id="copyCopyBtn" type="button" title="Copy selected plan and promotion message">📋 <span data-i18n="copy">Salin ayat</span></button>
+      <section id="selectionPreview" class="selection-preview" aria-live="polite" aria-atomic="true"></section>
       <button class="modal-add" id="modalAdd" data-i18n="addPackage">Tambah ke pakej</button>
     </div>
   </div>
 </dialog>
 <div class="toast" id="toast"></div>
 
-<script src="./catalog.js?v=20261118-artcool"></script><script src="./app.js?v=20261118-artcool-order"></script><script src="./image-lite-v2.js?v=20261009-images1"></script>
+<script src="./catalog.js?v=20261118-artcool"></script><script src="./app.js?v=20261121-selection-preview"></script><script src="./image-lite-v2.js?v=20261009-images1"></script>
 
 <nav class="page-scroll-controls" aria-label="Page navigation">
   <button id="pageScrollUp" type="button" aria-label="Back to top" title="Back to top" hidden><span aria-hidden="true">↑</span></button>
