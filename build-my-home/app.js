@@ -47,7 +47,7 @@ ms:{
   comboNeed2:'RM10 OFF combo perlukan sekurang-kurangnya 2 unit (model sama atau berlainan) dalam pakej yang kedua-duanya memilih RM10 OFF combo.',
   addedPackage:'Ditambah ke pakej',comboAdded:'ditambah ke pakej',comboNeedAnother:'Ditambah. RM10 combo perlukan satu lagi item dengan pakej RM10 OFF combo yang sama.',
   promoStandard:'Harga standard',promoHalf9:'50% OFF 9 bulan',promoCombo10:'RM10 OFF combo',promoOctober:'Promosi Oktober / Evergreen · Jason sahkan',promoDw99:'Promosi khas RM99/bulan',promoDw99Desc:'Sah untuk permohonan 1 Okt–31 Dis 2026. Harga biasa RM150/bulan.',
-  promoStandardDesc:'Tiada diskaun pengenalan.',promoHalf9Desc:'Promosi asas LG Subscribe: 50% OFF untuk 9 bulan pertama. Tidak boleh digabungkan dengan RM10 OFF combo pada item yang sama.',promoCombo10Desc:'Perlu sekurang-kurangnya 2 unit (model sama atau berlainan) dan kedua-duanya mesti pilih RM10 OFF combo. Tidak boleh campur satu item combo dengan item 50% OFF.',promoOctoberDesc:'Helaian pelancaran mengesahkan Promosi Oktober & Evergreen tetapi kadar/tempoh diskaun tidak dinyatakan. Jason akan sahkan tawaran semasa.',
+  promoStandardDesc:'Tiada diskaun pengenalan.',promoHalf9Desc:'⚠︎ Tidak boleh digabungkan dengan promosi RM10 OFF combo.',promoCombo10Desc:'Minimum 2 unit (model sama atau berlainan). ⚠︎ Tidak boleh digabungkan dengan promosi 50% OFF.',promoOctoberDesc:'Helaian pelancaran mengesahkan Promosi Oktober & Evergreen tetapi kadar/tempoh diskaun tidak dinyatakan. Jason akan sahkan tawaran semasa.',
   comboInactive:'belum aktif (perlu 2 item combo)',monthWord:'Bulan',notActiveAdd:'Belum aktif — tambah 1 lagi item menggunakan RM10 OFF combo',
   withinBudget:'Dalam bajet sebanyak {amount}/bulan',overBudget:'Melebihi bajet sebanyak {amount}/bulan',buildToCompare:'Bina pakej untuk banding dengan bajet.',
   addFirst:'Tambah produk dahulu sebelum jana link customer.',linkCopied:'Link customer disalin',linkCopiedFallback:'Link penuh disalin kerana servis link pendek tidak tersedia',shortLinkUnavailable:'Link pakej ini tidak tersedia. Sila minta link baharu daripada Jason.',copyLinkPrompt:'Salin link customer ini',packageCleared:'Pakej dikosongkan',
@@ -439,9 +439,9 @@ function novemberGiftCartText(){
 }
 function promoDescriptionPoints(p){
   const text=promoDescription(p)+(activeProduct?.id==='ac6'&&p.id==='combo10'?' '+artcoolBonusText():'');
-  // Retain the full promotion wording; only separate sentences into bullet points.
+  // Warnings carry their own marker.
   return text.split(/(?<=[.!?])\s+|(?<=[。！？])\s*/u).map(x=>x.trim()).filter(Boolean)
-    .map(line=>'<span class="promo-description-point">'+esc(line)+'</span>').join('');
+    .map(line=>'<span class="promo-description-point'+(line.startsWith('⚠')?' promo-description-warning':'')+'">'+esc(line)+'</span>').join('');
 }
 
 function renderPromos(){
