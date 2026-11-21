@@ -26,16 +26,35 @@
 #pageScrollDown{grid-row:2}
 </style>
 <style id="selection-preview-style">
-.selection-preview{grid-column:1/-1;min-width:0;background:#fff4cb;border:1px solid #edd99a;border-radius:15px;padding:16px;color:#4b3827}
-.selection-preview h3{margin:0 0 10px;font-size:16px}
-.selection-product{font-size:15px;font-weight:650;line-height:1.45;overflow-wrap:anywhere}
-.selection-plan,.selection-promo{font-size:14px;line-height:1.5;margin-top:5px}
-.selection-prices{margin-top:12px;border-top:1px solid #e8d69e}
-.selection-price-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px 16px;flex-wrap:wrap;padding:10px 0;border-bottom:1px solid #e8d69e;font-size:14px}
-.selection-price-row:last-child{border-bottom:0;padding-bottom:0}
-.selection-price-row strong{font-size:18px;color:#52351f}
-.selection-warning{font-size:14px;line-height:1.5;margin:12px 0 0;color:#7b481a}
+.selection-preview{grid-column:1/-1;min-width:0;background:#fffdf3;border:1px solid #f1ebd8;border-radius:12px;padding:9px 10px;color:#4b3827}
+.selection-heading{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:7px}
+.selection-heading h3{margin:0;font-size:14px;font-weight:700}
+.selection-heading>span{font-size:13px;text-align:right}
+.selection-prices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.selection-price-row{min-width:0;display:flex;flex-direction:column;gap:3px;background:#fff;border:1px solid #eee9de;border-radius:8px;padding:7px 8px;font-size:13px;text-align:center}
+.selection-price-row:only-child{grid-column:1/-1}
+.selection-price-row strong{font-size:16px;color:#52351f;line-height:1.25}
+.selection-warning{color:#92551e}
 #modalAdd{grid-column:1/-1}
+#modal{max-height:94vh;max-height:94dvh}
+#modal>.modal-in{display:flex;flex-direction:column;max-height:94vh;max-height:94dvh;overflow:hidden;padding:16px}
+#modal .selection-options{min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#modal .modal-bottom{flex-shrink:0;margin-top:10px;gap:8px;padding-bottom:env(safe-area-inset-bottom,0px)}
+#modal .modal-top h2{font-size:20px}
+#modal .modal-top p{margin-bottom:0}
+#modal .plan-title{margin:12px 0 7px}
+#modal .plan-grid,#modal .promo-grid{gap:7px}
+#modal .plan-card,#modal .promo-card{padding:10px 12px}
+#modal .plan-card>b{min-height:22px}
+#modal .plan-card .plan-type-icon{width:32px;height:32px}
+#modal .promo-card span{line-height:1.35}
+#modal .modal-add{padding:11px}
+@media(max-height:740px){
+ #modal>.modal-in{padding:12px}
+ #modal .plan-title{margin:8px 0 5px}
+ #modal .plan-card,#modal .promo-card{padding:8px 10px}
+ #modal .modal-bottom{margin-top:7px;gap:6px}
+}
 </style>
 </head>
 <body>
@@ -141,6 +160,7 @@
 
 <dialog class="modal" id="modal">
   <div class="modal-in">
+    <div class="selection-options">
     <div class="modal-top">
       <div><h2 id="modalModel"></h2><p id="modalSub"></p></div>
       <button class="close" onclick="closeModal()">×</button>
@@ -149,6 +169,7 @@
     <div class="plan-grid" id="planGrid"></div>
     <div class="plan-title"><b data-i18n="choosePromo">2. Pilih promosi</b></div>
     <div class="promo-grid" id="promoGrid"></div>
+    </div>
     <div class="modal-bottom">
       <div class="qtywrap"><label data-i18n="qty">Kuantiti</label><div class="qty"><button onclick="stepQty(-1)">−</button><input id="qtyInput" type="number" min="1" max="9" value="1"><button onclick="stepQty(1)">+</button></div></div>
       <button class="copywriting-btn" id="copyCopyBtn" type="button" title="Copy selected plan and promotion message">📋 <span data-i18n="copy">Salin ayat</span></button>
@@ -159,7 +180,7 @@
 </dialog>
 <div class="toast" id="toast"></div>
 
-<script src="./catalog.js?v=20261118-artcool"></script><script src="./app.js?v=20261121-selection-preview"></script><script src="./image-lite-v2.js?v=20261009-images1"></script>
+<script src="./catalog.js?v=20261118-artcool"></script><script src="./app.js?v=20261121-compact-preview"></script><script src="./image-lite-v2.js?v=20261009-images1"></script>
 
 <nav class="page-scroll-controls" aria-label="Page navigation">
   <button id="pageScrollUp" type="button" aria-label="Back to top" title="Back to top" hidden><span aria-hidden="true">↑</span></button>
