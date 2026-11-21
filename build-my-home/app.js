@@ -474,7 +474,7 @@ function renderSelectionPreview(){
   const summary=inactive
     ?pick('Combo belum aktif','Combo not active','组合优惠未生效')
     :(item.plan.outright?tr('outright'):item.plan.years+' '+tr('years'))+' · '+qty+' '+pick('unit','unit'+(qty>1?'s':''),'件');
-  el.innerHTML='<div class="selection-heading"><h3>'+pick('Ringkasan','Preview','配套预览')+'</h3><span'+(inactive?' class="selection-warning"':'')+'>'+esc(summary)+'</span></div>'+
+  el.innerHTML='<div class="selection-heading"><h3>'+pick('Ringkasan Pakej','Package Overview','配套概览')+'</h3><span'+(inactive?' class="selection-warning"':'')+'>'+esc(summary)+'</span></div>'+
     '<div class="selection-prices">'+rows+'</div>';
 }
 
