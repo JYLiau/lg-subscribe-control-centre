@@ -12,6 +12,8 @@
 .shared-package-view .budget{display:none!important}
 .shared-package-view .kpis{grid-template-columns:1fr!important}
 .shared-package-view .kpis .kpi:last-child{display:none!important}
+.hero-banner{margin:0;padding:0;background:#e9d4b1}
+.hero-banner img{display:block;width:100%;height:auto;max-width:1905px;margin:0 auto}
 </style>
 </head>
 <body>
@@ -26,31 +28,15 @@
   </div>
 </header>
 
-<section class="hero">
-  <div class="hero-in">
-    <div>
-      <div class="eyebrow" data-i18n="heroEyebrow">● Public showroom · no login required</div>
-      <h1 data-i18n-html="heroTitle">Rumah anda.<br>Pilihan anda.</h1>
-      <p data-i18n="heroText">Pilih produk, bandingkan pelan 5 atau 7 tahun, cuba promosi, dan lihat jadual bayaran pakej anda — semuanya dalam satu halaman.</p>
-    </div>
-    <div class="agent-card">
-      <div class="agent-avatar">JY</div>
-      <div><b>Jason Yang</b><span>LG PuriCare Manager · LGM122989</span></div>
-      <small data-i18n="agentNote">Harga pelan ialah anggaran. Jason akan sahkan promosi dan kelayakan sebelum permohonan.</small>
-    </div>
-  </div>
+<section class="hero hero-banner" aria-label="LG Subscribe — A Complete Home. Today.">
+  <img src="https://lgsubscribe-malaysia.com.my/_next/image/?q=75&amp;url=%2Fimages%2Flgbanner.webp&amp;w=3840" alt="LG Subscribe — A Complete Home. Today." width="1905" height="630" fetchpriority="high" decoding="async" referrerpolicy="no-referrer">
 </section>
 
 <main class="shell">
 <div class="builder-grid">
   <div class="maincol">
-    <section class="panel preview" id="packagePreview">
-      <div class="panel-head">
-        <div><h2 data-i18n="homeTitle">PAKEJ RUMAH ANDA</h2><p data-i18n="homeIntro">Susunan responsif — produk ke-3 dan seterusnya kekal sejajar.</p></div>
-        <div class="tiny" id="selectedCount">0 produk dipilih</div>
-      </div>
-      <div class="room-grid" id="roomGrid"></div>
-    </section>
+    <!-- Keep render targets available for package calculations without a duplicate preview. -->
+    <div hidden aria-hidden="true"><span id="selectedCount"></span><div id="roomGrid"></div></div>
 
     <section class="panel catalog" id="catalogSection">
       <div class="panel-head">
