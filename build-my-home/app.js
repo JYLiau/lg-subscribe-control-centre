@@ -924,6 +924,25 @@ function packagePeriodText(p){
 }
 function packageCopywriting(items=cart,priceFor=monthlyFor,labelFor=promoLabelFor,includeGift=true){
   if(!items.length)return '';
+  if(items.length === 1) {
+    const [item] = items;
+    if(item.product.id === 'lau-fv1450-vdh9066-combo' && item.promo === 'laundry150' &&
+       item.qty === 1 && planMonths(item.plan) === 60 &&
+       packagePricePeriods(month => priceFor(item, month), 60).every(period => Number(period.price) === 150)) {
+      const messages = {
+        en: ['*Best Seller Laundry Combo*', '*Washer 10.5kg + Dryer 9kg · White*', 'Model: FV1450S2W + VD-H9066WSR', '',
+          '*5-Year Plan • Monthly Payment:*', '🔥 *Combo Special Offer* 🔥', 'Months 1–60: RM150/month', '',
+          '*Package Includes (Combined Maintenance):*', '🛡️ 5-year warranty', '📦 Self-Service Kit delivered every 6 months', '👨🏻‍🔧 Technician service every 12 months'],
+        ms: ['*Kombo Dobi Terlaris*', '*Mesin Basuh 10.5kg + Mesin Pengering 9kg · Putih*', 'Model: FV1450S2W + VD-H9066WSR', '',
+          '*Pelan 5 Tahun • Bayaran Bulanan:*', '🔥 *Tawaran Khas Kombo* 🔥', 'Bulan 1–60: RM150/bulan', '',
+          '*Pakej Termasuk (Penyelenggaraan Gabungan):*', '🛡️ Waranti 5 tahun', '📦 Kit servis sendiri dihantar setiap 6 bulan', '👨🏻‍🔧 Servis juruteknik setiap 12 bulan'],
+        zh: ['*热销洗烘组合*', '*10.5kg 洗衣机 + 9kg 烘干机 · 白色*', '型号：FV1450S2W + VD-H9066WSR', '',
+          '*5 年配套 • 每月付款*', '🔥 *组合特惠* 🔥', '第 1–60 个月：RM150/月', '',
+          '*配套包含（组合保养）*', '🛡️ 5 年保修', '📦 每 6 个月配送自助保养套件', '👨🏻‍🔧 每 12 个月提供技师上门服务']
+      };
+      return (messages[currentLang] ?? messages.ms).join('\n');
+    }
+  }
   const pick=(ms,en,zh)=>currentLang==='zh'?zh:currentLang==='en'?en:ms;
   const lines=[];
   const periodLine=p=>paymentMonthRange(p.start,p.end)+': '+p.price+'/'+tr('month');
