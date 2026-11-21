@@ -56,6 +56,38 @@
  #modal .modal-bottom{margin-top:7px;gap:6px}
 }
 </style>
+
+<style id="single-view-selection-style">
+/* Keep the entire selector in normal flow; nothing overlays an option. */
+#modal{width:min(660px,96vw);max-height:94vh;max-height:94dvh;overflow:auto}
+#modal>.modal-in{display:block;max-height:none;overflow:visible;padding:14px}
+#modal .selection-options{overflow:visible}
+#modal .modal-top{gap:8px;align-items:start}
+#modal .modal-top h2{font-size:20px;line-height:1.2}
+#modal .modal-top p{font-size:13px;line-height:1.3;margin:3px 0 0}
+#modal .close{width:30px;height:30px;flex-shrink:0}
+#modal .plan-title{font-size:14px;margin:10px 0 6px}
+#modal .plan-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:0}
+#modal .plan-card{padding:9px;gap:3px;min-width:0;border-radius:11px;color:#4b3827}
+#modal .plan-card>b{font-size:15px;padding-right:23px;min-height:20px}
+#modal .plan-card span,#modal .plan-card small{font-size:12px;line-height:1.3}
+#modal .plan-card strong{font-size:16px;line-height:1.25}
+#modal .plan-card .plan-type-icon{width:22px;height:22px;top:8px;right:7px}
+#modal .promo-grid{grid-template-columns:1fr;gap:6px;margin:0}
+#modal .promo-card{padding:8px 10px;gap:2px;border-radius:10px;color:#4b3827}
+#modal .promo-card>b{font-size:14px;line-height:1.2}
+#modal .promo-card span{font-size:12px;line-height:1.3}
+#modal .modal-bottom{position:static;grid-template-columns:minmax(0,1fr) auto;margin-top:9px;gap:7px}
+#modal .qtywrap label{font-size:12px;margin-bottom:3px}
+#modal .qty{height:34px}
+#modal .qty input{font-size:16px}
+#modal .copywriting-btn{padding:8px 10px;font-size:14px;min-height:34px}
+#modal .selection-preview{padding:7px 9px;border-radius:10px}
+#modal .selection-heading{margin-bottom:5px}
+#modal .selection-price-row{padding:6px;gap:2px}
+#modal .selection-price-row strong{font-size:16px}
+#modal .modal-add{padding:10px;font-size:16px;line-height:1.3}
+</style>
 </head>
 <body>
 <header class="top">
@@ -180,7 +212,7 @@
 </dialog>
 <div class="toast" id="toast"></div>
 
-<script src="./catalog.js?v=20261118-artcool"></script><script src="./app.js?v=20261121-compact-preview"></script><script src="./image-lite-v2.js?v=20261009-images1"></script>
+<script src="./catalog.js?v=20261118-artcool"></script><script src="./app.js?v=20261121-single-view"></script><script src="./image-lite-v2.js?v=20261009-images1"></script>
 
 <nav class="page-scroll-controls" aria-label="Page navigation">
   <button id="pageScrollUp" type="button" aria-label="Back to top" title="Back to top" hidden><span aria-hidden="true">↑</span></button>
