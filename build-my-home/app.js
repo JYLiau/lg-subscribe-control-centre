@@ -928,7 +928,7 @@ function packageCopywriting(items=cart,priceFor=monthlyFor,labelFor=promoLabelFo
     const [item] = items;
     if(item.product.id === 'lau-fv1450-vdh9066-combo' && item.promo === 'laundry150' &&
        item.qty === 1 && planMonths(item.plan) === 60 &&
-       packagePricePeriods(month => priceFor(item, month), 60).every(period => Number(period.price) === 150)) {
+       packagePricePeriods(month => priceFor(item, month), 60).every(period => period.price === money(150))) {
       const messages = {
         en: ['*Best Seller Laundry Combo*', '*Washer 10.5kg + Dryer 9kg · White*', 'Model: FV1450S2W + VD-H9066WSR', '',
           '*5-Year Plan • Monthly Payment:*', '🔥 *Combo Special Offer* 🔥', 'Months 1–60: RM150/month', '',
