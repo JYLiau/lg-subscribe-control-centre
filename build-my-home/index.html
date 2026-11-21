@@ -26,7 +26,7 @@
 #pageScrollDown{grid-row:2}
 </style>
 <style id="selection-preview-style">
-.selection-preview{grid-column:1/-1;min-width:0;background:#fffdf3;border:1px solid #f1ebd8;border-radius:12px;padding:9px 10px;color:#4b3827}
+.selection-preview{grid-column:1/-1;min-width:0;background:#fffdf3;border:2px solid #52351f;border-radius:12px;padding:9px 10px;color:#4b3827}
 .selection-heading{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:7px}
 .selection-heading h3{margin:0;font-size:14px;font-weight:700}
 .selection-heading>span{font-size:13px;text-align:right}
@@ -52,7 +52,8 @@
 #modal .plan-card span,#modal .promo-card span{font-size:11px;color:var(--muted);line-height:1.3}
 #modal .plan-card .plan-type-icon{width:36px;height:36px;top:9px;right:10px}
 #modal .modal-bottom{position:static;margin-top:9px;gap:7px;padding-bottom:env(safe-area-inset-bottom,0px)}
-#modal .qty button{color:#3985ff}
+#modal .qty button{color:#3985ff;flex-shrink:0}
+#modal .qty input{flex:1;min-width:0}
 #modal .selection-preview{padding:7px 10px}
 #modal .selection-heading{margin-bottom:5px}
 #modal .selection-price-row{padding:6px 8px}
@@ -66,6 +67,8 @@
 #modal .promo-description-points{display:grid;gap:2px}
 #modal .promo-description-point{display:block;position:relative;padding-left:10px}
 #modal .promo-description-point:before{content:"•";position:absolute;left:0}
+#modal .promo-description-warning{padding-left:0}
+#modal .promo-description-warning:before{content:none}
 #modal>.modal-in{padding-bottom:8px}
 #modal .modal-bottom{grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto auto;row-gap:6px;margin-top:8px;padding-bottom:0;align-items:end}
 #modal .qtywrap{grid-row:1;grid-column:1}
@@ -197,7 +200,7 @@
 </dialog>
 <div class="toast" id="toast"></div>
 
-<script src="./catalog.js?v=20261118-artcool"></script><script src="./app.js?v=20261121-package-overview"></script><script src="./image-lite-v2.js?v=20261009-images1"></script>
+<script src="./catalog.js?v=20261118-artcool"></script><script src="./app.js?v=20261121-promo-preview"></script><script src="./image-lite-v2.js?v=20261009-images1"></script>
 
 <nav class="page-scroll-controls" aria-label="Page navigation">
   <button id="pageScrollUp" type="button" aria-label="Back to top" title="Back to top" hidden><span aria-hidden="true">↑</span></button>
