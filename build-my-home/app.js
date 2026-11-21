@@ -411,7 +411,7 @@ function renderProducts(){
 function allPlans(product){return [...(product?.plans||[]),...(product?.outrightOptions||[])];}
 function openProduct(id,outright=false){activeProduct=CATALOG.find(x=>x.id===id);const plans=allPlans(activeProduct);if(!activeProduct||!plans.length||stopSubmission(activeProduct))return;const matching=plansForYears(activeProduct);const quote=defaultQuotePromo(activeProduct);chosenPlan=(outright?plans.find(p=>p.outright):null)||(activeYears==='All'?plans.find(p=>!p.outright):matching.reduce((best,p)=>!best||promoPrice(activeProduct,p,quote,1)<promoPrice(activeProduct,best,quote,1)?p:best,null))||plans[0];chosenPromo=outright?'standard':quote;$('qtyInput').value=1;$('modalModel').textContent=activeProduct.code;$('modalSub').textContent=activeProduct.name+(orderNotice(activeProduct)?' · '+orderNotice(activeProduct):'');renderPlans();renderPromos();$('modalAdd').disabled=stopSubmission(activeProduct);$('modal').showModal();}
 window.closeModal=()=>$('modal').close();
-window.stepQty=d=>{const q=$('qtyInput');q.value=Math.max(1,Math.min(9,(Number(q.value)||1)+d));};
+window.stepQty=d=>{const q=$('qtyInput');q.value=Math.max(1,Math.min(9,(Number(q.value)||1)+d));renderSelectionPreview();};
 function renderPlans(){
   const plans=allPlans(activeProduct);
   $('planGrid').innerHTML=plans.map((p,i)=>{
@@ -450,7 +450,28 @@ function renderPromos(){
   }
   $('promoGrid').innerHTML=info+promos.map(p=>'<button class="promo-card '+(p.id===chosenPromo?'active':'')+'" data-id="'+p.id+'"><b>'+esc(promoLabel(p))+'</b><span>'+esc(promoDescription(p)+(activeProduct?.id==='ac6'&&p.id==='combo10'?' '+artcoolBonusText():''))+'</span></button>').join('');
   $('promoGrid').querySelectorAll('.promo-card').forEach(b=>b.onclick=()=>{chosenPromo=b.dataset.id;if(promoObj(activeProduct,chosenPromo).bundleProductId){chosenPlan=activeProduct.plans.find(p=>p.years===5&&p.service==='Combine Maintenance');renderPlans();}renderPromos();});
+  renderSelectionPreview();
 }
+function renderSelectionPreview(){
+  const el=$('selectionPreview');
+  if(!el||!activeProduct||!chosenPlan)return;
+  const pick=(ms,en,zh)=>currentLang==='zh'?zh:currentLang==='en'?en:ms;
+  const qty=Math.max(1,Math.min(9,Math.floor(Number($('qtyInput').value)||1)));
+  const item=selectedPackageItem(activeProduct,chosenPlan,chosenPromo,qty);
+  const context=[...cart,item];
+  const promo=promoObj(item.product,item.promo);
+  const inactive=(item.promo==='combo10'&&comboUnitCount(context)<2)||!specialComboEligible(item,context)||(item.promo==='airpair15'&&!pairPromoEligible(item,context));
+  const rows=item.plan.outright
+    ?'<div class="selection-price-row"><span>'+esc(tr('oneTime'))+'</span><strong>'+money((Number(item.plan.upfront)||0)*qty)+'</strong></div>'
+    :packagePricePeriods(month=>monthlyFor(item,month,context),planMonths(item.plan)).map(period=>'<div class="selection-price-row"><span>'+esc(paymentMonthRange(period.start,period.end))+'</span><strong>'+esc(period.price)+'/'+esc(tr('month'))+'</strong></div>').join('');
+  el.innerHTML='<h3>'+pick('Ringkasan Pilihan Anda','Your Selection Preview','您的配套预览')+'</h3>'+
+    '<div class="selection-product">'+esc(item.product.name)+' · '+qty+' '+pick('unit','unit'+(qty>1?'s':''),'件')+'</div>'+
+    '<div class="selection-plan">'+esc(item.plan.outright?tr('outright'):item.plan.years+' '+tr('years')+' · '+serviceLabel(item.plan.service))+'</div>'+
+    (item.plan.outright?'':'<div class="selection-promo">'+esc(promoLabel(promo))+'</div>')+
+    '<div class="selection-prices">'+rows+'</div>'+
+    (inactive?'<p class="selection-warning">'+pick('Syarat promosi belum dipenuhi. Harga standard dipaparkan sehingga produk pasangan yang layak ditambah.','Promotion requirements are not met. Standard pricing is shown until the eligible companion product is added.','尚未符合优惠条件；加入符合条件的搭配产品后才享有折扣，目前显示标准价格。')+'</p>':'');
+}
+
 function specialComboEligible(item,items){
   if(!['tv15nov','rac15nov'].includes(item.promo))return true;
   return items.reduce((n,x)=>n+(x.promo===item.promo&&!x.plan?.outright&&promoObj(x.product,x.promo).id===item.promo?Number(x.qty)||1:0),0)>=2;
@@ -458,10 +479,10 @@ function specialComboEligible(item,items){
 function comboUnitCount(items){return items.reduce((total,item)=>total+(item.promo==='combo10'&&!item.plan?.outright?Math.max(1,Math.floor(Number(item.qty)||1)):0),0);}
 function comboCartUnitCount(){return comboUnitCount(cart);}
 function comboEligible(){return comboCartUnitCount()>=2;}
-function pairPromoEligible(item){
+function pairPromoEligible(item,items=cart){
   const target=String(item?.product?.pairPromoWith||'').split('.')[0].toUpperCase();
   if(!target)return true;
-  return cart.some(x=>String(x.product?.code||'').split('.')[0].toUpperCase()===target);
+  return items.some(x=>String(x.product?.code||'').split('.')[0].toUpperCase()===target);
 }
 function promoLabelFor(item){
   const p=promoObj(item.product,item.promo);let label=promoLabel(p);
@@ -472,9 +493,9 @@ function promoLabelFor(item){
   return label;
 }
 function planMonths(plan){return plan?.outright?1:Math.max(1,Number(plan?.years)||0)*12;}
-function monthlyFor(item,month){
+function monthlyFor(item,month,items=cart){
   if(item.plan?.outright)return month===1?(Number(item.plan.upfront)||0)*item.qty:0;
-  return promoPrice(item.product,item.plan,item.promo,month,{comboActive:comboEligible(),pairActive:pairPromoEligible(item),specialComboActive:specialComboEligible(item,cart),artcoolWasherBonus:isArtcoolWasherCombo(item,cart)})*item.qty;
+  return promoPrice(item.product,item.plan,item.promo,month,{comboActive:comboUnitCount(items)>=2,pairActive:pairPromoEligible(item,items),specialComboActive:specialComboEligible(item,items),artcoolWasherBonus:isArtcoolWasherCombo(item,items)})*item.qty;
 }
 
 const PRODUCT_FEATURE_GROUPS={
@@ -969,6 +990,6 @@ async function wa(){
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1800);}
 window.scrollToCatalog=()=>$('catalogSection').scrollIntoView({behavior:'smooth',block:'start'});
 window.scrollToPackage=()=>$('packageSide').scrollIntoView({behavior:'smooth',block:'start'});
-document.addEventListener('DOMContentLoaded',async()=>{applyI18n();await loadFromUrl();const model=new URL(location.href).searchParams.get('model');if(model)$('search').value=model;renderCats();renderComboMenu();renderProducts();renderCart();loadSubmissionStatuses();$('langSelect').addEventListener('change',e=>setLanguage(e.target.value));$('search').addEventListener('input',renderProducts);$('sort').addEventListener('change',renderProducts);$('budget').addEventListener('input',budgetCheck);$('modalAdd').onclick=addActive;$('copyCopyBtn').onclick=copySelectedCopywriting;$('comboAddBtn').onclick=addRefinedCombo;$('shareBtn').onclick=sharePackage;$('copyPackageBtn').onclick=copyPackageCopywriting;$('waBtn').onclick=wa;$('editSharedBtn').onclick=editSharedPackage;$('resetBtn').onclick=()=>{cart=[];renderCart();toast(tr('packageCleared'));};$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal();});$('comboModal').addEventListener('click',e=>{if(e.target===$('comboModal'))closeComboModal();});if(document.body.classList.contains('shared-package-view')&&cart.length)setTimeout(()=>scrollToPackage(),80);});
+document.addEventListener('DOMContentLoaded',async()=>{applyI18n();await loadFromUrl();const model=new URL(location.href).searchParams.get('model');if(model)$('search').value=model;renderCats();renderComboMenu();renderProducts();renderCart();loadSubmissionStatuses();$('langSelect').addEventListener('change',e=>setLanguage(e.target.value));$('search').addEventListener('input',renderProducts);$('sort').addEventListener('change',renderProducts);$('budget').addEventListener('input',budgetCheck);$('qtyInput').addEventListener('input',renderSelectionPreview);$('qtyInput').addEventListener('change',()=>{$('qtyInput').value=Math.max(1,Math.min(9,Math.floor(Number($('qtyInput').value)||1)));renderSelectionPreview();});$('modalAdd').onclick=addActive;$('copyCopyBtn').onclick=copySelectedCopywriting;$('comboAddBtn').onclick=addRefinedCombo;$('shareBtn').onclick=sharePackage;$('copyPackageBtn').onclick=copyPackageCopywriting;$('waBtn').onclick=wa;$('editSharedBtn').onclick=editSharedPackage;$('resetBtn').onclick=()=>{cart=[];renderCart();toast(tr('packageCleared'));};$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal();});$('comboModal').addEventListener('click',e=>{if(e.target===$('comboModal'))closeComboModal();});if(document.body.classList.contains('shared-package-view')&&cart.length)setTimeout(()=>scrollToPackage(),80);});
 })();
 
