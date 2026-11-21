@@ -464,12 +464,11 @@ function renderSelectionPreview(){
   const rows=item.plan.outright
     ?'<div class="selection-price-row"><span>'+esc(tr('oneTime'))+'</span><strong>'+money((Number(item.plan.upfront)||0)*qty)+'</strong></div>'
     :packagePricePeriods(month=>monthlyFor(item,month,context),planMonths(item.plan)).map(period=>'<div class="selection-price-row"><span>'+esc(paymentMonthRange(period.start,period.end))+'</span><strong>'+esc(period.price)+'/'+esc(tr('month'))+'</strong></div>').join('');
-  el.innerHTML='<h3>'+pick('Ringkasan Pilihan Anda','Your Selection Preview','您的配套预览')+'</h3>'+
-    '<div class="selection-product">'+esc(item.product.name)+' · '+qty+' '+pick('unit','unit'+(qty>1?'s':''),'件')+'</div>'+
-    '<div class="selection-plan">'+esc(item.plan.outright?tr('outright'):item.plan.years+' '+tr('years')+' · '+serviceLabel(item.plan.service))+'</div>'+
-    (item.plan.outright?'':'<div class="selection-promo">'+esc(promoLabel(promo))+'</div>')+
-    '<div class="selection-prices">'+rows+'</div>'+
-    (inactive?'<p class="selection-warning">'+pick('Syarat promosi belum dipenuhi. Harga standard dipaparkan sehingga produk pasangan yang layak ditambah.','Promotion requirements are not met. Standard pricing is shown until the eligible companion product is added.','尚未符合优惠条件；加入符合条件的搭配产品后才享有折扣，目前显示标准价格。')+'</p>':'');
+  const summary=inactive
+    ?pick('Combo belum aktif','Combo not active','组合优惠未生效')
+    :(item.plan.outright?tr('outright'):item.plan.years+' '+tr('years'))+' · '+qty+' '+pick('unit','unit'+(qty>1?'s':''),'件');
+  el.innerHTML='<div class="selection-heading"><h3>'+pick('Ringkasan','Preview','配套预览')+'</h3><span'+(inactive?' class="selection-warning"':'')+'>'+esc(summary)+'</span></div>'+
+    '<div class="selection-prices">'+rows+'</div>';
 }
 
 function specialComboEligible(item,items){
