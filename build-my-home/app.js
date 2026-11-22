@@ -40,7 +40,7 @@ ms:{
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Imej produk daripada bahan rujukan yang dibekalkan. T&C apply.',
   comboHelp:'Pilih tempoh, servis dan promosi untuk setiap produk. Harga pakej akan dikira semula sebelum ditambah.',comboEstimate:'Anggaran bayaran bulan pertama',comboAdd:'Tambah set ke pakej',
   choosePlan:'1. Pilih pelan',choosePromo:'2. Pilih promosi',outright:'Outright',oneTime:'sekali bayar',noService:'Tanpa servis',qty:'Kuantiti',copy:'Salin ayat',copyTitle:'Salin ayat jualan untuk pelan dan promosi dipilih',addPackage:'Tambah ke pakej',
-  all:'Semua',allPlans:'Semua pelan',years:'tahun',month:'bulan',months:'bulan',from:'Dari',viewPlans:'Lihat pelan',pricePending:'Harga akan dikemas kini',planPending:'Pelan belum tersedia',currentSelection:'Lihat pilihan',availableLateNov:'Jangkaan pelancaran akhir Nov 2026',orderRestocking:'Tempahan dibuka · Stok dijangka minggu depan',orderConfirm:'Tempahan dibuka · Tarikh penghantaran akan disahkan',
+  outOfStock:'Stok habis',all:'Semua',allPlans:'Semua pelan',years:'tahun',month:'bulan',months:'bulan',from:'Dari',viewPlans:'Lihat pelan',pricePending:'Harga akan dikemas kini',planPending:'Pelan belum tersedia',currentSelection:'Lihat pilihan',availableLateNov:'Jangkaan pelancaran akhir Nov 2026',orderRestocking:'Tempahan dibuka · Stok dijangka minggu depan',orderConfirm:'Tempahan dibuka · Tarikh penghantaran akan disahkan',
   noProducts:'Belum ada produk.',startAppliance:'Mulakan dengan satu perkakas',startAppliance2:'Pilih produk di bawah untuk bina pakej rumah anda.',
   productSelected:'produk dipilih',unit:'unit',model:'model',standard:'standard',period:'Tempoh',service:'Servis',promotion:'Promosi',
   notAvailable:'Tidak tersedia',chooseCustomize:'Pilih & ubah suai',standardPlanFrom:'Dari pelan standard',canCustomize:'boleh ubah tempoh/servis/promosi',
@@ -76,7 +76,7 @@ en:{
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>Product images are from supplied reference materials. T&C apply.',
   comboHelp:'Choose the term, service and promotion for each product. The package price will be recalculated before adding.',comboEstimate:'Estimated first-month payment',comboAdd:'Add set to package',
   choosePlan:'1. Choose plan',choosePromo:'2. Choose promotion',outright:'Outright',oneTime:'one-time',noService:'No service',qty:'Quantity',copy:'Copy text',copyTitle:'Copy the selected plan and promotion message',addPackage:'Add to package',
-  all:'All',allPlans:'All plans',years:'years',month:'month',months:'months',from:'From',viewPlans:'View plans',pricePending:'Price pending',planPending:'Plan not available yet',currentSelection:'Explore options',availableLateNov:'Expected launch late Nov 2026',orderRestocking:'Orders open · Restocking expected next week',orderConfirm:'Orders open · Delivery timing to be confirmed',
+  outOfStock:'Out of stock',all:'All',allPlans:'All plans',years:'years',month:'month',months:'months',from:'From',viewPlans:'View plans',pricePending:'Price pending',planPending:'Plan not available yet',currentSelection:'Explore options',availableLateNov:'Expected launch late Nov 2026',orderRestocking:'Orders open · Restocking expected next week',orderConfirm:'Orders open · Delivery timing to be confirmed',
   noProducts:'No products yet.',startAppliance:'Start with one appliance',startAppliance2:'Choose a product below to build your home package.',
   productSelected:'products selected',unit:'unit',model:'model',standard:'standard',period:'Term',service:'Service',promotion:'Promotion',
   notAvailable:'Unavailable',chooseCustomize:'Choose & customise',standardPlanFrom:'From standard plan',canCustomize:'term/service/promotion can be changed',
@@ -112,7 +112,7 @@ zh:{
   footer:'Jason Yang · 011-5972 6619 · LGM122989<br>产品图片来自所提供的参考资料。须符合条款与条件。',
   comboHelp:'为每件产品选择年限、服务和优惠。加入前会重新计算配套价格。',comboEstimate:'首月预计月费',comboAdd:'加入整套配套',
   choosePlan:'1. 选择方案',choosePromo:'2. 选择优惠',outright:'直接购买',oneTime:'一次性付款',noService:'无服务',qty:'数量',copy:'复制文案',copyTitle:'复制所选方案与优惠的文案',addPackage:'加入配套',
-  all:'全部',allPlans:'全部方案',years:'年',month:'月',months:'个月',from:'每月低至',viewPlans:'查看方案',currentSelection:'查看方案',availableLateNov:'预计2026年11月底推出',orderRestocking:'开放预订 · 预计下周补货',orderConfirm:'开放预订 · 送货时间有待确认',
+  outOfStock:'缺货',all:'全部',allPlans:'全部方案',years:'年',month:'月',months:'个月',from:'每月低至',viewPlans:'查看方案',currentSelection:'查看方案',availableLateNov:'预计2026年11月底推出',orderRestocking:'开放预订 · 预计下周补货',orderConfirm:'开放预订 · 送货时间有待确认',
   noProducts:'尚未选择产品。',startAppliance:'从一件家电开始',startAppliance2:'从下方选择产品，建立你的家电配套。',
   productSelected:'件产品已选择',unit:'件',model:'型号',standard:'标准价',period:'年限',service:'服务',promotion:'优惠',
   notAvailable:'暂不可用',chooseCustomize:'选择并调整',standardPlanFrom:'标准方案起',canCustomize:'可更改年限/服务/优惠',
@@ -404,7 +404,7 @@ function renderProducts(){
    const priceHtml=pending
      ?'<div class="price pending-price"><div><small>'+esc(tr('pricePending'))+'</small></div></div>'
      :'<div class="price"><div><small>'+esc(tr('from'))+'</small><strong>'+money(quoteFrom)+'</strong><em>/'+esc(tr('month'))+'</em>'+offerCaption+'</div></div>';
-   return '<article class="product '+(pending?'pricing-pending':'')+'"><div class="pvisual">'+fridgeVisual(p)+'</div><div class="pbody"><div class="pcat">'+esc(categoryLabel(p.category))+'</div><h3>'+esc(p.code)+'</h3><div class="psub">'+esc(p.name)+'</div><span class="lifecycle current">'+esc(blocked?paused:orderNotice(p)||tr(isUpcoming(p)?'availableLateNov':'currentSelection'))+'</span>'+priceHtml+'<button class="addbtn" data-id="'+p.id+'" '+(pending||blocked?'disabled':'')+'>'+esc(blocked?paused:pending?tr('planPending'):tr('viewPlans'))+'</button>'+outrightButton+'</div></article>';
+   return '<article class="product '+(pending?'pricing-pending':'')+'"><div class="pvisual">'+fridgeVisual(p)+'</div><div class="pbody"><div class="pcat">'+esc(categoryLabel(p.category))+'</div>'+(['TX2522AT9GR','F2520SNEKR'].includes(baseCode(p.code))?'<div><span class="stock-badge">'+esc(tr('outOfStock'))+'</span></div>':'')+'<h3>'+esc(p.code)+'</h3><div class="psub">'+esc(p.name)+'</div><span class="lifecycle current">'+esc(blocked?paused:orderNotice(p)||tr(isUpcoming(p)?'availableLateNov':'currentSelection'))+'</span>'+priceHtml+'<button class="addbtn" data-id="'+p.id+'" '+(pending||blocked?'disabled':'')+'>'+esc(blocked?paused:pending?tr('planPending'):tr('viewPlans'))+'</button>'+outrightButton+'</div></article>';
  }).join('');
  $('products').querySelectorAll('.addbtn:not(:disabled)').forEach(b=>b.onclick=()=>openProduct(b.dataset.id,b.classList.contains('outright-btn')));
 }
