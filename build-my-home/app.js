@@ -404,7 +404,8 @@ function renderProducts(){
    const priceHtml=pending
      ?'<div class="price pending-price"><div><small>'+esc(tr('pricePending'))+'</small></div></div>'
      :'<div class="price"><div><small>'+esc(tr('from'))+'</small><strong>'+money(quoteFrom)+'</strong><em>/'+esc(tr('month'))+'</em>'+offerCaption+'</div></div>';
-   return '<article class="product '+(pending?'pricing-pending':'')+'"><div class="pvisual">'+fridgeVisual(p)+'</div><div class="pbody"><div class="pcat">'+esc(categoryLabel(p.category))+(['TX2522AT9GR','TV2520SV9KR'].includes(baseCode(p.code))?'<span class="stock-badge">'+esc(tr('outOfStock'))+'</span>':'')+'</div><h3>'+esc(p.code)+'</h3><div class="psub">'+esc(p.name)+'</div><span class="lifecycle current">'+esc(blocked?paused:orderNotice(p)||tr(isUpcoming(p)?'availableLateNov':'currentSelection'))+'</span>'+priceHtml+'<button class="addbtn" data-id="'+p.id+'" '+(pending||blocked?'disabled':'')+'>'+esc(blocked?paused:pending?tr('planPending'):tr('viewPlans'))+'</button>'+outrightButton+'</div></article>';
+   const outOfStock = ['TX2522AT9GR','TV2520SV9KR'].includes(baseCode(p.code));
+   return '<article class="product '+(pending?'pricing-pending':'')+'"><div class="pvisual">'+fridgeVisual(p)+'</div><div class="pbody"><div class="pcat">'+esc(categoryLabel(p.category))+'</div><h3>'+esc(p.code)+'</h3><div class="psub">'+esc(p.name)+'</div>'+(outOfStock?'<div><span class="stock-badge">'+esc(tr('outOfStock'))+'</span></div>':'<span class="lifecycle current">'+esc(blocked?paused:orderNotice(p)||tr(isUpcoming(p)?'availableLateNov':'currentSelection'))+'</span>')+''+priceHtml+'<button class="addbtn" data-id="'+p.id+'" '+(pending||blocked?'disabled':'')+'>'+esc(blocked?paused:pending?tr('planPending'):tr('viewPlans'))+'</button>'+outrightButton+'</div></article>';
  }).join('');
  $('products').querySelectorAll('.addbtn:not(:disabled)').forEach(b=>b.onclick=()=>openProduct(b.dataset.id,b.classList.contains('outright-btn')));
 }
