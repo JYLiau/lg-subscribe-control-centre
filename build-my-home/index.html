@@ -14,7 +14,8 @@
 .shared-package-view .kpis .kpi:last-child{display:none!important}
 .hero-banner{margin:0;padding:0;background:#e9d4b1}
 .hero-banner img{display:block;width:100%;height:auto;max-width:1905px;margin:0 auto}
-.stock-badge{display:inline-block;margin:4px 0;padding:3px 9px;border-radius:999px;background:#a5001d;color:#fff;font-size:12px;font-weight:700;line-height:1.35}
+.product .pcat:has(.stock-badge){display:flex;align-items:center;justify-content:space-between;gap:4px}
+.stock-badge{display:inline-block;flex:none;letter-spacing:normal;text-transform:none;white-space:nowrap;padding:3px 9px;border-radius:999px;background:#a5001d;color:#fff;font-size:12px;font-weight:700;line-height:1.35}
 </style>
 
 <style id="page-scroll-controls-style">
@@ -209,7 +210,7 @@
 </dialog>
 <div class="toast" id="toast"></div>
 
-<script src="./catalog.js?v=20261118-artcool"></script><script src="./app.js?v=20261122-top-load-stock"></script><script src="./image-lite-v2.js?v=20261009-images1"></script>
+<script src="./catalog.js?v=20261118-artcool"></script><script src="./app.js?v=20261122-stock-right"></script><script src="./image-lite-v2.js?v=20261009-images1"></script>
 
 <nav class="page-scroll-controls" aria-label="Page navigation">
   <button id="pageScrollUp" type="button" aria-label="Back to top" title="Back to top" hidden><span aria-hidden="true">↑</span></button>
